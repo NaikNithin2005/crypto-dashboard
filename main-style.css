@@ -1,3 +1,7 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
 :root{
     --color-white: #ffffff;
     --color-light: #f0eff5;
@@ -41,5 +45,140 @@ html{
 
 body{
     background: var(--color-light);
-    /*satrt from font size 25.03 */
+    font-family: "Poppins", sans-serif;
+    min-height: 100vh;
+    color: var(--color-grey-dark);
+    display: grid;
+    grid-template-columns: 17rem auto 30rem;
+    gap: 2rem;
+    transition: var(--transition);
 }
+
+.container {
+    width: 96vw;
+    margin-inline: auto ;
+}
+
+img{
+    display: block;
+    width: 100%;
+    object-fit: cover;
+}
+
+h1, h2, h3, h4, h5, h6{
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--color-dark);
+}
+
+h1{
+    font-size: 2.3rem;
+    font-weight: 900;
+}
+
+h2{
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+h3{
+    font-size: 1.4rem;
+}
+
+h4{
+    font-size: 1.2rem;
+}
+
+h5{
+    font-size: 1rem;
+}
+
+h6{
+    font-size: 0.8rem;
+}
+
+p{
+    font-size: 0.86rem;
+}
+
+small{
+    font-size:0.77rem ;
+}
+
+.text-muted {
+    color: var(--color-gray-light);
+}
+
+.primary {
+    color: var(--color-primary);
+}
+
+.bg-primary {
+    background: var(--color-primary);
+    box-shadow: 0 0.8rem 0.8rem var(--color-primary-light);
+}
+
+.bg-primary-light {
+    background: var(--color-primary-light);
+}
+
+.danger {
+    color: var(--color-danger);
+}
+
+.bg-danger {
+    background: var(--color-danger);
+    box-shadow: 0 0.8rem 0.8rem var(--color-danger-light);
+}
+
+.bg-danger-light {
+    background: var(--color-danger-light);
+}
+
+.success {
+    color: var(--color-success);
+}
+
+.bg.success {
+    background: var(--color-success);
+    box-shadow: 0 0.8rem 0.8rem var(--color-success-light);
+}
+
+.bg-success-light {
+    background: var(--color-success-light);
+}
+
+.warning {
+    color: var(--color-warning);
+}
+
+.bg.warning {
+    background: var(--color-warning);
+    box-shadow: 0 0.8rem 0.8rem var(--color-warning-light);
+}
+
+.bg-warning-light {
+    background: var(--color-warning-light);
+}
+
+.purple {
+    color: var(--color-purple);
+}
+
+.bg-purple {
+    background: var(--color-purple);
+    box-shadow: 0 0.8rem 0.8rem var(--color-purple-light);
+}
+
+.bg-purple-light {
+    background: var(--color-purple-light);
+}
+
+.bg-dark {
+    background: var(--color-dark);
+    box-shadow: 0 0.8rem 0.8rem rgba(0 , 0, 0, 0.12);
+}
+
+
+/*start from navbar*/
+/*37.00*/
