@@ -179,6 +179,136 @@ small{
     box-shadow: 0 0.8rem 0.8rem rgba(0 , 0, 0, 0.12);
 }
 
+button{
+    cursor: pointer;
+}
+
 
 /*start from navbar*/
-/*37.00*/
+nav{
+    width: 100vw;
+    background: var(--color-white);
+    display: grid;
+    place-items: center;
+    height: 4rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+.nav_container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav_logo{
+    width: 7rem;
+    /*need to change height acc. to logo or remove it add a logo which has a width[rectangle] */
+    height: 2rem;
+}
+
+.nav_search{
+    background: var(--color-light);
+    border-radius: var(--radius-1);
+    padding: 0.5rem 1rem;
+    width: 40rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    color: var(--color-gray-light);
+}
+
+.nav_search input[type="search"]{
+    color: var(--color-dark);
+    width: 100%;
+    background: transparent;
+}
+
+.nav_container i{
+    font-size: 1.6rem;
+}
+
+.nav_profile-wrapper{
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.nav_profile{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.nav_profile-photo{
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.nav_menu-btn{
+    display: none;
+}
+
+.nav_menu-btn i {
+    font-size: 2.6rem;
+}
+
+/*Side bar*/
+
+.sidebar{
+    margin-top: 8rem;
+    min-height: calc(100vh - 5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.sidebar a{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem 4vw 1.5rem 2vw;
+    transition: var(--transition);
+    background: transparent;
+    border-radius: 0 0.5rem 0.5rem 0;
+    color: var(--color-gray-dark);
+}
+
+.sidebar a i {
+    font-size: 2rem;
+    color:var(--color-gray-dark)
+}
+
+.sidebar a h5{
+    font-weight: 500;
+    color: var(--color-gray-dark);
+}
+
+.sidebar a:hover{
+    background: var(--color-white);
+}
+
+.sidebar a:hover *{
+    color: var(--color-primary);
+}
+
+.sidebar a:active {
+    background: var(--color-white);
+    border-left: 3rem solid var(--color-primary) ;
+    padding-left: calc(2vw - 00.5rem);
+}
+
+.sidebar a:active *{
+    color: var(--color-primary);
+}
+
+/*start with cards*/
+/*57.55*/
+
+
