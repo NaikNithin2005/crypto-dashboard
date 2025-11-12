@@ -377,8 +377,8 @@ nav{
 }
 
 .card_header-left img{
-    width: 2rem;
-    border: 1rem solid white;
+    width: 3rem;
+    border: 0.2rem solid white;
     border-radius: var(--radius-1);
     padding: 0.4rem;
 }
