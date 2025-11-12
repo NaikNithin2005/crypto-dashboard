@@ -409,3 +409,65 @@ nav{
 
 
 
+/* Fast Pyments */
+
+.fastpayment {
+    margin-top: 2rem ;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.fastpayment_badges{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+    max-width: 100%;
+}
+
+.fastpayment_badge{
+    background: var(--color-white);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    border-radius: var(--radius-1);
+    padding: 0.6rem var(--card-padding);
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.fastpayment_badge:hover{
+    box-shadow: 0 0 1em var(--color-primary-light);
+}
+
+.fastpayment_badge span{
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+}
+
+
+.fastpayment_badge div{
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+
+
+
+/* Chart */
+
+canvas {
+    background: var(--color-white);
+    width: 100%;
+    margin-top: 2rem;
+    border-radius: var(--radius-3);
+    padding: var(--card-padding);
+}
+
+
+
+
+
