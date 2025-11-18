@@ -471,3 +471,126 @@ canvas {
 
 
 
+
+/* Investement */
+
+.right{
+    margin-top: 6rem;
+    margin-right: 2vw;
+}
+
+.investements{
+    background: var(--color-white);
+    border-radius: var(--radius-3);
+}
+
+.investements_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--card-padding);
+}
+
+.investements_header a{
+    display: flex;
+    align-items: center;
+    color: var(--color-primary);
+}
+
+.investement img{
+    width: 2.4rem;
+}
+
+.investement {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--card-padding);
+    border-bottom: 3px solid var(--color-light);
+    transition: var(--transition);
+}
+
+.investement:hover{
+    background-color: var(--color-light);
+    cursor: pointer;
+}
+
+
+
+
+/* Recent Transactions */
+
+.recentTranscations{
+    margin-top: 2rem;
+    max-width: 100%;
+}
+
+.recentTranscations_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 2rem;
+    margin: 1rem 0;
+}
+
+.recentTranscations_header a{
+    display: flex;
+    align-items: center;
+    color: var(--color-primary);
+}
+
+.transaction{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem var(--card-padding);
+    border-radius: var(--radius-3);
+    transition: var(--transition);
+}
+
+.transaction:hover {
+    background: var(--color-white);
+    cursor: pointer;
+}
+
+.transaction_service {
+    display: flex;
+    gap: 1rem;
+}
+
+.transaction_service .icon{
+    border-radius: var(--radius-2);
+    display: flex;
+    align-items: center;
+    font-size: 1.7rem;
+    width: 3.4rem;
+    height: 3.4rem;
+    justify-content: center;
+}
+
+.transaction_card-details {
+    display: flex;
+    justify-content: flex-start;
+    gap: 1rem;
+}
+
+.transaction_card-image {
+    display: flex;
+    width: 3.4rem;
+    border-radius: var(--radius-1);
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-black{
+    background: black;
+}
+
+
+/* Media Quires */
+
+
+
+
+
+
