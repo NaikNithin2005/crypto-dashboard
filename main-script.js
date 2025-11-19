@@ -1,3 +1,6 @@
+ 
+//  Graph Chart
+
  const chart = document.querySelector("#chart").getContext("2d");
 
  new Chart(chart, {
@@ -26,6 +29,54 @@
     }
 
  })
+
+
+//Sidebar Menu
+
+const Sidebar = document.querySelector(".sidebar")
+const closeSidebarbtn = document.querySelector(".sidebar_close-btn")
+const openSidebarbtn = document.querySelector(".nav_menu-btn")
+
+openSidebarbtn.addEventListener("click", () => {
+   Sidebar.style.display = "flex";
+})
+
+closeSidebarbtn.addEventListener("click", () => {
+   Sidebar.style.display = "none";
+})
+
+
+// Theme Toggel
+
+const themeBtn = document.querySelector(".nav_theme-btn");
+
+themeBtn.addEventListener("click", () => {
+    document.body.classList.toggle("dark-theme")
+    if(document.body.classList.contains("dark-theme")){
+        themeBtn.innerHTML = '<i class="uil uil-sun"></i>'
+
+        localStorage.setItem("currentTheme", "dark-theme")
+    } else {
+        themeBtn.innerHTML = '<i class="uil uil-moon"></i>'
+
+        localStorage.setItem("currentTheme", " ")
+
+    }
+})
+
+document.body.className =localStorage.getItem("currentTheme")
+if(document.body.classList.contains("dark-theme")){
+    themeBtn.innerHTML = '<i class="uil uil-sun"></i>'
+
+    localStorage.setItem("currentTheme", "dark-theme")
+} else {
+    themeBtn.innerHTML = '<i class="uil uil-moon"></i>'
+
+    localStorage.setItem("currentTheme", " ")
+
+}
+
+
 
 
 
