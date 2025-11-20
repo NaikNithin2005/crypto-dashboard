@@ -1,0 +1,60 @@
+
+body{
+    grid-template-columns: 17rem auto;
+}
+
+.transactionTable{
+    height: fit-content;
+    margin-top: 6rem ;
+    background-color: black;
+}
+
+.transactionTable thead{
+    background-color: rgb(167, 151, 250);
+}
+
+.transactionTable th{
+    text-align: left;
+    padding: 0.8rem;
+}
+
+.transactionTable td {
+    padding: 1rem;
+}
+
+.transactionTable tbody tr:nth-child(odd) {
+    background-color: var(--color-white);
+}
+
+.transactionTable tbody tr:nth-child(even) {
+    background-color: rgb(237, 232, 232);
+}
+
+
+/* Media Quires(tablet) */
+
+@media screen and (max-width: 1024px) {
+    body{
+        grid-template-columns: 1fr;
+    }
+    
+}
+
+/* Media Quires(Phone) */
+
+@media screen and (max-width: 600px) {
+    .transactionTable thead tr, .transactionTable tbody tr {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .transactionTable tbody tr:nth-child(even){
+        border-left: 2px solid var(--color-white) ;
+    }
+
+
+}
+
+
+
+

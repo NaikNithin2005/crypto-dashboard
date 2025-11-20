@@ -281,6 +281,10 @@ nav{
     gap: 0.2rem;
 }
 
+.sidebar_close-btn{
+    display: none;   
+}
+
 .sidebar a{
     display: flex;
     align-items: center;
@@ -312,6 +316,7 @@ nav{
 
 .sidebar a:active {
     background: var(--color-white);
+    
     border-left: 3rem solid var(--color-primary) ;
     padding-left: calc(2vw - 00.5rem);
 }
