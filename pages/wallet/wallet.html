@@ -8,7 +8,7 @@
 <!--link for icons-->
 <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.2.0/css/line.css">
 <link rel="stylesheet" href="/main-style.css">
-<link rel="stylesheet" href="./transaction.css">
+<link rel="stylesheet" href="./wallete.css">
 
 <body>
     <!--++++NAV BAR++++-->
@@ -60,7 +60,7 @@
             <h5>Wallet</h5>
         </a>
 
-        <a href="/pages/transactions/transaction.html">
+        <a href="../transactions/transaction.html">
             <i class="uil uil-transaction"></i>
             <h5>Transacations</h5>
         </a>
@@ -90,6 +90,112 @@
         </button>
 
     </menu>
+
+
+    <section class="wallet">
+        <div class="wallet_balance">
+            <h4>Total Balance <i class="uil uil-eye-slash"></i></h4>
+            <h1>$1,454,454.325</h1>
+            <div class="wallet_cta">
+                <a href="#" class="wallet_cta-btn">
+                    <i class="uil uil-arrow-up-right"></i>
+                    <p>Send</p>
+                </a>
+                <a href="#" class="wallet_cta-btn">
+                    <i class="uil uil-arrow-down-left"></i>
+                    <p>Recive</p>
+                </a>
+                <a href="#" class="wallet_cta-btn">
+                    <i class="uil uil-share-alt"></i>
+                    <p>Share</p>
+                </a>
+                
+            </div>
+        </div>
+
+
+        <ul class="wallet_tokens">
+            <li class="wallet_token">
+                <div class="wallet_token-left">
+                    <div class="wallet_token-image">
+                        <img src="/assets/images/Bitcoin.svg.png" alt="Bitcoin">
+                    </div>
+                    <div>
+                        <h4>Bitcoin</h4>
+                        <div>
+                            <p>$55,000</p>
+                            <small class="danger">-3.21%</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="wallet_token-right">
+                    <h4>1 BTC</h4>
+                    <p>$45,789</p>
+                </div>
+            </li>
+
+
+            <li class="wallet_token">
+                <div class="wallet_token-left">
+                    <div class="wallet_token-image">
+                        <img src="/assets/images/ethereum-logo-EC6CDBA45B-seeklogo.com.png" alt="Etherium">
+                    </div>
+                    <div>
+                        <h4>Etherium</h4>
+                        <div>
+                            <p>$23,000</p>
+                            <small class="success">+2.14%</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="wallet_token-right">
+                    <h4>1 ETH</h4>
+                    <p>$35,564</p>
+                </div>
+            </li>
+            
+            <li class="wallet_token">
+                <div class="wallet_token-left">
+                    <div class="wallet_token-image">
+                        <img src="/assets/images/Litecoin_Logo.jpg" alt="Litecoin">
+                    </div>
+                    <div>
+                        <h4>Litecoin</h4>
+                        <div>
+                            <p>$1,254</p>
+                            <small class="success">+1.54%</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="wallet_token-right">
+                    <h4>1 LTN</h4>
+                    <p>$950</p>
+                </div>
+            </li>
+            
+            <li class="wallet_token">
+                <div class="wallet_token-left">
+                    <div class="wallet_token-image">
+                        <img src="/assets/images/dogecoin-doge-logo-alternative.svg" alt="Dogecoin">
+                    </div>
+                    <div>
+                        <h4>Dogecoin</h4>
+                        <div>
+                            <p>$5,654</p>
+                            <small class="danger">-2.64%</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="wallet_token-right">
+                    <h4>1 DC</h4>
+                    <p>$2,300</p>
+                </div>
+            </li>
+        </ul>
+
+
+    </section>
+
 
     <script src="/main-script.js"></script>
 </body>
