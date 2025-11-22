@@ -10,22 +10,51 @@
             , "August", "September", "October", "November", "December"],
             datasets: [
                 {
-                    label: "BTC",
-                    data: [29374, 33537, 49631, 59095, 57816, 36684, 33572, 39936, 48895, 61004, 57313, 48116],
-                    borderColor: "red",
-                    borderWidth: 2,
-                },
-                {
-                    label: "ETH",
-                    data: [46548, 54345, 95453, 87665, 75432, 78665, 57335, 45457, 68743, 85332, 76523, 85445],
-                    borderColor: "blue",
-                    borderWidth: 2,
-                },
+                    label: "Expenses",
+                    data: [59374, 53537, 55631, 50095, 57816, 46684, 50572, 49936, 52895, 61004, 57313, 48116],
+                    borderColor: "green",
+                    borderWidth: 1,
+                    fill: true,   
+                    backgroundColor: "rgba(115, 255, 0, 0.15)", 
+                    tension: 0.4, 
+                    pointRadius: 0, 
+                }
                 // add any number of chats
             ]
     },
     options: {
         responsive: true,
+        maintainAspectRatio: false,
+    }
+
+ })
+
+ // Graph Chart 1
+
+  const chart1 = document.querySelector("#chart1").getContext("2d");
+
+ new Chart(chart1, {
+    type: "bar",
+    data: {
+        labels: ["January", "February", "March", "April", "May", "June", "July"
+            , "August", "September", "October", "November", "December"],
+            datasets: [
+                {
+                    label: "Expenses",
+                    data: [59374, 53537, 55631, 50095, 57816, 46684, 50572, 49936, 52895, 61004, 57313, 48116],
+                    borderColor: "purple",
+                    borderWidth: 1,
+                    fill: true,   
+                    backgroundColor: "rgba(34, 0, 255, 0.15)", 
+                    tension: 0.4, 
+                    pointRadius: 0, 
+                }
+                // add any number of chats
+            ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
     }
 
  })
@@ -50,31 +79,31 @@ closeSidebarbtn.addEventListener("click", () => {
 
 const themeBtn = document.querySelector(".nav_theme-btn");
 
-themeBtn.addEventListener("click", () => {
-    document.body.classList.toggle("dark-theme")
-    if(document.body.classList.contains("dark-theme")){
-        themeBtn.innerHTML = '<i class="uil uil-sun"></i>'
+// Load saved theme
+const savedTheme = localStorage.getItem("currentTheme");
 
-        localStorage.setItem("currentTheme", "dark-theme")
-    } else {
-        themeBtn.innerHTML = '<i class="uil uil-moon"></i>'
-
-        localStorage.setItem("currentTheme", " ")
-
-    }
-})
-
-document.body.className =localStorage.getItem("currentTheme")
-if(document.body.classList.contains("dark-theme")){
-    themeBtn.innerHTML = '<i class="uil uil-sun"></i>'
-
-    localStorage.setItem("currentTheme", "dark-theme")
+// Apply saved theme (if exists)
+if (savedTheme === "dark-theme") {
+    document.body.classList.add("dark-theme");
+    themeBtn.innerHTML = '<i class="uil uil-sun"></i>';
 } else {
-    themeBtn.innerHTML = '<i class="uil uil-moon"></i>'
-
-    localStorage.setItem("currentTheme", " ")
-
+    themeBtn.innerHTML = '<i class="uil uil-moon"></i>';
 }
+
+// Toggle on click
+themeBtn.addEventListener("click", () => {
+    document.body.classList.toggle("dark-theme");
+
+    if (document.body.classList.contains("dark-theme")) {
+        themeBtn.innerHTML = '<i class="uil uil-sun"></i>';
+        localStorage.setItem("currentTheme", "dark-theme");
+    } else {
+        themeBtn.innerHTML = '<i class="uil uil-moon"></i>';
+        localStorage.setItem("currentTheme", "light-theme");
+    }
+});
+
+
 
 
 

@@ -340,8 +340,10 @@ nav{
 
 .main_header input[type="date"]{
     padding: 0.5rem 2rem;
-    background: var(--color-white);
+    background: var(--color-light);
     color: var(--color-gray-dark);
+    border-radius: var(--radius-3);
+    accent-color: var(--color-gray-dark);
 }
 
 .main_cards {
@@ -534,6 +536,11 @@ canvas {
 
 
 
+.date-time, .bond {
+    color: var(--color-dark);
+}
+
+
 
 /* Recent Transactions */
 
@@ -599,8 +606,16 @@ canvas {
     justify-content: center;
 }
 
+.transaction_details{
+    color: var(--color-dark);
+}
+
 .bg-black{
     background: black;
+}
+
+.icon{
+    color: var(--color-white);
 }
 
 

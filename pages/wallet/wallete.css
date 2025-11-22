@@ -96,6 +96,11 @@ body {
     gap: 0.8rem;
 }
 
+.coins{
+    margin-top: 2rem;
+    /* color: var(--color-gray-light); */
+}
+
 
 /* media Query (tablet) */
 

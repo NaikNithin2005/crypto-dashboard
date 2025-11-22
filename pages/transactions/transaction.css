@@ -1,12 +1,13 @@
 
 body{
-    grid-template-columns: 17rem auto;
+    grid-template-columns: 17rem auto ;
 }
 
 .transactionTable{
     height: fit-content;
-    margin-top: 6rem ;
-    background-color: black;
+    width: 98%;
+    margin-top: 0.5rem; ;
+    background-color: var(--color-dark);
 }
 
 .transactionTable thead{
@@ -19,6 +20,7 @@ body{
 }
 
 .transactionTable td {
+    color: var(--color-dark);
     padding: 1rem;
 }
 
@@ -27,33 +29,114 @@ body{
 }
 
 .transactionTable tbody tr:nth-child(even) {
-    background-color: rgb(237, 232, 232);
+    background-color: var(--color-light);
 }
+
+.chartcontiner {
+    width: 40rem;     
+    height: 20rem; 
+    display: flex;
+    gap: 10rem;  
+    margin-top: 2rem;
+}
+
+#chart{
+    margin-left: 5rem;
+}
+
+#chart1{
+    margin-left: 5rem;
+}
+
+canvas {
+    background: var(--color-white);
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: var(--radius-3);
+    padding: var(--card-padding);
+}
+
+header{
+    margin-top: 3rem;
+    cursor: pointer;
+}
+
+h1{
+    margin-top: 6rem;
+    justify-content: center;
+    text-align: center;
+    color: var(--color-primary);
+}
+
+h2{
+    margin-top: 2rem;
+    color: var(--color-gray-dark);
+}
+
 
 
 /* Media Quires(tablet) */
-
+/* Tablet View (≤ 1024px) */
 @media screen and (max-width: 1024px) {
-    body{
+    body {
         grid-template-columns: 1fr;
     }
-    
+
+    .chartcontiner {
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: column;   /* charts stack vertically */
+        align-items: center;
+        gap: 2rem;                /* smaller clean spacing */
+        margin-top: 2rem;
+    }
+
+    canvas {
+        width: 90% !important;    /* chart fits tablet screen */
+        height: 18rem !important;
+    }
 }
 
-/* Media Quires(Phone) */
 
+
+/* Mobile View (≤ 600px) */
 @media screen and (max-width: 600px) {
-    .transactionTable thead tr, .transactionTable tbody tr {
+    body {
+        grid-template-columns: 1fr;
+    }
+
+    /* Make table responsive */
+    .transactionTable thead tr,
+    .transactionTable tbody tr {
         display: flex;
         flex-direction: column;
     }
-    
-    .transactionTable tbody tr:nth-child(even){
-        border-left: 2px solid var(--color-white) ;
+
+    .transactionTable tbody tr:nth-child(even) {
+        border-left: 2px solid var(--color-white);
     }
 
+    /* Chart section */
+    .chartcontiner {
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
 
+    canvas {
+        width: 95% !important;   /* perfect mobile fit */
+        height: 15rem !important;
+        margin-left: 0 !important;
+    }
+
+    #chart, #chart1 {
+        margin-left: 0 !important;  /* centers graphs */
+    }
 }
+
 
 
 
