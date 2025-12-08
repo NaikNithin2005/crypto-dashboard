@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Send Crypto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* ====== Global Styles ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at top, #1f2933, #050816);
+            color: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .send-page {
+            width: 100%;
+            max-width: 1100px;
+            display: grid;
+            grid-template-columns: 2fr 1.2fr;
+            gap: 2rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(148, 163, 184, 0.1);
+            backdrop-filter: blur(18px);
+        }
+
+        @media (max-width: 900px) {
+            .send-page {
+                grid-template-columns: 1fr;
+                max-width: 600px;
+            }
+        }
+
+        .send-left,
+        .send-right {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .page-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .page-subtitle {
+            font-size: 0.9rem;
+            color: #9ca3af;
+        }
+
+        /* ====== Form ====== */
+        form {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                flex-direction: column;
+            }
+        }
+
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: #d1d5db;
+        }
+
+        label span.required {
+            color: #f97373;
+            margin-left: 0.2rem;
+        }
+
+        input, select, textarea {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(55, 65, 81, 0.9);
+            padding: 0.7rem 0.9rem;
+            color: #e5e7eb;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4);
+            background: rgba(15, 23, 42, 1);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #6b7280;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+            max-height: 140px;
+        }
+
+        .input-hint {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .inline-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .inline-info span strong {
+            color: #e5e7eb;
+        }
+
+        .error-text {
+            font-size: 0.75rem;
+            color: #f97373;
+            display: none;
+        }
+
+        /* ====== Checkbox / 2FA Section ====== */
+        .confirm-row {
+            display: flex;
+            gap: 0.6rem;
+            margin-top: 0.4rem;
+        }
+
+        .confirm-row input[type="checkbox"] {
+            width: 1rem;
+            height: 1rem;
+            margin-top: 0.08rem;
+            border-radius: 0.25rem;
+        }
+
+        .confirm-row label {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            cursor: pointer;
+        }
+
+        /* ====== Buttons ====== */
+        .button-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn {
+            border: none;
+            outline: none;
+            border-radius: 999px;
+            padding: 0.65rem 1.4rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn:active {
+            transform: translateY(1px) scale(0.99);
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: rgba(31, 41, 55, 0.9);
+            color: #e5e7eb;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.6);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(55, 65, 81, 1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: #f9fafb;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.45);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.95;
+        }
+
+        /* ====== Right Summary Card ====== */
+        .summary-card {
+            background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent),
+                        radial-gradient(circle at bottom right, rgba(96, 165, 250, 0.12), transparent),
+                        rgba(15, 23, 42, 0.96);
+            border-radius: 1.25rem;
+            border: 1px solid rgba(55, 65, 81, 0.8);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #d1d5db;
+        }
+
+        .summary-status {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.7rem;
+            border-radius: 999px;
+            background: rgba(22, 163, 74, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .summary-main-amount {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .summary-sub-amount {
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #d1d5db;
+        }
+
+        .summary-row span:nth-child(2) {
+            color: #9ca3af;
+        }
+
+        .summary-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(55, 65, 81, 0.9), transparent);
+            margin: 0.25rem 0;
+        }
+
+        .summary-tagline {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        /* ====== Popup Modal ====== */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+
+        .modal {
+            background: radial-gradient(circle at top, rgba(52, 211, 153, 0.16), transparent),
+                        rgba(15, 23, 42, 0.98);
+            border-radius: 1.3rem;
+            padding: 1.8rem 1.6rem 1.4rem;
+            max-width: 380px;
+            width: 100%;
+            border: 1px solid rgba(55, 65, 81, 0.9);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+            text-align: center;
+            animation: popIn 0.2s ease-out;
+        }
+
+        .modal-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 0.8rem;
+            border-radius: 999px;
+            border: 1px solid rgba(52, 211, 153, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #6ee7b7;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15), transparent);
+        }
+
+        .modal-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .modal-body {
+            font-size: 0.88rem;
+            color: #9ca3af;
+            margin-bottom: 1rem;
+        }
+
+        .modal-body strong {
+            color: #e5e7eb;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: center;
+            margin-top: 0.4rem;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="send-page">
+    <!-- LEFT: FORM -->
+    <div class="send-left">
+        <div>
+            <h1 class="page-title">Send Crypto</h1>
+            <p class="page-subtitle">
+                Transfer digital assets securely. Double-check the recipient address and network before sending.
+            </p>
+        </div>
+
+        <form id="sendForm">
+            <!-- From Wallet & Asset -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fromWallet">From wallet<span class="required">*</span></label>
+                    <select id="fromWallet" required>
+                        <option value="">Select wallet</option>
+                        <option value="main">Main Wallet • 0xA1B2...9F3E</option>
+                        <option value="trading">Trading Wallet • 0xC8D4...8A12</option>
+                        <option value="cold">Cold Storage • 0x9F0C...4B7D</option>
+                    </select>
+                    <p class="input-hint">Choose the wallet that will be debited.</p>
+                    <span class="error-text" data-error-for="fromWallet">Please select a wallet.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="asset">Asset / Coin<span class="required">*</span></label>
+                    <select id="asset" required>
+                        <option value="">Select asset</option>
+                        <option value="BTC">BTC • Bitcoin</option>
+                        <option value="ETH">ETH • Ethereum</option>
+                        <option value="USDT">USDT • Tether (ERC20)</option>
+                        <option value="USDC">USDC • USD Coin</option>
+                        <option value="MATIC">MATIC • Polygon</option>
+                    </select>
+                    <p class="input-hint">Select the cryptocurrency you want to send.</p>
+                    <span class="error-text" data-error-for="asset">Please select an asset.</span>
+                </div>
+            </div>
+
+            <!-- Network & Priority -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="network">Network<span class="required">*</span></label>
+                    <select id="network" required>
+                        <option value="">Select network</option>
+                        <option value="Bitcoin">Bitcoin</option>
+                        <option value="Ethereum">Ethereum (ERC20)</option>
+                        <option value="Polygon">Polygon</option>
+                        <option value="BNB Chain">BNB Chain</option>
+                        <option value="Arbitrum">Arbitrum</option>
+                    </select>
+                    <p class="input-hint">Make sure the receiver supports this network.</p>
+                    <span class="error-text" data-error-for="network">Please select a network.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="priority">Fee priority</label>
+                    <select id="priority">
+                        <option value="normal">Normal (Recommended)</option>
+                        <option value="fast">Fast</option>
+                        <option value="slow">Economy</option>
+                    </select>
+                    <p class="input-hint">Higher priority may confirm faster with slightly higher fees.</p>
+                </div>
+            </div>
+
+            <!-- Recipient Address -->
+            <div class="form-group">
+                <label for="address">Recipient address<span class="required">*</span></label>
+                <input type="text" id="address" placeholder="Paste wallet address (0x...)" required>
+                <div class="inline-info">
+                    <span id="addressPreview">Preview: —</span>
+                    <span>Address type must match network.</span>
+                </div>
+                <span class="error-text" data-error-for="address">Enter a valid wallet address.</span>
+            </div>
+
+            <!-- Amount & Fiat -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="amount">Amount<span class="required">*</span></label>
+                    <input type="number" id="amount" min="0" step="0.00000001" placeholder="0.0000" required>
+                    <div class="inline-info">
+                        <span id="amountAssetLabel">You send: 0</span>
+                        <span id="fiatEstimate">≈ $0.00 (est)</span>
+                    </div>
+                    <span class="error-text" data-error-for="amount">Enter a valid amount greater than 0.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="fee">Estimated network fee</label>
+                    <input type="text" id="fee" disabled value="0.0000">
+                    <p class="input-hint">Fee is estimated for preview. Actual fee may vary.</p>
+                </div>
+            </div>
+
+            <!-- Note / Memo -->
+            <div class="form-group">
+                <label for="note">Note / Memo (optional)</label>
+                <textarea id="note" placeholder="Add a short note for your reference (not always stored on-chain)."></textarea>
+            </div>
+
+            <!-- 2FA & Confirmation -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="twofa">2FA Code<span class="required">*</span></label>
+                    <input type="text" id="twofa" maxlength="6" placeholder="123456" inputmode="numeric" required>
+                    <p class="input-hint">Enter the 6-digit code from your authenticator or SMS.</p>
+                    <span class="error-text" data-error-for="twofa">Enter a valid 6-digit 2FA code.</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Confirmation<span class="required">*</span></label>
+                    <div class="confirm-row">
+                        <input type="checkbox" id="confirmCheckbox">
+                        <label for="confirmCheckbox">
+                            I understand that crypto transfers are irreversible and I’ve verified the address.
+                        </label>
+                    </div>
+                    <span class="error-text" data-error-for="confirm">You must confirm before sending.</span>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-row">
+                <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="sendBtn">
+                    Send
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- RIGHT: SUMMARY PANEL -->
+    <div class="send-right">
+        <div class="summary-card">
+            <div class="summary-header">
+                <span class="summary-title">Transaction summary</span>
+                <span class="summary-status">Draft</span>
+            </div>
+
+            <div>
+                <div class="summary-main-amount" id="summaryMainAmount">0.0000 —</div>
+                <div class="summary-sub-amount" id="summaryFiatAmount">≈ $0.00</div>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-row">
+                <span>Asset</span>
+                <span id="summaryAsset">—</span>
+            </div>
+
+            <div class="summary-row">
+                <span>Network</span>
+                <span id="summaryNetwork">—</span>
+            </div>
+
+            <div class="summary-row">
+                <span>From</span>
+                <span id="summaryFrom">—</span>
+            </div>
+
+            <div class="summary-row">
+                <span>To</span>
+                <span id="summaryTo">—</span>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-row">
+                <span>Network fee (est)</span>
+                <span id="summaryFee">0.0000</span>
+            </div>
+
+            <div class="summary-row">
+                <span>Total (amount + fee)</span>
+                <span id="summaryTotal">0.0000</span>
+            </div>
+
+            <p class="summary-tagline">
+                Review details carefully before confirming. Once sent, the transaction cannot be reversed.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- POPUP MODAL -->
+<div class="modal-backdrop" id="successModal">
+    <div class="modal">
+        <div class="modal-icon">✓</div>
+        <div class="modal-title">Money Sent</div>
+        <div class="modal-body" id="modalBody">
+            Your transaction has been submitted.
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" id="closeModalBtn">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ====== Helper: Simple fake price map for estimation (demo only) ======
+    const PRICE_MAP = {
+        "BTC": 60000,
+        "ETH": 3000,
+        "USDT": 1,
+        "USDC": 1,
+        "MATIC": 0.8
+    };
+
+    // ====== Elements ======
+    const assetEl = document.getElementById("asset");
+    const networkEl = document.getElementById("network");
+    const fromWalletEl = document.getElementById("fromWallet");
+    const addressEl = document.getElementById("address");
+    const amountEl = document.getElementById("amount");
+    const feeEl = document.getElementById("fee");
+    const noteEl = document.getElementById("note");
+    const twofaEl = document.getElementById("twofa");
+    const confirmCheckboxEl = document.getElementById("confirmCheckbox");
+
+    const addressPreviewEl = document.getElementById("addressPreview");
+    const amountAssetLabelEl = document.getElementById("amountAssetLabel");
+    const fiatEstimateEl = document.getElementById("fiatEstimate");
+
+    const summaryMainAmountEl = document.getElementById("summaryMainAmount");
+    const summaryFiatAmountEl = document.getElementById("summaryFiatAmount");
+    const summaryAssetEl = document.getElementById("summaryAsset");
+    const summaryNetworkEl = document.getElementById("summaryNetwork");
+    const summaryFromEl = document.getElementById("summaryFrom");
+    const summaryToEl = document.getElementById("summaryTo");
+    const summaryFeeEl = document.getElementById("summaryFee");
+    const summaryTotalEl = document.getElementById("summaryTotal");
+
+    const sendForm = document.getElementById("sendForm");
+    const cancelBtn = document.getElementById("cancelBtn");
+
+    const successModal = document.getElementById("successModal");
+    const modalBody = document.getElementById("modalBody");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+
+    // ====== Utility functions ======
+    function showError(fieldName) {
+        const el = document.querySelector(`.error-text[data-error-for="${fieldName}"]`);
+        if (el) el.style.display = "block";
+    }
+
+    function hideError(fieldName) {
+        const el = document.querySelector(`.error-text[data-error-for="${fieldName}"]`);
+        if (el) el.style.display = "none";
+    }
+
+    function formatFiat(value) {
+        return "$" + value.toFixed(2);
+    }
+
+    function truncateAddress(addr) {
+        if (!addr || addr.length <= 10) return addr || "—";
+        return addr.slice(0, 6) + "..." + addr.slice(-4);
+    }
+
+    function updateEstimates() {
+        const asset = assetEl.value;
+        const amount = parseFloat(amountEl.value) || 0;
+
+        const price = PRICE_MAP[asset] || 0;
+        const fiat = amount * price;
+
+        amountAssetLabelEl.textContent = `You send: ${amount.toFixed(4)} ${asset || ""}`.trim();
+        fiatEstimateEl.textContent = `≈ ${formatFiat(fiat)}`;
+
+        // Simple fee estimation: 0.2% of amount (for demo)
+        const feeAmount = amount * 0.002;
+        feeEl.value = feeAmount.toFixed(6);
+
+        // Update summary card
+        summaryMainAmountEl.textContent = `${amount.toFixed(4)} ${asset || "—"}`;
+        summaryFiatAmountEl.textContent = `≈ ${formatFiat(fiat)}`;
+        summaryAssetEl.textContent = asset || "—";
+        summaryNetworkEl.textContent = networkEl.value || "—";
+
+        const fromText = fromWalletEl.options[fromWalletEl.selectedIndex]?.text || "—";
+        summaryFromEl.textContent = fromText;
+
+        const toText = truncateAddress(addressEl.value);
+        summaryToEl.textContent = toText;
+
+        summaryFeeEl.textContent = `${feeAmount.toFixed(6)} ${asset || "—"}`;
+        const total = amount + feeAmount;
+        summaryTotalEl.textContent = `${total.toFixed(6)} ${asset || "—"}`;
+    }
+
+    function updateAddressPreview() {
+        const addr = addressEl.value.trim();
+        addressPreviewEl.textContent = "Preview: " + (truncateAddress(addr) || "—");
+        updateEstimates();
+    }
+
+    // ====== Event listeners for live updates ======
+    assetEl.addEventListener("change", () => {
+        hideError("asset");
+        updateEstimates();
+    });
+
+    networkEl.addEventListener("change", () => {
+        hideError("network");
+        updateEstimates();
+    });
+
+    fromWalletEl.addEventListener("change", () => {
+        hideError("fromWallet");
+        updateEstimates();
+    });
+
+    amountEl.addEventListener("input", () => {
+        hideError("amount");
+        updateEstimates();
+    });
+
+    addressEl.addEventListener("input", () => {
+        hideError("address");
+        updateAddressPreview();
+    });
+
+    twofaEl.addEventListener("input", () => {
+        hideError("twofa");
+    });
+
+    confirmCheckboxEl.addEventListener("change", () => {
+        hideError("confirm");
+    });
+
+    // ====== Form submission ======
+    sendForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        let valid = true;
+
+        // Basic validations
+        if (!fromWalletEl.value) {
+            showError("fromWallet");
+            valid = false;
+        } else hideError("fromWallet");
+
+        if (!assetEl.value) {
+            showError("asset");
+            valid = false;
+        } else hideError("asset");
+
+        if (!networkEl.value) {
+            showError("network");
+            valid = false;
+        } else hideError("network");
+
+        const address = addressEl.value.trim();
+        if (!address || address.length < 10) {
+            showError("address");
+            valid = false;
+        } else hideError("address");
+
+        const amount = parseFloat(amountEl.value);
+        if (isNaN(amount) || amount <= 0) {
+            showError("amount");
+            valid = false;
+        } else hideError("amount");
+
+        const twofa = twofaEl.value.trim();
+        if (!/^\d{6}$/.test(twofa)) {
+            showError("twofa");
+            valid = false;
+        } else hideError("twofa");
+
+        if (!confirmCheckboxEl.checked) {
+            showError("confirm");
+            valid = false;
+        } else hideError("confirm");
+
+        if (!valid) {
+            return;
+        }
+
+        // If all good, show success popup
+        const asset = assetEl.value;
+        const truncatedAddr = truncateAddress(address);
+        const network = networkEl.value;
+
+        modalBody.innerHTML = `
+            You have successfully initiated a transfer of
+            <strong>${amount.toFixed(4)} ${asset}</strong> on
+            <strong>${network}</strong> to address
+            <strong>${truncatedAddr}</strong>.
+        `;
+
+        successModal.style.display = "flex";
+
+        // Optionally reset form AFTER showing modal
+        sendForm.reset();
+        updateEstimates();
+        updateAddressPreview();
+    });
+
+    // ====== Cancel button ======
+    cancelBtn.addEventListener("click", function () {
+        // You can change this to: window.location.href = 'wallet.html';
+        sendForm.reset();
+        updateEstimates();
+        updateAddressPreview();
+    });
+
+    // ====== Modal actions ======
+    closeModalBtn.addEventListener("click", function () {
+        successModal.style.display = "none";
+    });
+
+    successModal.addEventListener("click", function (e) {
+        if (e.target === successModal) {
+            successModal.style.display = "none";
+        }
+    });
+
+    // Initial setup
+    updateEstimates();
+    updateAddressPreview();
+</script>
+
+</body>
+</html>

@@ -11,16 +11,38 @@
             datasets: [
                 {
                     label: "BTC",
-                    data: [29374, 33537, 49631, 59095, 57816, 36684, 33572, 39936, 48895, 61004, 57313, 48116],
-                    borderColor: "red",
+                    data: [66548, 54345, 95453, 87665, 75432, 78665, 57335, 65457, 68743, 85332, 76523, 85445],
+                    borderColor: "green",
                     borderWidth: 2,
+                    fill: true,   
+                    backgroundColor: "rgba(106, 255, 0, 0.17)", 
+                    tension: 0.1, 
+                    pointRadius: 3,
+                    pointstyle: "rect" 
                 },
                 {
                     label: "ETH",
-                    data: [46548, 54345, 95453, 87665, 75432, 78665, 57335, 45457, 68743, 85332, 76523, 85445],
+                    data: [49374, 53537, 69631, 65095, 67816, 66684, 63572, 59936, 58895, 71004, 67313, 78116],
                     borderColor: "blue",
                     borderWidth: 2,
+                    fill: true,   
+                    backgroundColor: "rgba(13, 16, 203, 0.47)", 
+                    tension: 0.1, 
+                    pointRadius: 3,
                 },
+                {
+                    label: "EUR",
+                    data: [59374, 65537, 49631, 59095, 61816, 55684, 57572, 50936, 58895, 80004, 61313, 68116],
+                    borderColor: "red",
+                    borderWidth: 1.5,
+                    fill: true,   
+                    backgroundColor: "rgba(255, 0, 0, 0.4)", 
+                    tension: 0.1, 
+                    pointRadius: 3,
+                
+
+                }
+                    
                 // add any number of chats
             ]
     },

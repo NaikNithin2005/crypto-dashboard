@@ -96,6 +96,10 @@ body {
     gap: 0.8rem;
 }
 
+.wallet_token p {
+    color: var(--color-dark);
+}
+
 .coins{
     margin-top: 2rem;
     /* color: var(--color-gray-light); */

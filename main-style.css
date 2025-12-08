@@ -314,13 +314,13 @@ nav{
     color: var(--color-primary);
 }
 
-.sidebar a.active {
+.sidebar a:active {
     background: var(--color-white);
-    border-left: 0.5rem solid var(--color-primary) ;
+    border-left: 3rem solid var(--color-primary) ;
     padding-left: calc(2vw - 00.5rem);
 }
 
-.sidebar a.active *{
+.sidebar a:active *{
     color: var(--color-primary);
 }
 

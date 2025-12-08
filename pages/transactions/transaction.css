@@ -73,6 +73,22 @@ h2{
     color: var(--color-gray-dark);
 }
 
+/* quick send */
+
+.quick-send{
+    margin-top: 8rem;
+    margin-left: 4rem;
+}
+
+.quick-send a{
+    color: var(--color-white);
+    background-color: var(--color-primary);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-2);
+    margin-top: auto;
+}
+
+
 
 
 /* Media Quires(tablet) */

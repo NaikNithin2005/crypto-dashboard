@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Receive Crypto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- QR Code library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at top, #1f2933, #050816);
+            color: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .receive-page {
+            width: 100%;
+            max-width: 1100px;
+            display: grid;
+            grid-template-columns: 2fr 1.4fr;
+            gap: 2rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(148, 163, 184, 0.1);
+            backdrop-filter: blur(18px);
+        }
+
+        @media (max-width: 900px) {
+            .receive-page {
+                grid-template-columns: 1fr;
+                max-width: 600px;
+            }
+        }
+
+        .receive-left,
+        .receive-right {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .page-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .page-subtitle {
+            font-size: 0.9rem;
+            color: #9ca3af;
+        }
+
+        form {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                flex-direction: column;
+            }
+        }
+
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: #d1d5db;
+        }
+
+        label span.required {
+            color: #f97373;
+            margin-left: 0.2rem;
+        }
+
+        input, select, textarea {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(55, 65, 81, 0.9);
+            padding: 0.7rem 0.9rem;
+            color: #e5e7eb;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4);
+            background: rgba(15, 23, 42, 1);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #6b7280;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+            max-height: 140px;
+        }
+
+        .input-hint {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .inline-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .inline-info span strong {
+            color: #e5e7eb;
+        }
+
+        .error-text {
+            font-size: 0.75rem;
+            color: #f97373;
+            display: none;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn {
+            border: none;
+            outline: none;
+            border-radius: 999px;
+            padding: 0.65rem 1.4rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn:active {
+            transform: translateY(1px) scale(0.99);
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: rgba(31, 41, 55, 0.9);
+            color: #e5e7eb;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.6);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(55, 65, 81, 1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #f9fafb;
+            box-shadow: 0 8px 25px rgba(22, 163, 74, 0.45);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.95;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            color: #e5e7eb;
+        }
+
+        .btn-outline:hover {
+            background: rgba(30, 64, 175, 0.25);
+        }
+
+        /* QR card */
+        .qr-card {
+            margin-top: 1rem;
+            padding: 1.2rem;
+            border-radius: 1rem;
+            background: radial-gradient(circle at top left, rgba(45, 212, 191, 0.12), transparent),
+                        rgba(15, 23, 42, 0.96);
+            border: 1px solid rgba(55, 65, 81, 0.9);
+            display: flex;
+            gap: 1.2rem;
+            align-items: center;
+        }
+
+        .qr-box {
+            width: 180px;
+            height: 180px;
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 1rem;
+            border: 1px dashed rgba(75, 85, 99, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+
+        .qr-info span.label {
+            color: #6b7280;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .qr-info span.value {
+            color: #e5e7eb;
+            font-weight: 500;
+        }
+
+        /* Right: friends + requests */
+        .friends-card {
+            background: radial-gradient(circle at top right, rgba(96, 165, 250, 0.16), transparent),
+                        rgba(15, 23, 42, 0.96);
+            border-radius: 1.25rem;
+            border: 1px solid rgba(55, 65, 81, 0.9);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+        }
+
+        .friends-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .friends-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #d1d5db;
+        }
+
+        .friends-subtitle {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .friend-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            max-height: 290px;
+            overflow-y: auto;
+        }
+
+        .friend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            padding: 0.7rem 0.6rem;
+            border-radius: 0.75rem;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(55, 65, 81, 0.9);
+        }
+
+        .friend-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: radial-gradient(circle at top, rgba(59, 130, 246, 0.5), rgba(15, 23, 42, 1));
+            border: 1px solid rgba(96, 165, 250, 0.7);
+        }
+
+        .friend-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+        }
+
+        .friend-name {
+            font-size: 0.9rem;
+            color: #e5e7eb;
+        }
+
+        .friend-handle {
+            font-size: 0.78rem;
+            color: #9ca3af;
+        }
+
+        .friend-address {
+            font-size: 0.78rem;
+            color: #6b7280;
+        }
+
+        .friend-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            align-items: flex-end;
+        }
+
+        .friend-actions input {
+            width: 90px;
+            padding: 0.4rem 0.5rem;
+            font-size: 0.78rem;
+            border-radius: 999px;
+        }
+
+        .friend-actions .btn {
+            padding: 0.35rem 0.8rem;
+            font-size: 0.78rem;
+        }
+
+        .tag-pill {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.6rem;
+            border-radius: 999px;
+            border: 1px solid rgba(37, 99, 235, 0.5);
+            color: #60a5fa;
+        }
+
+        /* Popup modal for request sent */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+
+        .modal {
+            background: radial-gradient(circle at top, rgba(59, 130, 246, 0.16), transparent),
+                        rgba(15, 23, 42, 0.98);
+            border-radius: 1.3rem;
+            padding: 1.8rem 1.6rem 1.4rem;
+            max-width: 380px;
+            width: 100%;
+            border: 1px solid rgba(55, 65, 81, 0.9);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+            text-align: center;
+            animation: popIn 0.2s ease-out;
+        }
+
+        .modal-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 0.8rem;
+            border-radius: 999px;
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #93c5fd;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.15), transparent);
+        }
+
+        .modal-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .modal-body {
+            font-size: 0.88rem;
+            color: #9ca3af;
+            margin-bottom: 1rem;
+        }
+
+        .modal-body strong {
+            color: #e5e7eb;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: center;
+            margin-top: 0.4rem;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="receive-page">
+    <!-- LEFT: RECEIVE + QR -->
+    <div class="receive-left">
+        <div>
+            <h1 class="page-title">Receive Crypto</h1>
+            <p class="page-subtitle">
+                Share your wallet QR or address to receive funds safely. Only receive on supported networks.
+            </p>
+        </div>
+
+        <form id="receiveForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="walletSelect">Receive to wallet<span class="required">*</span></label>
+                    <select id="walletSelect" required>
+                        <option value="">Select wallet</option>
+                        <option value="0xA1B2C3D4E5F6A1B2C3D4E5F61234567890ABCD01">
+                            Main Wallet • 0xA1B2...CD01
+                        </option>
+                        <option value="0x98FEDCBA12340987ABCDEF09876543211234EF56">
+                            Savings Wallet • 0x98FE...EF56
+                        </option>
+                        <option value="bc1qexamplelongbitcoinaddress1234567890xyz">
+                            BTC Wallet • bc1q...xyz
+                        </option>
+                    </select>
+                    <p class="input-hint">Select which wallet address you want to receive into.</p>
+                    <span class="error-text" data-error-for="walletSelect">Please select a wallet.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="assetSelect">Asset / Coin<span class="required">*</span></label>
+                    <select id="assetSelect" required>
+                        <option value="">Select asset</option>
+                        <option value="BTC">BTC • Bitcoin</option>
+                        <option value="ETH">ETH • Ethereum</option>
+                        <option value="USDT">USDT • Tether (ERC20)</option>
+                        <option value="USDC">USDC • USD Coin</option>
+                        <option value="MATIC">MATIC • Polygon</option>
+                    </select>
+                    <p class="input-hint">Match asset with the sender’s side to avoid loss of funds.</p>
+                    <span class="error-text" data-error-for="assetSelect">Please select an asset.</span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="networkSelect">Network<span class="required">*</span></label>
+                    <select id="networkSelect" required>
+                        <option value="">Select network</option>
+                        <option value="Bitcoin">Bitcoin</option>
+                        <option value="Ethereum">Ethereum (ERC20)</option>
+                        <option value="Polygon">Polygon</option>
+                        <option value="BNB Chain">BNB Chain</option>
+                        <option value="Arbitrum">Arbitrum</option>
+                    </select>
+                    <p class="input-hint">Ensure the sender uses the same network.</p>
+                    <span class="error-text" data-error-for="networkSelect">Please select a network.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="amountInput">Requested amount (optional)</label>
+                    <input type="number" id="amountInput" min="0" step="0.00000001" placeholder="0.0000">
+                    <p class="input-hint">Sender will see this suggested amount in the request.</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="noteInput">Note / Reference (optional)</label>
+                <textarea id="noteInput" placeholder="Eg. Rent for December, repayment, shared dinner, etc."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Current receive address</label>
+                <div class="inline-info">
+                    <span id="currentAddressShort">—</span>
+                    <button type="button" class="btn btn-outline" id="copyAddressBtn">Copy address</button>
+                </div>
+                <p class="input-hint">Share this address only with people you trust.</p>
+            </div>
+
+            <div class="button-row">
+                <button type="button" class="btn btn-secondary" id="resetBtn">Reset</button>
+                <button type="button" class="btn btn-primary" id="generateQrBtn">Generate QR</button>
+            </div>
+        </form>
+
+        <!-- QR section -->
+        <div class="qr-card">
+            <div class="qr-box">
+                <div id="qrcode"></div>
+            </div>
+            <div class="qr-info">
+                <span class="label">Scan to pay</span>
+                <span class="value" id="qrAssetLabel">No asset selected</span>
+                <span class="label">Address</span>
+                <span class="value" id="qrAddressLabel">Select wallet to show address</span>
+                <span class="label">Amount (optional)</span>
+                <span class="value" id="qrAmountLabel">—</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT: FRIEND REQUESTS -->
+    <div class="receive-right">
+        <div class="friends-card">
+            <div class="friends-header">
+                <div>
+                    <div class="friends-title">Request with friends</div>
+                    <div class="friends-subtitle">Send a pre-filled payment request to your contacts.</div>
+                </div>
+                <span class="tag-pill">Friends</span>
+            </div>
+
+            <div class="friend-list" id="friendList">
+                <!-- Friend 1 -->
+                <div class="friend-item" data-address="0xF3A1B2C3D4E5F6A1B2C3D4E51234567890AA1111">
+                    <div class="friend-avatar">AK</div>
+                    <div class="friend-info">
+                        <div class="friend-name">Arjun Kumar</div>
+                        <div class="friend-handle">@arjun.eth</div>
+                        <div class="friend-address">0xF3A1...1111</div>
+                    </div>
+                    <div class="friend-actions">
+                        <input type="number" min="0" step="0.0001" placeholder="0.01" class="friend-amount">
+                        <button class="btn btn-primary friend-request-btn">Request</button>
+                    </div>
+                </div>
+
+                <!-- Friend 2 -->
+                <div class="friend-item" data-address="0xB8C9D0E1F2A3B4C5D6E7F80987654321ABCDEF22">
+                    <div class="friend-avatar">SR</div>
+                    <div class="friend-info">
+                        <div class="friend-name">Sneha Reddy</div>
+                        <div class="friend-handle">@sneha.btc</div>
+                        <div class="friend-address">0xB8C9...EF22</div>
+                    </div>
+                    <div class="friend-actions">
+                        <input type="number" min="0" step="0.0001" placeholder="25" class="friend-amount">
+                        <button class="btn btn-primary friend-request-btn">Request</button>
+                    </div>
+                </div>
+
+                <!-- Friend 3 -->
+                <div class="friend-item" data-address="0xCDAABBCCDDEEFF0011223344556677889900CC33">
+                    <div class="friend-avatar">RV</div>
+                    <div class="friend-info">
+                        <div class="friend-name">Rohan Verma</div>
+                        <div class="friend-handle">@rohan.defi</div>
+                        <div class="friend-address">0xCDAA...CC33</div>
+                    </div>
+                    <div class="friend-actions">
+                        <input type="number" min="0" step="0.0001" placeholder="100" class="friend-amount">
+                        <button class="btn btn-primary friend-request-btn">Request</button>
+                    </div>
+                </div>
+
+                <!-- Friend 4 -->
+                <div class="friend-item" data-address="bc1qrolexamplefriendaddress987654321xyz">
+                    <div class="friend-avatar">MS</div>
+                    <div class="friend-info">
+                        <div class="friend-name">Meera Shah</div>
+                        <div class="friend-handle">@meera.btc</div>
+                        <div class="friend-address">bc1qro...xyz</div>
+                    </div>
+                    <div class="friend-actions">
+                        <input type="number" min="0" step="0.0001" placeholder="0.005" class="friend-amount">
+                        <button class="btn btn-primary friend-request-btn">Request</button>
+                    </div>
+                </div>
+            </div>
+
+            <p class="friends-subtitle">
+                Choosing a friend will auto-fill your QR with their request details so they can pay you quickly.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- POPUP MODAL: REQUEST SENT -->
+<div class="modal-backdrop" id="requestModal">
+    <div class="modal">
+        <div class="modal-icon">↗</div>
+        <div class="modal-title">Request Sent</div>
+        <div class="modal-body" id="requestModalBody">
+            Your request has been sent.
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" id="closeRequestModalBtn">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Elements
+    const walletSelect = document.getElementById("walletSelect");
+    const assetSelect = document.getElementById("assetSelect");
+    const networkSelect = document.getElementById("networkSelect");
+    const amountInput = document.getElementById("amountInput");
+    const noteInput = document.getElementById("noteInput");
+    const currentAddressShort = document.getElementById("currentAddressShort");
+
+    const qrAssetLabel = document.getElementById("qrAssetLabel");
+    const qrAddressLabel = document.getElementById("qrAddressLabel");
+    const qrAmountLabel = document.getElementById("qrAmountLabel");
+    const generateQrBtn = document.getElementById("generateQrBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const copyAddressBtn = document.getElementById("copyAddressBtn");
+
+    const requestModal = document.getElementById("requestModal");
+    const requestModalBody = document.getElementById("requestModalBody");
+    const closeRequestModalBtn = document.getElementById("closeRequestModalBtn");
+
+    const friendList = document.getElementById("friendList");
+
+    let qrCodeInstance = null;
+
+    function showError(fieldName) {
+        const el = document.querySelector(`.error-text[data-error-for="${fieldName}"]`);
+        if (el) el.style.display = "block";
+    }
+
+    function hideError(fieldName) {
+        const el = document.querySelector(`.error-text[data-error-for="${fieldName}"]`);
+        if (el) el.style.display = "none";
+    }
+
+    function truncateAddress(addr) {
+        if (!addr || addr.length <= 10) return addr || "—";
+        return addr.slice(0, 6) + "..." + addr.slice(-4);
+    }
+
+    function buildQrPayload() {
+        const address = walletSelect.value;
+        const asset = assetSelect.value;
+        const network = networkSelect.value;
+        const amount = amountInput.value ? parseFloat(amountInput.value) : 0;
+        const note = noteInput.value.trim();
+
+        // Simple dynamic payload (you can adapt to standard URIs later)
+        return JSON.stringify({
+            type: "receive",
+            asset,
+            network,
+            address,
+            amount: amount || undefined,
+            note: note || undefined,
+            ts: Date.now()
+        });
+    }
+
+    function updateQrPreviewLabels() {
+        const address = walletSelect.value;
+        const asset = assetSelect.value;
+        const amount = amountInput.value;
+        const network = networkSelect.value;
+
+        currentAddressShort.textContent = address ? truncateAddress(address) : "—";
+        qrAssetLabel.textContent = asset ? `${asset} on ${network || "network not set"}` : "No asset selected";
+        qrAddressLabel.textContent = address ? truncateAddress(address) : "Select wallet to show address";
+        qrAmountLabel.textContent = amount ? amount + " " + (asset || "") : "—";
+    }
+
+    function generateQr() {
+        // Validation: wallet, asset, network required
+        let valid = true;
+
+        if (!walletSelect.value) {
+            showError("walletSelect");
+            valid = false;
+        } else hideError("walletSelect");
+
+        if (!assetSelect.value) {
+            showError("assetSelect");
+            valid = false;
+        } else hideError("assetSelect");
+
+        if (!networkSelect.value) {
+            showError("networkSelect");
+            valid = false;
+        } else hideError("networkSelect");
+
+        if (!valid) return;
+
+        const payload = buildQrPayload();
+
+        const qrContainer = document.getElementById("qrcode");
+        qrContainer.innerHTML = ""; // clear previous
+
+        qrCodeInstance = new QRCode(qrContainer, {
+            text: payload,
+            width: 170,
+            height: 170,
+        });
+
+        updateQrPreviewLabels();
+    }
+
+    // Events
+    walletSelect.addEventListener("change", () => {
+        hideError("walletSelect");
+        updateQrPreviewLabels();
+    });
+
+    assetSelect.addEventListener("change", () => {
+        hideError("assetSelect");
+        updateQrPreviewLabels();
+    });
+
+    networkSelect.addEventListener("change", () => {
+        hideError("networkSelect");
+        updateQrPreviewLabels();
+    });
+
+    amountInput.addEventListener("input", updateQrPreviewLabels);
+    noteInput.addEventListener("input", () => { /* only used in payload */ });
+
+    generateQrBtn.addEventListener("click", generateQr);
+
+    resetBtn.addEventListener("click", () => {
+        document.getElementById("receiveForm").reset();
+        document.getElementById("qrcode").innerHTML = "";
+        qrAssetLabel.textContent = "No asset selected";
+        qrAddressLabel.textContent = "Select wallet to show address";
+        qrAmountLabel.textContent = "—";
+        currentAddressShort.textContent = "—";
+        hideError("walletSelect");
+        hideError("assetSelect");
+        hideError("networkSelect");
+    });
+
+    copyAddressBtn.addEventListener("click", async () => {
+        const address = walletSelect.value;
+        if (!address) {
+            alert("Select a wallet first to copy its address.");
+            return;
+        }
+        try {
+            await navigator.clipboard.writeText(address);
+            copyAddressBtn.textContent = "Copied!";
+            setTimeout(() => {
+                copyAddressBtn.textContent = "Copy address";
+            }, 1500);
+        } catch (err) {
+            alert("Unable to copy. Please copy manually.");
+        }
+    });
+
+    // Friend request handling
+    friendList.addEventListener("click", (e) => {
+        if (e.target.classList.contains("friend-request-btn")) {
+            const item = e.target.closest(".friend-item");
+            const friendAddress = item.getAttribute("data-address");
+            const friendName = item.querySelector(".friend-name").textContent;
+            const friendAmountInput = item.querySelector(".friend-amount");
+            const friendAmount = friendAmountInput.value || "0";
+
+            // Use your selected wallet + asset/network
+            const myWallet = walletSelect.value;
+            const asset = assetSelect.value || "Asset not set";
+            const network = networkSelect.value || "Network not set";
+
+            // Auto-fill amount in main form if set
+            if (friendAmount && !isNaN(friendAmount)) {
+                amountInput.value = friendAmount;
+            }
+            updateQrPreviewLabels();
+
+            // Generate QR (dynamic) for this friend request
+            if (myWallet && assetSelect.value && networkSelect.value) {
+                generateQr();
+            }
+
+            // Show "request sent" popup
+            requestModalBody.innerHTML = `
+                You have created a payment request of 
+                <strong>${friendAmount || "0"} ${asset}</strong> 
+                from <strong>${friendName}</strong> on 
+                <strong>${network}</strong> into your wallet.
+            `;
+            requestModal.style.display = "flex";
+        }
+    });
+
+    closeRequestModalBtn.addEventListener("click", () => {
+        requestModal.style.display = "none";
+    });
+
+    requestModal.addEventListener("click", (e) => {
+        if (e.target === requestModal) {
+            requestModal.style.display = "none";
+        }
+    });
+
+    // Initial labels
+    updateQrPreviewLabels();
+</script>
+
+</body>
+</html>
