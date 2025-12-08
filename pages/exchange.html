@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crypto Dashboard – Exchange</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <!-- Font similar to your dashboard -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-page: #f4f5fb;
+            --bg-card: #ffffff;
+            --bg-sidebar: #ffffff;
+            --primary: #5c6fff;
+            --primary-soft: #ecebff;
+            --accent-red: #ff5f6d;
+            --accent-yellow: #ffc371;
+            --accent-purple: #7e22ce;
+            --accent-blue: #4f46e5;
+            --text-main: #20212c;
+            --text-soft: #9ca3af;
+            --radius-xl: 26px;
+            --shadow-card: 0 18px 40px rgba(15, 23, 42, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: var(--bg-page);
+            color: var(--text-main);
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR (approx same style as your dashboard) */
+        .sidebar {
+            width: 230px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid #eaecf4;
+            padding: 1.8rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .logo-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #ffb300, #ff7b00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            margin-top: 0.5rem;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            padding: 0.8rem 0.9rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            color: #6b7280;
+            cursor: pointer;
+            transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+        }
+
+        .sidebar-item i {
+            font-size: 1.2rem;
+        }
+
+        .sidebar-item:hover {
+            background: #f3f4ff;
+            color: #4f46e5;
+        }
+
+        .sidebar-item.active {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: #ffffff;
+            box-shadow: 0 14px 32px rgba(79, 70, 229, 0.35);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        /* MAIN AREA */
+        .main {
+            flex: 1;
+            padding: 1.8rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .topbar-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .topbar-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+        }
+
+        .topbar-breadcrumb {
+            font-size: 0.85rem;
+            color: var(--text-soft);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .search-box {
+            background: #f3f4ff;
+            border-radius: 999px;
+            padding: 0.5rem 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 260px;
+        }
+
+        .search-box i {
+            font-size: 1rem;
+            color: #9ca3af;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 0.85rem;
+            width: 100%;
+        }
+
+        .topbar-date {
+            padding: 0.5rem 0.9rem;
+            border-radius: 999px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .topbar-toggle {
+            width: 36px;
+            height: 36px;
+            border-radius: 999px;
+            background: #111827;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #facc15;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #4f46e5, #ec4899);
+        }
+
+        .user-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* TOP CARDS (similar to overview cards) */
+        .card-row {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.3rem;
+        }
+
+        .asset-card {
+            border-radius: var(--radius-xl);
+            padding: 1.4rem 1.2rem;
+            color: #fff;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .asset-card:nth-child(1) {
+            background: linear-gradient(135deg, #ff5f6d, #ffc371);
+        }
+        .asset-card:nth-child(2) {
+            background: linear-gradient(135deg, #1f2937, #4b5563);
+        }
+        .asset-card:nth-child(3) {
+            background: linear-gradient(135deg, #4338ca, #ec4899);
+        }
+
+        .asset-chip {
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.2rem 0.7rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .asset-chip i {
+            font-size: 1rem;
+        }
+
+        .asset-balance {
+            margin-top: 1rem;
+            font-size: 1.7rem;
+            font-weight: 600;
+        }
+
+        .asset-sub {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .asset-footer {
+            margin-top: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            opacity: 0.95;
+        }
+
+        .asset-card-btn {
+            position: absolute;
+            right: 1.2rem;
+            top: 1.4rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 999px;
+            border: none;
+            font-size: 0.75rem;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.18);
+            color: #fff;
+        }
+
+        .asset-card-btn:hover {
+            background: rgba(255, 255, 255, 0.28);
+        }
+
+        /* MAIN EXCHANGE LAYOUT */
+        .exchange-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.3fr);
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none; /* you can remove if you have your own responsive sidebar */
+            }
+            .main {
+                padding: 1.2rem;
+            }
+            .exchange-layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .card-row {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        /* SWAP CARD */
+        .swap-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: 1.5rem 1.4rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .swap-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.1rem;
+        }
+
+        .swap-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        .swap-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-soft);
+        }
+
+        .rate-chip {
+            padding: 0.3rem 0.75rem;
+            border-radius: 999px;
+            background: var(--primary-soft);
+            font-size: 0.75rem;
+            color: var(--primary);
+        }
+
+        .swap-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .swap-label {
+            font-size: 0.8rem;
+            color: var(--text-soft);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .swap-input-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .amount-input {
+            padding: 0.9rem 1rem;
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .amount-input:focus {
+            border-color: var(--primary);
+            background: #fff;
+        }
+
+        .asset-select {
+            padding: 0.75rem 0.8rem;
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            background: #ffffff;
+            font-size: 0.85rem;
+        }
+
+        .asset-select-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .asset-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .asset-icon.btc {
+            background: linear-gradient(135deg, #f97316, #fb923c);
+        }
+        .asset-icon.eth {
+            background: linear-gradient(135deg, #4b5563, #111827);
+        }
+        .asset-icon.eur {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+        }
+        .asset-icon.usdt {
+            background: linear-gradient(135deg, #059669, #10b981);
+        }
+
+        .switch-row {
+            display: flex;
+            justify-content: center;
+            margin: 0.3rem 0 0.7rem;
+        }
+
+        .switch-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 999px;
+            border: 4px solid #f4f4ff;
+            background: linear-gradient(135deg, #4f46e5, #ec4899);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 12px 28px rgba(79, 70, 229, 0.45);
+        }
+
+        .swap-meta {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.9rem;
+            margin-top: 0.7rem;
+            font-size: 0.78rem;
+        }
+
+        .swap-meta-item {
+            background: #f9fafb;
+            border-radius: 20px;
+            padding: 0.7rem 0.8rem;
+        }
+
+        .swap-meta-label {
+            color: var(--text-soft);
+            margin-bottom: 0.1rem;
+        }
+
+        .swap-meta-value {
+            font-weight: 500;
+        }
+
+        .swap-btn-row {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .swap-btn {
+            padding: 0.7rem 1.6rem;
+            border-radius: 999px;
+            border: none;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 15px 34px rgba(79, 70, 229, 0.45);
+        }
+
+        .swap-btn:hover {
+            opacity: 0.96;
+        }
+
+        /* RIGHT PANEL: Market + Recent */
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .panel-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: 1.4rem 1.3rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.9rem;
+        }
+
+        .panel-title {
+            font-size: 0.98rem;
+            font-weight: 600;
+        }
+
+        .panel-link {
+            font-size: 0.8rem;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .pair-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.55rem 0;
+            font-size: 0.85rem;
+        }
+
+        .pair-info {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .pair-symbol {
+            font-weight: 500;
+        }
+
+        .pair-sub {
+            font-size: 0.75rem;
+            color: var(--text-soft);
+        }
+
+        .pair-change.positive {
+            color: #059669;
+        }
+
+        .pair-change.negative {
+            color: #dc2626;
+        }
+
+        .recent-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.55rem 0;
+            font-size: 0.83rem;
+        }
+
+        .recent-left {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .recent-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .recent-text-main {
+            font-weight: 500;
+        }
+
+        .recent-text-sub {
+            font-size: 0.72rem;
+            color: var(--text-soft);
+        }
+
+        .recent-amount.buy {
+            color: #059669;
+        }
+
+        .recent-amount.sell {
+            color: #dc2626;
+        }
+
+        /* Modal (success) */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+
+        .modal {
+            background: #ffffff;
+            border-radius: 22px;
+            padding: 1.8rem 1.8rem 1.4rem;
+            max-width: 360px;
+            width: 100%;
+            box-shadow: 0 22px 50px rgba(15, 23, 42, 0.35);
+            text-align: center;
+        }
+
+        .modal-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 999px;
+            margin: 0 auto 0.9rem;
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.6rem;
+        }
+
+        .modal-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .modal-body {
+            font-size: 0.86rem;
+            color: var(--text-soft);
+            margin-bottom: 1rem;
+        }
+
+        .modal-btn {
+            padding: 0.6rem 1.3rem;
+            border-radius: 999px;
+            border: none;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-circle">N</div>
+            <div class="logo-text">Nihar</div>
+        </div>
+
+        <nav class="sidebar-menu">
+            <div class="sidebar-item">
+                <i class="uil uil-estate"></i><span>Dashboard</span>
+            </div>
+            <div class="sidebar-item active">
+                <i class="uil uil-exchange"></i><span>Exchange</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="uil uil-wallet"></i><span>Wallet</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="uil uil-transaction"></i><span>Transactions</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="uil uil-chart-line"></i><span>Analytics</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="uil uil-message"></i><span>Messages</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="uil uil-question-circle"></i><span>Help Center</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="uil uil-setting"></i><span>Settings</span>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            © 2025 Nihar.  
+            All rights reserved.
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <div class="topbar-title">Exchange</div>
+                <div class="topbar-breadcrumb">Overview / Exchange</div>
+            </div>
+
+            <div class="topbar-right">
+                <div class="search-box">
+                    <i class="uil uil-search"></i>
+                    <input type="text" placeholder="Search coin, pair, wallet...">
+                </div>
+
+                <div class="topbar-date">
+                    <i class="uil uil-calender"></i>
+                    <span id="topbarDate">mm / dd / yyyy</span>
+                </div>
+
+                <div class="topbar-toggle">
+                    <i class="uil uil-moon"></i>
+                </div>
+
+                <div class="topbar-user">
+                    <div class="user-avatar"></div>
+                    <div class="user-name">Nithin</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- TOP CARDS (your balances) -->
+        <section class="card-row">
+            <div class="asset-card" data-from="BTC">
+                <button class="asset-card-btn">Use as From</button>
+                <div class="asset-chip">
+                    <i class="uil uil-bitcoin-circle"></i>
+                    <span>BTC</span>
+                </div>
+                <div class="asset-balance">$827,119</div>
+                <div class="asset-sub">Balance: 12.4521 BTC</div>
+                <div class="asset-footer">
+                    <span>Card Holder<br><strong>Nithin Naik.R</strong></span>
+                    <span>Active • Main</span>
+                </div>
+            </div>
+
+            <div class="asset-card" data-from="ETH">
+                <button class="asset-card-btn">Use as From</button>
+                <div class="asset-chip">
+                    <i class="uil uil-ethereum"></i>
+                    <span>ETH</span>
+                </div>
+                <div class="asset-balance">$87,119</div>
+                <div class="asset-sub">Balance: 35.1000 ETH</div>
+                <div class="asset-footer">
+                    <span>Card Holder<br><strong>Nithin Naik.R</strong></span>
+                    <span>Trading Wallet</span>
+                </div>
+            </div>
+
+            <div class="asset-card" data-from="EUR">
+                <button class="asset-card-btn">Use as From</button>
+                <div class="asset-chip">
+                    <i class="uil uil-euro-circle"></i>
+                    <span>EUO</span>
+                </div>
+                <div class="asset-balance">$827,119</div>
+                <div class="asset-sub">Balance: 760,000 EUR</div>
+                <div class="asset-footer">
+                    <span>Card Holder<br><strong>Nithin Naik.R</strong></span>
+                    <span>European Account</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXCHANGE LAYOUT -->
+        <section class="exchange-layout">
+            <!-- LEFT: SWAP -->
+            <div class="swap-card">
+                <div class="swap-header">
+                    <div>
+                        <div class="swap-title">Fast Swap</div>
+                        <div class="swap-subtitle">Exchange your crypto instantly with best market rates.</div>
+                    </div>
+                    <div class="rate-chip" id="rateChip">
+                        1 BTC ≈ 87.21 ETH
+                    </div>
+                </div>
+
+                <div class="swap-row">
+                    <div class="swap-label">
+                        <span>From</span>
+                        <span id="fromBalanceText">Balance: 12.4521 BTC</span>
+                    </div>
+                    <div class="swap-input-row">
+                        <input type="number" id="fromAmount" class="amount-input" placeholder="0.0000" min="0" step="0.00000001">
+                        <div class="asset-select" id="fromAssetSelect">
+                            <div class="asset-select-left">
+                                <div class="asset-icon btc" id="fromAssetIcon">B</div>
+                                <div>
+                                    <div id="fromAssetCode">BTC</div>
+                                    <div style="font-size:0.7rem; color:var(--text-soft);">Bitcoin</div>
+                                </div>
+                            </div>
+                            <i class="uil uil-angle-down"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="switch-row">
+                    <button class="switch-btn" id="switchBtn">
+                        <i class="uil uil-exchange"></i>
+                    </button>
+                </div>
+
+                <div class="swap-row">
+                    <div class="swap-label">
+                        <span>To</span>
+                        <span id="toEstimateFiat">Est. value: $0.00</span>
+                    </div>
+                    <div class="swap-input-row">
+                        <input type="number" id="toAmount" class="amount-input" placeholder="0.0000" min="0" step="0.00000001" readonly>
+                        <div class="asset-select" id="toAssetSelect">
+                            <div class="asset-select-left">
+                                <div class="asset-icon eth" id="toAssetIcon">E</div>
+                                <div>
+                                    <div id="toAssetCode">ETH</div>
+                                    <div style="font-size:0.7rem; color:var(--text-soft);">Ethereum</div>
+                                </div>
+                            </div>
+                            <i class="uil uil-angle-down"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="swap-meta">
+                    <div class="swap-meta-item">
+                        <div class="swap-meta-label">Exchange rate</div>
+                        <div class="swap-meta-value" id="metaRate">1 BTC = 14.5 ETH</div>
+                    </div>
+                    <div class="swap-meta-item">
+                        <div class="swap-meta-label">Network fee</div>
+                        <div class="swap-meta-value" id="metaFee">0.00030 BTC</div>
+                    </div>
+                    <div class="swap-meta-item">
+                        <div class="swap-meta-label">Slippage</div>
+                        <div class="swap-meta-value">0.50%</div>
+                    </div>
+                </div>
+
+                <div class="swap-btn-row">
+                    <button class="swap-btn" id="swapNowBtn">Exchange Now</button>
+                </div>
+            </div>
+
+            <!-- RIGHT: MARKET & RECENT -->
+            <div class="side-panel">
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <div class="panel-title">Market Overview</div>
+                        <div class="panel-link">View all</div>
+                    </div>
+
+                    <div class="pair-row">
+                        <div class="pair-info">
+                            <div class="asset-icon btc" style="width:26px;height:26px;font-size:0.9rem;">B</div>
+                            <div>
+                                <div class="pair-symbol">BTC / USDT</div>
+                                <div class="pair-sub">$62,430.22</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="pair-change positive">+3.27%</div>
+                            <div class="pair-sub">24h Vol 1.2K</div>
+                        </div>
+                    </div>
+
+                    <div class="pair-row">
+                        <div class="pair-info">
+                            <div class="asset-icon eth" style="width:26px;height:26px;font-size:0.9rem;">E</div>
+                            <div>
+                                <div class="pair-symbol">ETH / USDT</div>
+                                <div class="pair-sub">$3,210.18</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="pair-change negative">-1.24%</div>
+                            <div class="pair-sub">24h Vol 980</div>
+                        </div>
+                    </div>
+
+                    <div class="pair-row">
+                        <div class="pair-info">
+                            <div class="asset-icon usdt" style="width:26px;height:26px;font-size:0.9rem;">U</div>
+                            <div>
+                                <div class="pair-symbol">MATIC / USDT</div>
+                                <div class="pair-sub">$0.89</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="pair-change positive">+5.04%</div>
+                            <div class="pair-sub">24h Vol 32K</div>
+                        </div>
+                    </div>
+
+                    <div class="pair-row">
+                        <div class="pair-info">
+                            <div class="asset-icon eur" style="width:26px;height:26px;font-size:0.9rem;">€</div>
+                            <div>
+                                <div class="pair-symbol">EUO / USDT</div>
+                                <div class="pair-sub">$1.09</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="pair-change positive">+0.32%</div>
+                            <div class="pair-sub">24h Vol 4.4K</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <div class="panel-title">Recent Exchange</div>
+                        <div class="panel-link">More</div>
+                    </div>
+
+                    <div class="recent-row">
+                        <div class="recent-left">
+                            <div class="recent-icon" style="background:#4ade80;"><i class="uil uil-arrow-growth"></i></div>
+                            <div>
+                                <div class="recent-text-main">Swapped BTC → ETH</div>
+                                <div class="recent-text-sub">20 Nov 2025 • 0.35 BTC</div>
+                            </div>
+                        </div>
+                        <div class="recent-amount buy">+ 4.92 ETH</div>
+                    </div>
+
+                    <div class="recent-row">
+                        <div class="recent-left">
+                            <div class="recent-icon" style="background:#f97316;"><i class="uil uil-arrow-down-left"></i></div>
+                            <div>
+                                <div class="recent-text-main">Swapped ETH → USDT</div>
+                                <div class="recent-text-sub">18 Nov 2025 • 3.0 ETH</div>
+                            </div>
+                        </div>
+                        <div class="recent-amount sell">- $9,620</div>
+                    </div>
+
+                    <div class="recent-row">
+                        <div class="recent-left">
+                            <div class="recent-icon" style="background:#6366f1;"><i class="uil uil-arrow-up-right"></i></div>
+                            <div>
+                                <div class="recent-text-main">Swapped USDT → EUO</div>
+                                <div class="recent-text-sub">17 Nov 2025 • $2,000</div>
+                            </div>
+                        </div>
+                        <div class="recent-amount buy">+ €1,835</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-backdrop" id="swapModal">
+    <div class="modal">
+        <div class="modal-icon"><i class="uil uil-check"></i></div>
+        <div class="modal-title">Exchange Completed</div>
+        <div class="modal-body" id="swapModalBody">
+            Your swap has been placed successfully.
+        </div>
+        <button class="modal-btn" id="closeModalBtn">Close</button>
+    </div>
+</div>
+
+<script>
+    // small “fake” rate table
+    const RATES = {
+        BTC: { ETH: 14.5, USDT: 62430, EUR: 58000 },
+        ETH: { BTC: 0.069, USDT: 3200, EUR: 2900 },
+        USDT:{ BTC: 1/62430, ETH: 1/3200, EUR: 0.93 },
+        EUR: { BTC: 1/58000, ETH: 1/2900, USDT: 1.07 }
+    };
+
+    const FIAT_PRICE = { BTC: 62430, ETH: 3200, USDT: 1, EUR: 1.09 };
+
+    let fromAsset = "BTC";
+    let toAsset   = "ETH";
+
+    const fromAmountEl = document.getElementById("fromAmount");
+    const toAmountEl   = document.getElementById("toAmount");
+    const rateChip     = document.getElementById("rateChip");
+    const metaRate     = document.getElementById("metaRate");
+    const metaFee      = document.getElementById("metaFee");
+    const toEstimateFiat = document.getElementById("toEstimateFiat");
+    const fromBalanceText = document.getElementById("fromBalanceText");
+
+    const fromAssetCodeEl = document.getElementById("fromAssetCode");
+    const toAssetCodeEl   = document.getElementById("toAssetCode");
+    const fromAssetIconEl = document.getElementById("fromAssetIcon");
+    const toAssetIconEl   = document.getElementById("toAssetIcon");
+
+    const swapNowBtn   = document.getElementById("swapNowBtn");
+    const switchBtn    = document.getElementById("switchBtn");
+    const swapModal    = document.getElementById("swapModal");
+    const swapModalBody= document.getElementById("swapModalBody");
+    const closeModalBtn= document.getElementById("closeModalBtn");
+
+    // update top date
+    (function setDate(){
+        const d = new Date();
+        const pad = n => String(n).padStart(2,"0");
+        document.getElementById("topbarDate").textContent =
+            `${pad(d.getMonth()+1)} / ${pad(d.getDate())} / ${d.getFullYear()}`;
+    })();
+
+    function updateIcons() {
+        fromAssetCodeEl.textContent = fromAsset;
+        toAssetCodeEl.textContent   = toAsset;
+
+        const iconMap = { BTC: "btc", ETH: "eth", EUR: "eur", USDT: "usdt" };
+        fromAssetIconEl.className = "asset-icon " + iconMap[fromAsset];
+        toAssetIconEl.className   = "asset-icon " + iconMap[toAsset];
+
+        fromAssetIconEl.textContent = fromAsset.charAt(0);
+        toAssetIconEl.textContent   = toAsset.charAt(0);
+
+        // dummy balances
+        const balances = {
+            BTC:"Balance: 12.4521 BTC",
+            ETH:"Balance: 35.1000 ETH",
+            USDT:"Balance: 20,000 USDT",
+            EUR:"Balance: 760,000 EUR"
+        };
+        fromBalanceText.textContent = balances[fromAsset] || "";
+    }
+
+    function updateRateText() {
+        const rate = (RATES[fromAsset] && RATES[fromAsset][toAsset]) || 0;
+        rateChip.textContent = `1 ${fromAsset} ≈ ${rate ? rate.toFixed(4) : "0.0000"} ${toAsset}`;
+        metaRate.textContent = `1 ${fromAsset} = ${rate ? rate.toFixed(4) : "0.0000"} ${toAsset}`;
+
+        const feeBase = 0.0003; // fake
+        metaFee.textContent = `${feeBase.toFixed(5)} ${fromAsset}`;
+    }
+
+    function updateConversion() {
+        const amount = parseFloat(fromAmountEl.value) || 0;
+        const rate = (RATES[fromAsset] && RATES[fromAsset][toAsset]) || 0;
+        const out = amount * rate;
+        toAmountEl.value = out ? out.toFixed(6) : "";
+
+        const fiat = out * (FIAT_PRICE[toAsset] || 0);
+        toEstimateFiat.textContent = `Est. value: $${fiat.toFixed(2)}`;
+    }
+
+    fromAmountEl.addEventListener("input", updateConversion);
+
+    switchBtn.addEventListener("click", () => {
+        const tmp = fromAsset;
+        fromAsset = toAsset;
+        toAsset = tmp;
+        updateIcons();
+        updateRateText();
+        updateConversion();
+    });
+
+    // choose asset from top cards
+    document.querySelectorAll(".asset-card").forEach(card => {
+        card.querySelector(".asset-card-btn").addEventListener("click", () => {
+            fromAsset = card.getAttribute("data-from");
+            if (toAsset === fromAsset) {
+                // choose default other asset
+                toAsset = fromAsset === "BTC" ? "ETH" : "BTC";
+            }
+            updateIcons();
+            updateRateText();
+            updateConversion();
+        });
+    });
+
+    swapNowBtn.addEventListener("click", () => {
+        const amount = parseFloat(fromAmountEl.value);
+        if (!amount || amount <= 0) {
+            alert("Enter an amount to exchange.");
+            return;
+        }
+
+        const rate = (RATES[fromAsset] && RATES[fromAsset][toAsset]) || 0;
+        const out = amount * rate;
+
+        swapModalBody.innerHTML = `
+            You swapped <strong>${amount.toFixed(6)} ${fromAsset}</strong>
+            to approximately <strong>${out.toFixed(6)} ${toAsset}</strong>.
+        `;
+        swapModal.style.display = "flex";
+    });
+
+    closeModalBtn.addEventListener("click", () => {
+        swapModal.style.display = "none";
+    });
+
+    swapModal.addEventListener("click", e => {
+        if (e.target === swapModal) swapModal.style.display = "none";
+    });
+
+    // initial
+    updateIcons();
+    updateRateText();
+    updateConversion();
+</script>
+</body>
+</html>
