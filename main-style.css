@@ -198,7 +198,7 @@ nav{
     background: var(--color-white);
     display: grid;
     place-items: center;
-    height: 4rem;
+    height: 5rem;
     position: fixed;
     top: 0;
     left: 0;
@@ -211,10 +211,14 @@ nav{
     align-items: center;
 }
 
-.nav_logo{
-    width: 7rem;
+.nav_logo img{
+    width: 10rem;
     /*need to change height acc. to logo or remove it add a logo which has a width[rectangle] */
-    height: 2rem;
+    height: 4rem;
+    background-color: var(--color-gray-dark);
+    border-radius: var(--radius-3);
+    padding: 0.2rem;
+    margin-top: 1rem;
 }
 
 .nav_search{

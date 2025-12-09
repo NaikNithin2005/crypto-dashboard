@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Receive Crypto</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.1.0/css/line.css">
+<link rel="stylesheet" href="./recive.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+</head>
+<body>
+
+<div class="page">
+    <div class="container">
+
+        <div class="title">Receive Crypto</div>
+        <div class="subtitle">Generate a QR code or copy address to receive payments safely.</div>
+
+        <div class="layout">
+
+            <!-- LEFT PANEL (FORM) -->
+            <div class="col">
+
+                <div class="form-group">
+                    <label>Select Wallet</label>
+                    <select id="walletSelect">
+                        <option>Main Wallet • 0xA1B2...9F3E</option>
+                        <option>Trading Wallet • 0xC8D4...8A12</option>
+                        <option>Long Term • bc1qar0s77lux...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Crypto Asset</label>
+                    <select id="asset">
+                        <option>BTC - Bitcoin</option>
+                        <option>ETH - Ethereum</option>
+                        <option>USDT - Tether</option>
+                        <option>BNB - Binance Coin</option>
+                        <option>XRP - Ripple</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Amount to Request (Optional)</label>
+                    <input type="number" id="amount" placeholder="0.00">
+                </div>
+
+                <div class="form-group">
+                    <label>Memo / Reason (Optional)</label>
+                    <input type="text" id="memo" placeholder="Eg: Rent Payment, Salary, Debt return...">
+                </div>
+
+                <button class="btn generate-btn" id="generateQRBtn">Generate QR Code</button>
+                <button class="btn copy-btn" id="copyBtn">Copy Wallet Address</button>
+                <button class="btn download-btn" id="downloadInvoice">
+                    <i class="uil uil-file-download"></i> Download Payment Request
+                </button>
+                <a class="cancel" href="../wallet/wallet.html">Cancel</a>
+
+
+            </div>
+
+            <!-- RIGHT PANEL (QR + ADDRESS) -->
+            <div class="col">
+
+                <div class="qr-box" id="qrBox">
+                    <span style="color:var(--soft)">QR will appear here</span>
+                </div>
+
+                <div style="margin-top:15px; font-size:0.9rem;">
+                    <strong>Wallet Address:</strong>  
+                    <div id="walletText">0xA1B2C3D4EXAMPLEADDRESS999999999</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FRIEND SECTION -->
+        <div class="friend-card">
+            <strong>Request from Friends</strong>
+            <div class="friend-row" data-name="Arjun Kumar" data-amount="0.01" data-memo="Repayment">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <div class="friend-avatar">AK</div>
+                    <div>Arjun Kumar</div>
+                </div>
+                <button class="friend-btn">Request</button>
+            </div>
+            <div class="friend-row" data-name="Sneha" data-amount="50" data-memo="Dinner Split">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <div class="friend-avatar">SR</div>
+                    <div>Sneha</div>
+                </div>
+                <button class="friend-btn">Request</button>
+            </div>
+        </div>
+
+        <!-- SAFETY NOTICE -->
+        <div class="security">
+            <i class="uil uil-shield-check"></i>
+            Always verify the network before sharing your receive address. Incorrect network deposits may be permanently lost.
+        </div>
+
+    </div>
+</div>
+
+<script src="./recivee.js"></script>
+
+</body>
+</html>
