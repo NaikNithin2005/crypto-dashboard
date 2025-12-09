@@ -5,12 +5,9 @@
     <title>NINAR – Exchange</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Unicons -->
+    <!-- Icons -->
     <link rel="stylesheet"
           href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
-
-    <!-- Global styles with nav + sidebar -->
-    <link rel="stylesheet" href="/main-style.css">
 
     <style>
         :root {
@@ -21,10 +18,14 @@
             --text-muted: #9ca3af;
             --accent: #5b21ff;
             --accent-soft: rgba(91, 33, 255, 0.08);
+            --accent-strong: #4c1d95;
             --danger: #ef4444;
             --success: #22c55e;
             --border-subtle: #e5e7eb;
-            --radius-lg: 1.4rem;
+            --scrollbar: #d1d5db;
+            --bg-elevated: #f9fafb;
+            --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.08);
+            --radius-lg: 18px;
         }
 
         * {
@@ -33,42 +34,108 @@
 
         body {
             margin: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-            sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             background: var(--bg-body);
             color: var(--text-main);
         }
 
-        /* Layout shell – only main content now (sidebar comes from main-style.css) */
-        .app {
+        .layout {
             display: grid;
-            grid-template-columns: minmax(0, 1fr);
+            grid-template-columns: 260px minmax(0, 1fr);
             min-height: 100vh;
         }
 
+        /* Sidebar */
+        .sidebar {
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-subtle);
+            padding: 20px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-logo-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 20% 20%, #facc15, #f97316, #000);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .sidebar-logo-text-main {
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 999px;
+            font-size: 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: 0.18s ease;
+        }
+
+        .sidebar-link i {
+            font-size: 18px;
+        }
+
+        .sidebar-link:hover {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .sidebar-link.active {
+            background: linear-gradient(135deg, #5b21ff, #7c3aed);
+            color: #fff;
+            box-shadow: 0 14px 40px rgba(88, 28, 135, 0.35);
+        }
+
+        .sidebar-link.active i {
+            color: #fff;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Main area */
         .main {
-            padding: 1.4rem 2rem 2rem;
-            width: 100%;
+            padding: 20px 26px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
         }
-
-        @media (max-width: 960px) {
-            .app {
-                grid-template-columns: 1fr;
-            }
-
-            .main {
-                padding: 1rem 1rem 1.6rem;
-            }
-        }
-
-        /* Top bar */
 
         .topbar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            gap: 16px;
         }
 
         .topbar-left {
@@ -76,1687 +143,1388 @@
             flex-direction: column;
         }
 
-        .topbar-left h1 {
-            margin: 0;
-            font-size: 1.4rem;
+        .topbar-title {
+            font-size: 22px;
+            font-weight: 700;
         }
 
-        .topbar-left span {
-            font-size: 0.8rem;
+        .topbar-sub {
+            font-size: 13px;
             color: var(--text-muted);
         }
 
-        .topbar-search {
-            flex: 1;
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        .search-input {
-            max-width: 340px;
-            width: 100%;
-            background: #ffffff;
-            border-radius: 999px;
+        .topbar-right {
             display: flex;
             align-items: center;
-            padding: 0.4rem 0.8rem;
-            border: 1px solid var(--border-subtle);
-            gap: 0.4rem;
+            gap: 16px;
         }
 
-        .search-input i {
-            color: var(--text-muted);
+        .search-wrapper {
+            flex: 1;
+            max-width: 360px;
+            background: #fff;
+            border-radius: 999px;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid transparent;
+            box-shadow: 0 10px 24px rgba(148, 163, 184, 0.18);
         }
 
-        .search-input input {
+        .search-wrapper input {
             border: none;
             outline: none;
-            background: transparent;
+            font-size: 14px;
             flex: 1;
-            font-size: 0.9rem;
         }
 
-        /* Layout for exchange content */
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            background: #111827;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f9fafb;
+            font-size: 14px;
+            font-weight: 600;
+        }
 
-        .exchange-layout {
+        .icon-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            background: #fff;
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Exchange Page */
+        .exchange-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .pair-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: #fff;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .pair-symbol {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pair-symbol-badge {
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .pair-symbol-text {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .pair-price {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .pair-change {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .pill-neutral {
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            background: #eef2ff;
+            color: #4338ca;
+        }
+
+        .exchange-grid {
+            margin-top: 16px;
             display: grid;
-            grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.1fr);
-            gap: 1.5rem;
-        }
-
-        @media (max-width: 1100px) {
-            .exchange-layout {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .left-column {
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
-        }
-
-        .right-column {
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
+            grid-template-columns: 330px minmax(0, 1.3fr) 330px;
+            gap: 16px;
+            align-items: flex-start;
         }
 
         .card {
             background: var(--card-bg);
             border-radius: var(--radius-lg);
-            border: 1px solid var(--border-subtle);
-            padding: 1.2rem 1.3rem;
-            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+            padding: 14px 14px 12px;
+            box-shadow: var(--shadow-soft);
         }
 
         .card-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 10px;
         }
 
-        .card-header h2 {
-            margin: 0;
-            font-size: 1rem;
-        }
-
-        .card-header span.sub {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-        }
-
-        /* Tabs (All / Favourites / Watchlist) */
-
-        .tabs {
-            display: inline-flex;
-            background: #f9fafb;
-            border-radius: 999px;
-            padding: 0.17rem;
-            border: 1px solid var(--border-subtle);
-        }
-
-        .tab {
-            border: none;
-            background: transparent;
-            padding: 0.35rem 0.9rem;
-            border-radius: 999px;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            cursor: pointer;
-        }
-
-        .tab.active {
-            background: var(--accent);
-            color: #ffffff;
-        }
-
-        /* Markets table */
-
-        .markets-header-row {
-            display: grid;
-            grid-template-columns: 2.2fr 1.1fr 1.1fr 1.3fr 1.2fr;
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            padding: 0 0.2rem 0.4rem;
-            border-bottom: 1px solid #f3f4f6;
-        }
-
-        .markets-list {
-            margin-top: 0.4rem;
-            max-height: 270px;
-            overflow-y: auto;
-        }
-
-        .markets-list::-webkit-scrollbar,
-        .orderbook-list::-webkit-scrollbar,
-        .trades-list::-webkit-scrollbar,
-        .orders-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .markets-list::-webkit-scrollbar-thumb,
-        .orderbook-list::-webkit-scrollbar-thumb,
-        .trades-list::-webkit-scrollbar-thumb,
-        .orders-scroll::-webkit-scrollbar-thumb {
-            background: #e5e7eb;
-            border-radius: 999px;
-        }
-
-        .market-row {
-            display: grid;
-            grid-template-columns: 2.2fr 1.1fr 1.1fr 1.3fr 1.2fr;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.6rem 0.2rem;
-            font-size: 0.82rem;
-            border-bottom: 1px solid #f3f4f6;
-        }
-
-        .market-row:last-child {
-            border-bottom: none;
-        }
-
-        .market-main {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
-
-        .coin-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 999px;
-            background: linear-gradient(135deg, #f97316, #facc15);
-        }
-
-        .coin-avatar.eth {
-            background: linear-gradient(135deg, #6366f1, #0ea5e9);
-        }
-
-        .coin-avatar.bnb {
-            background: linear-gradient(135deg, #facc15, #f59e0b);
-        }
-
-        .coin-avatar.sol {
-            background: linear-gradient(135deg, #22c55e, #06b6d4);
-        }
-
-        .coin-avatar.usdt {
-            background: linear-gradient(135deg, #16a34a, #22c55e);
-        }
-
-        .coin-label {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .coin-label span:first-child {
+        .card-title {
+            font-size: 14px;
             font-weight: 600;
         }
 
-        .coin-label span:last-child {
-            font-size: 0.72rem;
+        .card-sub {
+            font-size: 12px;
             color: var(--text-muted);
         }
 
-        .change-positive {
-            color: var(--success);
-        }
-
-        .change-negative {
-            color: var(--danger);
-        }
-
-        .fav-watch {
-            display: flex;
-            gap: 0.35rem;
-        }
-
-        .icon-btn {
-            width: 26px;
-            height: 26px;
+        .tag-pill {
+            padding: 4px 10px;
             border-radius: 999px;
-            border: 1px solid #e5e7eb;
-            background: #ffffff;
+            background: var(--bg-elevated);
+            font-size: 11px;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1rem;
-            color: var(--text-muted);
+            gap: 4px;
         }
 
-        .icon-btn.active {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: var(--accent-soft);
-        }
-
-        .buy-sell-actions {
+        /* Markets list */
+        .market-tabs {
             display: flex;
-            gap: 0.4rem;
+            gap: 8px;
+            margin-bottom: 10px;
         }
 
-        .pill {
+        .market-tab {
             border-radius: 999px;
-            padding: 0.25rem 0.6rem;
-            font-size: 0.75rem;
-            border: none;
+            padding: 6px 12px;
+            font-size: 12px;
+            border: 1px solid var(--border-subtle);
+            background: #f9fafb;
             cursor: pointer;
+        }
+
+        .market-tab.active {
+            border-color: transparent;
+            background: linear-gradient(135deg, #5b21ff, #7c3aed);
+            color: #fff;
+        }
+
+        .market-search {
+            margin-bottom: 8px;
+        }
+
+        .market-search input {
+            width: 100%;
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            padding: 6px 10px;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .markets-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .markets-table th,
+        .markets-table td {
+            padding: 6px 4px;
+            text-align: left;
+        }
+
+        .markets-table th {
+            font-size: 11px;
+            color: var(--text-muted);
             font-weight: 500;
         }
 
-        .pill.buy {
-            background: rgba(34, 197, 94, 0.12);
-            color: var(--success);
-        }
-
-        .pill.sell {
-            background: rgba(239, 68, 68, 0.12);
-            color: var(--danger);
-        }
-
-        /* Order book + trades */
-
-        .orderbook-grid {
-            display: grid;
-            grid-template-columns: 1.1fr 1.1fr;
-            gap: 0.8rem;
-        }
-
-        .orderbook-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            margin-bottom: 0.25rem;
-        }
-
-        .orderbook-list {
-            max-height: 180px;
-            overflow-y: auto;
-            font-size: 0.8rem;
-        }
-
-        .orderbook-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.18rem 0;
-        }
-
-        .orderbook-row span:first-child {
-            min-width: 57px;
-        }
-
-        .orderbook-row span.price.ask {
-            color: var(--danger);
-        }
-
-        .orderbook-row span.price.bid {
-            color: var(--success);
-        }
-
-        .orderbook-row span.size {
-            color: var(--text-muted);
-        }
-
-        .mid-price {
-            text-align: center;
-            font-size: 0.8rem;
-            margin: 0.4rem 0;
-        }
-
-        .mid-price span {
-            padding: 0.18rem 0.6rem;
-            border-radius: 999px;
-            background: #f3f4f6;
-        }
-
-        .trades-list {
-            max-height: 130px;
-            overflow-y: auto;
-            font-size: 0.8rem;
-            margin-top: 0.4rem;
-        }
-
-        .trade-row {
-            display: grid;
-            grid-template-columns: 0.9fr 0.9fr 1.1fr;
-            padding: 0.18rem 0;
-        }
-
-        .trade-row span.side-buy {
-            color: var(--success);
-        }
-
-        .trade-row span.side-sell {
-            color: var(--danger);
-        }
-
-        .muted {
-            color: var(--text-muted);
-        }
-
-        /* Trade panel */
-
-        .side-card-section {
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
-        }
-
-        .toggle-row {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-        }
-
-        .pill-toggle {
-            display: inline-flex;
-            background: #f9fafb;
-            border-radius: 999px;
-            padding: 0.17rem;
-            border: 1px solid var(--border-subtle);
-        }
-
-        .pill-toggle button {
-            border: none;
-            background: transparent;
-            padding: 0.32rem 1rem;
-            border-radius: 999px;
-            font-size: 0.8rem;
-            color: var(--text-muted);
+        .markets-table tbody tr {
             cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
+            transition: background 0.15s ease;
         }
 
-        .pill-toggle button.active {
-            color: #ffffff;
+        .markets-table tbody tr:hover {
+            background: #f3f4ff;
         }
 
-        .pill-toggle button.active.buy {
-            background: var(--success);
+        .markets-table tbody tr.active {
+            background: var(--accent-soft);
         }
 
-        .pill-toggle button.active.sell {
-            background: var(--danger);
+        .fav-icon {
+            font-size: 16px;
+            cursor: pointer;
         }
 
-        .pill-toggle button.active.type {
-            background: var(--accent);
+        .fav-icon.filled {
+            color: #facc15;
         }
 
-        .pill-toggle i {
-            font-size: 1rem;
-        }
-
-        .pair-highlight {
-            margin-top: 0.7rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.1rem;
-        }
-
-        .pair-highlight span.label {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-        }
-
-        .pair-highlight span.price {
-            font-size: 1.25rem;
+        .change-pos {
+            color: var(--success);
             font-weight: 600;
         }
 
-        .pair-highlight span.change-chip {
-            font-size: 0.78rem;
-            padding: 0.12rem 0.5rem;
+        .change-neg {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        /* Chart placeholder */
+        .chart-card {
+            height: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chart-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .chart-toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timeframe-tabs {
+            display: flex;
+            gap: 6px;
+        }
+
+        .timeframe-tab {
             border-radius: 999px;
-            display: inline-block;
-            background: rgba(34, 197, 94, 0.1);
+            padding: 4px 10px;
+            font-size: 11px;
+            background: var(--bg-elevated);
+            border: none;
+            cursor: pointer;
+        }
+
+        .timeframe-tab.active {
+            background: linear-gradient(135deg, #5b21ff, #7c3aed);
+            color: #fff;
+        }
+
+        .chart-body {
+            flex: 1;
+            border-radius: 14px;
+            background: radial-gradient(circle at 10% 0%, rgba(91, 33, 255, 0.15), transparent 55%),
+                        radial-gradient(circle at 90% 0%, rgba(249, 115, 22, 0.2), transparent 55%),
+                        #020617;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-body canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .chart-overlay-label {
+            position: absolute;
+            left: 14px;
+            top: 10px;
+            font-size: 11px;
+            padding: 3px 7px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.75);
+            color: #e5e7eb;
+        }
+
+        /* Order book + trades */
+        .depth-trades {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            min-height: 230px;
+        }
+
+        .depth-list,
+        .trades-list {
+            height: 210px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .depth-header-row,
+        .trade-header-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .depth-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            font-size: 11px;
+            padding: 3px 0;
+            position: relative;
+        }
+
+        .depth-row .bar {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            opacity: 0.16;
+        }
+
+        .depth-row span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .depth-row.bid .bar {
+            background: var(--success);
+        }
+
+        .depth-row.ask .bar {
+            background: var(--danger);
+        }
+
+        .trades-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            font-size: 11px;
+            padding: 3px 0;
+        }
+
+        .trades-row.buy {
             color: var(--success);
         }
 
-        .pair-highlight span.change-chip.red {
-            background: rgba(239, 68, 68, 0.1);
+        .trades-row.sell {
             color: var(--danger);
         }
 
-        form.exchange-form {
-            margin-top: 1rem;
+        /* Buy/Sell panel */
+        .trade-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .side-toggle {
+            display: flex;
+            border-radius: 999px;
+            background: var(--bg-elevated);
+            padding: 2px;
+        }
+
+        .side-toggle button {
+            flex: 1;
+            border-radius: 999px;
+            padding: 6px 0;
+            border: none;
+            font-size: 13px;
+            cursor: pointer;
+            background: transparent;
+            font-weight: 500;
+        }
+
+        .side-toggle button.active.buy {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+        }
+
+        .side-toggle button.active.sell {
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            color: #fff;
+        }
+
+        .order-type-row {
+            display: flex;
+            gap: 6px;
+            font-size: 11px;
+        }
+
+        .order-type-pill {
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: var(--bg-elevated);
+            cursor: pointer;
+        }
+
+        .order-type-pill.active {
+            background: var(--accent-soft);
+            color: var(--accent-strong);
+            font-weight: 600;
         }
 
         .form-group {
-            margin-bottom: 0.8rem;
-            font-size: 0.82rem;
+            margin-top: 6px;
+            font-size: 12px;
         }
 
         .form-group label {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.2rem;
+            margin-bottom: 4px;
+        }
+
+        .form-input {
+            position: relative;
+        }
+
+        .form-input input {
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            padding: 7px 9px;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .form-input span.unit {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 11px;
             color: var(--text-muted);
         }
 
-        .form-group label span.title {
-            color: #111827;
-            font-weight: 500;
+        .slider-row {
+            margin-top: 6px;
         }
 
-        .form-group label span.info {
-            font-size: 0.75rem;
-        }
-
-        .form-group input,
-        .form-group select {
+        .slider-row input[type="range"] {
             width: 100%;
-            border-radius: 0.8rem;
-            border: 1px solid #e5e7eb;
-            padding: 0.55rem 0.7rem;
-            font-size: 0.86rem;
-            outline: none;
-            background: #f9fafb;
         }
 
-        .form-group input:focus,
-        .form-group select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 1px rgba(91, 33, 255, 0.15);
-            background: #ffffff;
-        }
-
-        .form-group input[readonly] {
-            background: #f3f4f6;
-        }
-
-        .summary-box {
-            margin-top: 0.4rem;
-            padding: 0.55rem 0.7rem;
-            border-radius: 0.9rem;
-            background: #f9fafb;
-            border: 1px dashed #e5e7eb;
-            font-size: 0.8rem;
-        }
-
-        .summary-row {
+        .trade-meta {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.15rem;
-        }
-
-        .summary-row span:first-child {
+            font-size: 11px;
+            margin-top: 4px;
             color: var(--text-muted);
         }
 
-        .summary-row span:last-child {
-            font-weight: 500;
-        }
-
-        .summary-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .primary-btn {
-            margin-top: 0.8rem;
-            width: 100%;
-            border-radius: 999px;
-            border: none;
-            padding: 0.75rem;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-            cursor: pointer;
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: #ffffff;
+        .trade-total {
+            margin-top: 6px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
             font-weight: 600;
         }
 
-        .primary-btn.sell {
-            background: linear-gradient(135deg, #fb7185, #ef4444);
-        }
-
-        .primary-btn:active {
-            transform: translateY(1px);
-        }
-
-        .status-msg {
-            margin-top: 0.45rem;
-            font-size: 0.78rem;
-        }
-
-        .status-success {
-            color: var(--success);
-        }
-
-        .status-error {
-            color: var(--danger);
-        }
-
-        /* Wallet + orders */
-
-        .wallet-list {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
-        }
-
-        .wallet-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.2rem 0;
-        }
-
-        .wallet-row span:first-child {
-            font-weight: 500;
-            color: #111827;
-        }
-
-        .orders-tabs {
-            margin-top: 0.8rem;
-        }
-
-        .orders-tabs-buttons {
-            display: inline-flex;
+        .btn-submit {
+            margin-top: 10px;
+            width: 100%;
             border-radius: 999px;
-            background: #f9fafb;
-            border: 1px solid var(--border-subtle);
-            padding: 0.17rem;
-        }
-
-        .orders-tabs-buttons button {
+            padding: 9px 0;
             border: none;
-            background: transparent;
-            font-size: 0.78rem;
-            padding: 0.25rem 0.8rem;
-            border-radius: 999px;
-            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
+            color: #fff;
         }
 
-        .orders-tabs-buttons button.active {
-            background: var(--accent);
-            color: #ffffff;
+        .btn-submit.buy {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            box-shadow: 0 14px 36px rgba(22, 163, 74, 0.45);
         }
 
-        .orders-scroll {
-            max-height: 150px;
-            overflow-y: auto;
-            font-size: 0.78rem;
-            margin-top: 0.4rem;
+        .btn-submit.sell {
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            box-shadow: 0 14px 36px rgba(239, 68, 68, 0.45);
         }
 
-        .orders-header {
-            display: grid;
-            grid-template-columns: 0.8fr 0.8fr 0.7fr 0.9fr 1fr;
+        .trade-note {
+            font-size: 10px;
             color: var(--text-muted);
-            margin-bottom: 0.15rem;
+            margin-top: 4px;
         }
 
-        .orders-row {
-            display: grid;
-            grid-template-columns: 0.8fr 0.8fr 0.7fr 0.9fr 1fr;
-            margin-bottom: 0.1rem;
+        /* Open orders */
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
         }
 
-        .tag {
+        .orders-table th,
+        .orders-table td {
+            padding: 4px 3px;
+            text-align: left;
+        }
+
+        .orders-table th {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .status-pill {
+            padding: 2px 6px;
             border-radius: 999px;
-            padding: 0.05rem 0.45rem;
-            font-size: 0.7rem;
-            display: inline-block;
+            font-size: 10px;
         }
 
-        .tag.buy {
-            background: rgba(34, 197, 94, 0.14);
-            color: var(--success);
+        .status-open {
+            background: rgba(59, 130, 246, 0.1);
+            color: #2563eb;
         }
 
-        .tag.sell {
-            background: rgba(239, 68, 68, 0.14);
-            color: var(--danger);
+        .status-filled {
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
         }
 
-        .fee-text {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 0.1rem;
+        /* Scrollbars */
+        .depth-list::-webkit-scrollbar,
+        .trades-list::-webkit-scrollbar,
+        .markets-table tbody::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--scrollbar);
+            border-radius: 999px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1150px) {
+            .layout {
+                grid-template-columns: 70px minmax(0, 1fr);
+            }
+
+            .sidebar {
+                padding: 18px 10px;
+                align-items: center;
+            }
+
+            .sidebar-logo-text-main,
+            .sidebar-logo-text-sub,
+            .sidebar-footer {
+                display: none;
+            }
+
+            .sidebar-nav {
+                align-items: center;
+            }
+
+            .sidebar-link {
+                border-radius: 16px;
+                justify-content: center;
+                width: 44px;
+                padding-inline: 0;
+            }
+
+            .sidebar-link span {
+                display: none;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .exchange-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .depth-trades {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .topbar-right {
+                width: 100%;
+            }
+
+            .search-wrapper {
+                max-width: none;
+            }
         }
     </style>
 </head>
 <body>
-
-<!-- ++++ NAV BAR ++++ -->
-<nav>
-    <div class="container nav_container">
-        <a href="../../main-index.html" class="nav_logo">
-            <img src="../../assets/images/ninar logo.png" alt="logo">
-        </a>
-        <div class="nav_search">
-            <i class="uil uil-search"></i>
-            <input type="search" placeholder="search">
-        </div>
-        <div class="nav_profile-wrapper">
-            <button class="nav_theme-btn">
-                <i class="uil uil-moon"></i>
-            </button>
-            <div class="nav_profile">
-                <div class="nav_profile-photo">
-                    <img src="https://tse1.explicit.bing.net/th/id/OIP.hGSCbXlcOjL_9mmzerqAbQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
-                         alt="profile photo">
+<div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-circle">N</div>
+            <div>
+                <div class="sidebar-logo-text-main">NINAR</div>
+                <div class="sidebar-logo-text-sub" style="font-size: 11px; color: var(--text-muted);">
+                    Crypto Dashboard
                 </div>
-                <h5>Nithin</h5>
-                <i class="uil uil-angle-down"></i>
             </div>
-            <button class="nav_menu-btn">
-                <i class="uil uil-bars"></i>
-            </button>
         </div>
-    </div>
-</nav>
 
-<!-- +++++ SIDEBAR ++++ -->
-<menu class="sidebar">
-    <a href="../../main-index.html">
-        <i class="uil uil-create-dashboard"></i>
-        <h5>Dashboard</h5>
-    </a>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="sidebar-link">
+                <i class="uil uil-estate"></i><span>Dashboard</span>
+            </a>
+            <a href="#" class="sidebar-link active">
+                <i class="uil uil-exchange"></i><span>Exchange</span>
+            </a>
+            <a href="wallet.html" class="sidebar-link">
+                <i class="uil uil-wallet"></i><span>Wallet</span>
+            </a>
+            <a href="transactions.html" class="sidebar-link">
+                <i class="uil uil-receipt-alt"></i><span>Transactions</span>
+            </a>
+            <a href="analytics.html" class="sidebar-link">
+                <i class="uil uil-analytics"></i><span>Analytics</span>
+            </a>
+            <a href="messages.html" class="sidebar-link">
+                <i class="uil uil-message"></i><span>Message</span>
+            </a>
+            <a href="help-center.html" class="sidebar-link">
+                <i class="uil uil-question-circle"></i><span>Help Center</span>
+            </a>
+            <a href="settings.html" class="sidebar-link">
+                <i class="uil uil-setting"></i><span>Settings</span>
+            </a>
+        </nav>
 
-    <a href="exchange.html" class="active">
-        <i class="uil uil-exchange"></i>
-        <h5>Exchange</h5>
-    </a>
+        <div class="sidebar-footer">
+            NINAR Demo Exchange<br>Paper-trading only, no real funds.
+        </div>
+    </aside>
 
-    <a href="../wallet/wallet.html">
-        <i class="uil uil-wallet"></i>
-        <h5>Wallet</h5>
-    </a>
-
-    <a href="../transactions/transaction.html">
-        <i class="uil uil-transaction"></i>
-        <h5>Transacations</h5>
-    </a>
-
-    <a href="../analytics/analytics.html">
-        <i class="uil uil-chart-line"></i>
-        <h5>Analytics</h5>
-    </a>
-
-    <a href="../message/message.html">
-        <i class="uil uil-comment-alt-message"></i>
-        <h5>Message</h5>
-    </a>
-
-    <a href="../help/help.html">
-        <i class="uil uil-question-circle"></i>
-        <h5>Help Center</h5>
-    </a>
-
-    <a href="../settings/settings.html">
-        <i class="uil uil-setting"></i>
-        <h5>Settings</h5>
-    </a>
-
-    <button class="sidebar_close-btn">
-        <i class="uil uil-times"></i>
-    </button>
-</menu>
-
-<div class="app">
     <!-- Main -->
     <main class="main">
-        <header class="topbar">
+        <!-- Topbar -->
+        <div class="topbar">
             <div class="topbar-left">
-                <h1>Exchange</h1>
-                <span>Trade crypto, manage favourites & watchlist – demo only (no backend)</span>
+                <div class="topbar-title">Exchange</div>
+                <div class="topbar-sub">Trade, track & manage your crypto positions in real-time (demo).</div>
             </div>
-            <div class="topbar-search">
-                <div class="search-input">
-                    <i class="uil uil-search"></i>
-                    <input type="text" id="searchInput" placeholder="Search coin / symbol">
+            <div class="topbar-right">
+                <div class="search-wrapper">
+                    <i class="uil uil-search" style="color:var(--text-muted); font-size:18px;"></i>
+                    <input type="text" placeholder="Search markets, coins, pairs…" id="globalSearch">
+                </div>
+                <div class="icon-circle">
+                    <i class="uil uil-bell"></i>
+                </div>
+                <div class="avatar">NN</div>
+            </div>
+        </div>
+
+        <!-- Pair header -->
+        <section>
+            <div class="exchange-header">
+                <div>
+                    <div style="font-size:13px; color:var(--text-muted); margin-bottom:4px;">
+                        Current market
+                    </div>
+                    <div class="pair-indicator">
+                        <div class="pair-symbol">
+                            <div class="pair-symbol-badge" id="pairBaseBadge">B</div>
+                            <div class="pair-symbol-text" id="pairSymbolText">BTC / USDT</div>
+                        </div>
+                        <div class="pair-price">
+                            <span id="pairLastPrice">$0.00</span>
+                        </div>
+                        <div class="pair-change" id="pairChange">+0.00%</div>
+                        <div class="pill-neutral">
+                            <i class="uil uil-signal-alt-3"></i>
+                            Live
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <span class="tag-pill"><i class="uil uil-shield-check"></i> Isolated Demo</span>
+                    <span class="tag-pill"><i class="uil uil-clock-eight"></i> 24h Volume: <span
+                            id="pairVolume">$0</span></span>
                 </div>
             </div>
-        </header>
+        </section>
 
-        <section class="exchange-layout">
-            <div class="left-column">
-                <!-- Markets -->
-                <section class="card">
-                    <div class="card-header">
-                        <div>
-                            <h2>Markets</h2>
-                            <span class="sub">Live-style prices with favourites & watchlist</span>
-                        </div>
-                        <div class="tabs">
-                            <button class="tab active" data-tab="all">All</button>
-                            <button class="tab" data-tab="favourites">Favourites</button>
-                            <button class="tab" data-tab="watchlist">Watchlist</button>
-                        </div>
-                    </div>
-
-                    <div class="markets-header-row">
-                        <span>Pair</span>
-                        <span>Price</span>
-                        <span>24h Change</span>
-                        <span>24h Volume</span>
-                        <span>Actions</span>
-                    </div>
-
-                    <div class="markets-list" id="marketsList"></div>
-                </section>
-
-                <!-- Order book + trades -->
-                <section class="card">
-                    <div class="card-header">
-                        <div>
-                            <h2>Order Book & Trades</h2>
-                            <span class="sub" id="obPairTitle">BTC / USDT</span>
-                        </div>
-                    </div>
-
-                    <div class="orderbook-grid">
-                        <div>
-                            <div class="orderbook-header">
-                                <span>Asks</span>
-                                <span>Size</span>
-                            </div>
-                            <div class="orderbook-list" id="asksList"></div>
-                        </div>
-                        <div>
-                            <div class="orderbook-header">
-                                <span>Bids</span>
-                                <span>Size</span>
-                            </div>
-                            <div class="orderbook-list" id="bidsList"></div>
-                        </div>
-                    </div>
-
-                    <div class="mid-price">
-                        <span id="midPriceLabel">$0.00</span>
-                    </div>
-
+        <!-- Exchange content -->
+        <section class="exchange-grid">
+            <!-- Left: Markets -->
+            <div class="card">
+                <div class="card-header">
                     <div>
-                        <div class="orderbook-header">
-                            <span>Recent Trades</span>
-                            <span>Side • Price • Amount</span>
+                        <div class="card-title">Markets</div>
+                        <div class="card-sub">Spot pairs, 24h move & volume.</div>
+                    </div>
+                    <div style="font-size:11px; color:var(--text-muted); display:flex;align-items:center;gap:6px;">
+                        <i class="uil uil-star"></i> Favorites & Watchlist
+                    </div>
+                </div>
+
+                <div class="market-tabs">
+                    <button class="market-tab active" data-tab="all">All</button>
+                    <button class="market-tab" data-tab="favorites"><i class="uil uil-star"></i> Favorites</button>
+                    <button class="market-tab" data-tab="btc">BTC</button>
+                    <button class="market-tab" data-tab="alts">ALTS</button>
+                    <button class="market-tab" data-tab="defi">DeFi</button>
+                </div>
+
+                <div class="market-search">
+                    <input type="text" id="marketSearch" placeholder="Search by pair or symbol…">
+                </div>
+
+                <div style="max-height:380px; overflow-y:auto;">
+                    <table class="markets-table">
+                        <thead>
+                        <tr>
+                            <th style="width:20px;"></th>
+                            <th>Pair</th>
+                            <th>Last price</th>
+                            <th>24h %</th>
+                            <th>24h Vol</th>
+                        </tr>
+                        </thead>
+                        <tbody id="marketsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Middle: Chart + orderbook/trades -->
+            <div class="card" style="display:flex;flex-direction:column;gap:10px;">
+                <div class="chart-card">
+                    <div class="chart-toolbar">
+                        <div class="chart-toolbar-left">
+                            <span style="font-size:13px; font-weight:600;" id="chartPairLabel">BTC / USDT</span>
+                            <span style="font-size:12px;color:var(--text-muted);">Mini price trend (mock)</span>
+                        </div>
+                        <div class="timeframe-tabs">
+                            <button class="timeframe-tab active" data-tf="1m">1m</button>
+                            <button class="timeframe-tab" data-tf="5m">5m</button>
+                            <button class="timeframe-tab" data-tf="1h">1h</button>
+                            <button class="timeframe-tab" data-tf="4h">4h</button>
+                            <button class="timeframe-tab" data-tf="1d">1D</button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="priceChart"></canvas>
+                        <div class="chart-overlay-label">
+                            Demo chart – plug in TradingView / real API here.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card depth-trades">
+                    <div>
+                        <div class="card-header" style="margin-bottom:4px;">
+                            <div class="card-title">Order book</div>
+                            <div class="card-sub">Top bids & asks (mock depth).</div>
+                        </div>
+                        <div class="depth-header-row">
+                            <span>Price</span><span>Amount</span><span>Total</span>
+                        </div>
+                        <div class="depth-list" id="orderBookList"></div>
+                    </div>
+                    <div>
+                        <div class="card-header" style="margin-bottom:4px;">
+                            <div class="card-title">Recent trades</div>
+                            <div class="card-sub">Real-time stream (mock).</div>
+                        </div>
+                        <div class="trade-header-row">
+                            <span>Time</span><span>Price</span><span>Amount</span>
                         </div>
                         <div class="trades-list" id="tradesList"></div>
                     </div>
-                </section>
+                </div>
             </div>
 
-            <div class="right-column side-card-section">
+            <!-- Right: Trade panel + Orders -->
+            <div style="display:flex;flex-direction:column;gap:12px;">
+                <div class="card trade-panel">
+                    <div class="card-header" style="margin-bottom:4px;">
+                        <div class="card-title">Place order</div>
+                        <div class="card-sub">Spot, 1x leverage. Wallet balance only.</div>
+                    </div>
 
-                <!-- Trade panel -->
-                <section class="card">
+                    <div class="side-toggle">
+                        <button class="active buy" id="btnBuySide">Buy</button>
+                        <button class="sell" id="btnSellSide">Sell</button>
+                    </div>
+
+                    <div class="order-type-row">
+                        <span class="order-type-pill active" data-type="market">Market</span>
+                        <span class="order-type-pill" data-type="limit">Limit</span>
+                        <span class="order-type-pill" data-type="stop">Stop</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <span>Price</span>
+                            <span id="priceLabelRight" style="color:var(--text-muted);font-size:11px;">Market</span>
+                        </label>
+                        <div class="form-input">
+                            <input type="number" id="inputPrice" placeholder="Market price"
+                                   step="0.01" min="0">
+                            <span class="unit" id="priceUnit">USDT</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <span>Amount</span>
+                            <span id="balanceLabel">Balance: 2.0000 BTC</span>
+                        </label>
+                        <div class="form-input">
+                            <input type="number" id="inputAmount" placeholder="0.0000" step="0.0001" min="0">
+                            <span class="unit" id="amountUnit">BTC</span>
+                        </div>
+                    </div>
+
+                    <div class="slider-row">
+                        <input type="range" id="amountSlider" min="0" max="100" value="0">
+                        <div class="trade-meta">
+                            <span>Size: <span id="sliderPercent">0%</span></span>
+                            <span>Fee (taker): 0.10%</span>
+                        </div>
+                    </div>
+
+                    <div class="trade-total">
+                        <span>Total</span>
+                        <span id="totalValue">0.00 USDT</span>
+                    </div>
+
+                    <button class="btn-submit buy" id="btnPlaceOrder">Buy BTC</button>
+
+                    <div class="trade-note">
+                        This is a paper-trading environment. Orders & balances are simulated on your device only.
+                    </div>
+                </div>
+
+                <div class="card">
                     <div class="card-header">
-                        <div>
-                            <h2>Trade</h2>
-                            <span class="sub" id="pairTitle">BTC / USDT</span>
-                        </div>
-                        <div class="toggle-row">
-                            <div class="pill-toggle" id="sideToggle">
-                                <button type="button" class="active buy" data-side="BUY">
-                                    <i class="uil uil-arrow-up-right"></i> Buy
-                                </button>
-                                <button type="button" data-side="SELL">
-                                    <i class="uil uil-arrow-down-left"></i> Sell
-                                </button>
-                            </div>
-                            <div class="pill-toggle" id="typeToggle">
-                                <button type="button" class="active type" data-type="MARKET">Market</button>
-                                <button type="button" data-type="LIMIT">Limit</button>
-                            </div>
-                        </div>
+                        <div class="card-title">Open orders</div>
+                        <div class="card-sub">Local demo, no real execution.</div>
                     </div>
-
-                    <div class="pair-highlight">
-                        <span class="label">Last Price</span>
-                        <span class="price" id="pairPrice">$0.00</span>
-                        <span class="change-chip" id="pairChange">+0.00%</span>
+                    <div style="max-height:190px; overflow-y:auto;">
+                        <table class="orders-table">
+                            <thead>
+                            <tr>
+                                <th>Pair</th>
+                                <th>Side</th>
+                                <th>Type</th>
+                                <th>Price</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody id="ordersBody">
+                            <tr>
+                                <td colspan="6" style="font-size:11px;color:var(--text-muted);padding-top:4px;">
+                                    No open orders yet. Place a Buy or Sell to see it here.
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
+                </div>
 
-                    <form class="exchange-form" id="orderForm">
-                        <input type="hidden" id="orderSide" value="BUY">
-                        <input type="hidden" id="orderType" value="MARKET">
-
-                        <div class="form-group">
-                            <label>
-                                <span class="title">Coin</span>
-                                <span class="info">
-                                    Balance:
-                                    <strong id="availableBalance">0.00000000 BTC</strong>
-                                </span>
-                            </label>
-                            <select id="symbolSelect"></select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>
-                                <span class="title">Amount</span>
-                                <span class="info" id="amountHint">Amount you want to buy</span>
-                            </label>
-                            <input type="number" id="amountInput" min="0" step="0.00000001"
-                                   placeholder="0.0000">
-                        </div>
-
-                        <div class="form-group">
-                            <label>
-                                <span class="title">Price (USDT)</span>
-                                <span class="info" id="priceInfo">Market price</span>
-                            </label>
-                            <input type="number" id="priceInput" min="0" step="0.01"
-                                   placeholder="0.00" readonly>
-                        </div>
-
-                        <div class="form-group">
-                            <label>
-                                <span class="title">Total (USDT)</span>
-                                <span class="info">Amount × Price</span>
-                            </label>
-                            <input type="number" id="totalInput" readonly placeholder="0.00">
-                            <div class="fee-text" id="feeText">Fee (0.1%): 0.0000 USDT</div>
-                        </div>
-
-                        <div class="summary-box">
-                            <div class="summary-row">
-                                <span>Side</span>
-                                <span id="summarySide">Buy</span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Type</span>
-                                <span id="summaryType">Market</span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Pair</span>
-                                <span id="summaryPair">BTC / USDT</span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Estimated</span>
-                                <span id="summaryTotal">0.00 USDT</span>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="primary-btn" id="submitBtn">
-                            <i class="uil uil-shopping-cart-alt"></i>
-                            <span id="submitLabel">Place Buy Market Order</span>
-                        </button>
-
-                        <div id="statusMsg" class="status-msg"></div>
-                    </form>
-                </section>
-
-                <!-- Wallet & Orders -->
-                <section class="card">
-                    <div class="card-header">
-                        <div>
-                            <h2>Wallet & Orders</h2>
-                            <span class="sub">Local demo balances & order simulator</span>
-                        </div>
-                    </div>
-
-                    <div class="wallet-list" id="walletList"></div>
-
-                    <div class="orders-tabs">
-                        <div class="orders-tabs-buttons">
-                            <button type="button" class="active" data-orders-tab="open">Open Orders</button>
-                            <button type="button" data-orders-tab="history">Order History</button>
-                        </div>
-                        <div class="orders-scroll" id="ordersContainer">
-                            <!-- Filled by JS -->
-                        </div>
-                    </div>
-                </section>
             </div>
         </section>
     </main>
 </div>
 
 <script>
-    // ===== DEMO DATA (FRONTEND ONLY, NO BACKEND) =====
-
-    const coins = [
-        {
-            symbol: "BTC",
-            name: "Bitcoin",
-            price: 82719,
-            change: 1.72,
-            volume: 120000000,
-            orderBook: {bids: [], asks: []},
-            trades: []
-        },
-        {
-            symbol: "ETH",
-            name: "Ethereum",
-            price: 3719,
-            change: -0.84,
-            volume: 78000000,
-            orderBook: {bids: [], asks: []},
-            trades: []
-        },
-        {
-            symbol: "BNB",
-            name: "Binance Coin",
-            price: 628,
-            change: 0.32,
-            volume: 32000000,
-            orderBook: {bids: [], asks: []},
-            trades: []
-        },
-        {
-            symbol: "SOL",
-            name: "Solana",
-            price: 142.5,
-            change: 3.12,
-            volume: 56000000,
-            orderBook: {bids: [], asks: []},
-            trades: []
-        },
-        {
-            symbol: "USDT",
-            name: "Tether",
-            price: 1.0,
-            change: 0.02,
-            volume: 890000000,
-            orderBook: {bids: [], asks: []},
-            trades: []
-        }
+    // ---------- Mock market data ----------
+    const baseMarkets = [
+        {pair: "BTC/USDT", base: "BTC", quote: "USDT", price: 82719, change: 2.53, volume: 14320, segment: "btc"},
+        {pair: "ETH/USDT", base: "ETH", quote: "USDT", price: 3719, change: -0.82, volume: 41320, segment: "alts"},
+        {pair: "SOL/USDT", base: "SOL", quote: "USDT", price: 142.13, change: 4.11, volume: 28310, segment: "alts"},
+        {pair: "BNB/USDT", base: "BNB", quote: "USDT", price: 612.34, change: 1.02, volume: 12340, segment: "alts"},
+        {pair: "XRP/USDT", base: "XRP", quote: "USDT", price: 1.18, change: -3.21, volume: 55340, segment: "alts"},
+        {pair: "ADA/USDT", base: "ADA", quote: "USDT", price: 0.72, change: 0.91, volume: 21230, segment: "alts"},
+        {pair: "UNI/USDT", base: "UNI", quote: "USDT", price: 12.11, change: 5.43, volume: 9870, segment: "defi"},
+        {pair: "AAVE/USDT", base: "AAVE", quote: "USDT", price: 142.55, change: 1.67, volume: 3210, segment: "defi"},
+        {pair: "LINK/USDT", base: "LINK", quote: "USDT", price: 18.22, change: -0.56, volume: 11200, segment: "defi"},
+        {pair: "BTC/EUR", base: "BTC", quote: "EUR", price: 74810, change: 2.23, volume: 3800, segment: "btc"}
     ];
 
-    const balances = {
-        BTC: 0.05234567,
-        ETH: 1.21456789,
-        BNB: 2.437621,
-        SOL: 10.432156,
-        USDT: 2500.12
-    };
+    let markets = JSON.parse(JSON.stringify(baseMarkets));
 
-    const favourites = new Set();
-    const watchlist = new Set();
-    const openOrders = [];
-    const orderHistory = [];
-    let nextOrderId = 1;
+    // ---------- Favorites / watchlist ----------
+    const FAVORITES_KEY = "ninar_exchange_favorites";
+    let favoriteSet = new Set(JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]"));
 
-    // ===== STATE =====
+    function saveFavorites() {
+        localStorage.setItem(FAVORITES_KEY, JSON.stringify(Array.from(favoriteSet)));
+    }
 
-    let currentSymbol = "BTC";
-    let currentSide = "BUY";
-    let currentType = "MARKET"; // MARKET | LIMIT
-    let currentTab = "all";
-    let currentOrdersTab = "open";
+    // ---------- DOM refs ----------
+    const marketsBody = document.getElementById("marketsBody");
+    const marketTabs = document.querySelectorAll(".market-tab");
+    const marketSearch = document.getElementById("marketSearch");
+    const globalSearch = document.getElementById("globalSearch");
 
-    const FEE_RATE = 0.001; // 0.1%
-
-    // ===== DOM ELEMENTS =====
-
-    const marketsListEl = document.getElementById("marketsList");
-    const searchInput = document.getElementById("searchInput");
-    const tabs = document.querySelectorAll(".tab");
-
-    const obPairTitle = document.getElementById("obPairTitle");
-    const asksListEl = document.getElementById("asksList");
-    const bidsListEl = document.getElementById("bidsList");
-    const tradesListEl = document.getElementById("tradesList");
-    const midPriceLabel = document.getElementById("midPriceLabel");
-
-    const sideToggle = document.getElementById("sideToggle");
-    const typeToggle = document.getElementById("typeToggle");
-    const orderSideInput = document.getElementById("orderSide");
-    const orderTypeInput = document.getElementById("orderType");
-    const pairTitle = document.getElementById("pairTitle");
-    const pairPriceEl = document.getElementById("pairPrice");
+    const pairBaseBadge = document.getElementById("pairBaseBadge");
+    const pairSymbolText = document.getElementById("pairSymbolText");
+    const pairLastPrice = document.getElementById("pairLastPrice");
     const pairChangeEl = document.getElementById("pairChange");
+    const pairVolumeEl = document.getElementById("pairVolume");
+    const chartPairLabel = document.getElementById("chartPairLabel");
 
-    const symbolSelect = document.getElementById("symbolSelect");
-    const availableBalanceEl = document.getElementById("availableBalance");
-    const amountHint = document.getElementById("amountHint");
-    const amountInput = document.getElementById("amountInput");
-    const priceInput = document.getElementById("priceInput");
-    const priceInfo = document.getElementById("priceInfo");
-    const totalInput = document.getElementById("totalInput");
-    const feeText = document.getElementById("feeText");
+    const btnBuySide = document.getElementById("btnBuySide");
+    const btnSellSide = document.getElementById("btnSellSide");
+    const sideButtons = [btnBuySide, btnSellSide];
+    const orderTypePills = document.querySelectorAll(".order-type-pill");
+    const inputPrice = document.getElementById("inputPrice");
+    const inputAmount = document.getElementById("inputAmount");
+    const priceLabelRight = document.getElementById("priceLabelRight");
+    const priceUnit = document.getElementById("priceUnit");
+    const amountUnit = document.getElementById("amountUnit");
+    const amountSlider = document.getElementById("amountSlider");
+    const sliderPercent = document.getElementById("sliderPercent");
+    const totalValue = document.getElementById("totalValue");
+    const btnPlaceOrder = document.getElementById("btnPlaceOrder");
+    const balanceLabel = document.getElementById("balanceLabel");
+    const ordersBody = document.getElementById("ordersBody");
+    const orderBookList = document.getElementById("orderBookList");
+    const tradesList = document.getElementById("tradesList");
 
-    const summarySide = document.getElementById("summarySide");
-    const summaryType = document.getElementById("summaryType");
-    const summaryPair = document.getElementById("summaryPair");
-    const summaryTotal = document.getElementById("summaryTotal");
-    const submitBtn = document.getElementById("submitBtn");
-    const submitLabel = document.getElementById("submitLabel");
-    const statusMsg = document.getElementById("statusMsg");
-    const orderForm = document.getElementById("orderForm");
+    let activeTab = "all";
+    let selectedMarket = markets[0];
+    let activeSide = "buy"; // or "sell"
+    let activeOrderType = "market"; // market | limit | stop
+    let openOrders = [];
 
-    const walletList = document.getElementById("walletList");
-    const ordersContainer = document.getElementById("ordersContainer");
-    const ordersTabsButtons = document.querySelectorAll("[data-orders-tab]");
-
-    // ===== HELPERS =====
-
-    function formatNumber(val, decimals = 2) {
-        return Number(val).toLocaleString(undefined, {
-            minimumFractionDigits: decimals,
-            maximumFractionDigits: decimals
-        });
-    }
-
-    function formatCompact(val) {
-        return Intl.NumberFormat("en", {
-            notation: "compact",
-            maximumFractionDigits: 2
-        }).format(val);
-    }
-
-    function getCoin(symbol) {
-        return coins.find(c => c.symbol === symbol);
-    }
-
-    // ===== RENDER FUNCTIONS =====
-
+    // ---------- Markets rendering ----------
     function renderMarkets() {
-        const q = (searchInput.value || "").trim().toLowerCase();
-        marketsListEl.innerHTML = "";
+        const searchTerm = (marketSearch.value || globalSearch.value || "").toLowerCase();
+        marketsBody.innerHTML = "";
 
-        let filtered = coins.slice();
+        let filtered = markets.filter(m => {
+            if (activeTab === "favorites" && !favoriteSet.has(m.pair)) return false;
+            if (activeTab === "btc" && m.base !== "BTC") return false;
+            if (activeTab === "alts" && (m.base === "BTC" || m.base === "ETH")) return false;
+            if (activeTab === "defi" && !["UNI", "AAVE", "LINK"].includes(m.base)) return false;
+            if (!searchTerm) return true;
+            return m.pair.toLowerCase().includes(searchTerm) || m.base.toLowerCase().includes(searchTerm);
+        });
 
-        if (currentTab === "favourites") {
-            filtered = filtered.filter(c => favourites.has(c.symbol));
-        } else if (currentTab === "watchlist") {
-            filtered = filtered.filter(c => watchlist.has(c.symbol));
-        }
+        filtered.forEach(market => {
+            const tr = document.createElement("tr");
+            if (market.pair === selectedMarket.pair) {
+                tr.classList.add("active");
+            }
 
-        if (q) {
-            filtered = filtered.filter(c =>
-                c.symbol.toLowerCase().includes(q) ||
-                c.name.toLowerCase().includes(q)
-            );
-        }
+            tr.innerHTML = `
+                <td>
+                    <i class="uil uil-star fav-icon ${favoriteSet.has(market.pair) ? "filled" : ""}"
+                       data-pair="${market.pair}"></i>
+                </td>
+                <td>${market.pair}</td>
+                <td>$${market.price.toLocaleString(undefined, {maximumFractionDigits: 2})}</td>
+                <td class="${market.change >= 0 ? "change-pos" : "change-neg"}">
+                    ${market.change >= 0 ? "+" : ""}${market.change.toFixed(2)}%
+                </td>
+                <td>${(market.volume / 1000).toFixed(2)}k</td>
+            `;
+
+            // Fav click
+            tr.querySelector(".fav-icon").addEventListener("click", (e) => {
+                e.stopPropagation();
+                const pair = market.pair;
+                if (favoriteSet.has(pair)) {
+                    favoriteSet.delete(pair);
+                } else {
+                    favoriteSet.add(pair);
+                }
+                saveFavorites();
+                renderMarkets();
+            });
+
+            // Row click = select pair
+            tr.addEventListener("click", () => {
+                selectedMarket = market;
+                updateSelectedMarketUI();
+                renderMarkets();
+            });
+
+            marketsBody.appendChild(tr);
+        });
 
         if (filtered.length === 0) {
-            marketsListEl.innerHTML =
-                '<div class="muted" style="padding:0.7rem 0.2rem;font-size:0.8rem;">No coins match this filter.</div>';
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td colspan="5" style="font-size:11px;color:var(--text-muted);padding-top:6px;">
+                No markets match this filter.</td>`;
+            marketsBody.appendChild(tr);
+        }
+    }
+
+    function updateSelectedMarketUI() {
+        pairBaseBadge.textContent = selectedMarket.base[0];
+        pairSymbolText.textContent = `${selectedMarket.pair}`;
+        chartPairLabel.textContent = `${selectedMarket.pair}`;
+        pairLastPrice.textContent = `$${selectedMarket.price.toLocaleString(undefined, {maximumFractionDigits: 2})}`;
+        pairChangeEl.textContent = `${selectedMarket.change >= 0 ? "+" : ""}${selectedMarket.change.toFixed(2)}%`;
+        pairChangeEl.style.color = selectedMarket.change >= 0 ? "var(--success)" : "var(--danger)";
+        pairVolumeEl.textContent = `${(selectedMarket.volume / 1000).toFixed(2)}k ${selectedMarket.quote}`;
+
+        priceUnit.textContent = selectedMarket.quote;
+        amountUnit.textContent = selectedMarket.base;
+
+        balanceLabel.textContent = `Balance: ${(2 + Math.random()).toFixed(4)} ${selectedMarket.base}`;
+        btnPlaceOrder.textContent = `${activeSide === "buy" ? "Buy" : "Sell"} ${selectedMarket.base}`;
+
+        // For Market orders, sync inputPrice to current price but keep it read only visually (placeholder)
+        if (activeOrderType === "market") {
+            inputPrice.value = "";
+            priceLabelRight.textContent = "Market";
+        } else {
+            if (!inputPrice.value) inputPrice.value = selectedMarket.price.toFixed(2);
+            priceLabelRight.textContent = activeOrderType === "limit" ? "Limit" : "Stop";
+        }
+        recalcTotal();
+        generateOrderBook();
+        generateTrades();
+        regenerateChartData();
+    }
+
+    marketTabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            marketTabs.forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            activeTab = tab.dataset.tab;
+            renderMarkets();
+        });
+    });
+
+    [marketSearch, globalSearch].forEach(input =>
+        input.addEventListener("input", renderMarkets)
+    );
+
+    // ---------- Side & order type ----------
+    function setSide(side) {
+        activeSide = side;
+        btnBuySide.classList.toggle("active", side === "buy");
+        btnSellSide.classList.toggle("active", side === "sell");
+        btnPlaceOrder.classList.toggle("buy", side === "buy");
+        btnPlaceOrder.classList.toggle("sell", side === "sell");
+        btnPlaceOrder.textContent = `${side === "buy" ? "Buy" : "Sell"} ${selectedMarket.base}`;
+        recalcTotal();
+    }
+
+    btnBuySide.addEventListener("click", () => setSide("buy"));
+    btnSellSide.addEventListener("click", () => setSide("sell"));
+
+    orderTypePills.forEach(pill => {
+        pill.addEventListener("click", () => {
+            orderTypePills.forEach(p => p.classList.remove("active"));
+            pill.classList.add("active");
+            activeOrderType = pill.dataset.type;
+            if (activeOrderType === "market") {
+                priceLabelRight.textContent = "Market";
+                inputPrice.value = "";
+                inputPrice.placeholder = "Market price";
+                inputPrice.disabled = false; // still editable if user wants a hint
+            } else if (activeOrderType === "limit") {
+                priceLabelRight.textContent = "Limit";
+                if (!inputPrice.value) inputPrice.value = selectedMarket.price.toFixed(2);
+                inputPrice.placeholder = "Set your limit price";
+                inputPrice.disabled = false;
+            } else {
+                priceLabelRight.textContent = "Stop";
+                if (!inputPrice.value) inputPrice.value = (selectedMarket.price * 0.98).toFixed(2);
+                inputPrice.placeholder = "Stop trigger price";
+                inputPrice.disabled = false;
+            }
+            recalcTotal();
+        });
+    });
+
+    // ---------- Amount slider / total ----------
+    amountSlider.addEventListener("input", () => {
+        sliderPercent.textContent = amountSlider.value + "%";
+        // Let 100% = 2 units of base asset
+        const maxSize = 2.0;
+        const size = (amountSlider.value / 100) * maxSize;
+        inputAmount.value = size.toFixed(4);
+        recalcTotal();
+    });
+
+    [inputPrice, inputAmount].forEach(el => el.addEventListener("input", recalcTotal));
+
+    function recalcTotal() {
+        const amount = parseFloat(inputAmount.value) || 0;
+        let price = parseFloat(inputPrice.value);
+        if (activeOrderType === "market" || !price) {
+            price = selectedMarket.price;
+        }
+        const total = amount * price;
+        totalValue.textContent = `${total.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })} ${selectedMarket.quote}`;
+    }
+
+    // ---------- Orders ----------
+    function renderOrders() {
+        ordersBody.innerHTML = "";
+        if (openOrders.length === 0) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td colspan="6" style="font-size:11px;color:var(--text-muted);padding-top:4px;">
+                No open orders yet. Place a Buy or Sell to see it here.</td>`;
+            ordersBody.appendChild(tr);
             return;
         }
 
-        filtered.forEach(c => {
-            const row = document.createElement("div");
-            row.className = "market-row";
-
-            const avatarClass =
-                c.symbol === "ETH" ? "eth" :
-                    c.symbol === "BNB" ? "bnb" :
-                        c.symbol === "SOL" ? "sol" :
-                            c.symbol === "USDT" ? "usdt" : "";
-
-            const changeClass = c.change >= 0 ? "change-positive" : "change-negative";
-            const changeText = (c.change >= 0 ? "+" : "") + c.change.toFixed(2) + "%";
-
-            row.innerHTML = `
-                <div class="market-main">
-                    <div class="coin-avatar ${avatarClass}"></div>
-                    <div class="coin-label">
-                        <span>${c.symbol} / USDT</span>
-                        <span>${c.name}</span>
-                    </div>
-                </div>
-                <div>$${formatNumber(c.price, 2)}</div>
-                <div class="${changeClass}">${changeText}</div>
-                <div>${formatCompact(c.volume)} USDT</div>
-                <div>
-                    <div class="buy-sell-actions" style="margin-bottom:0.3rem;">
-                        <button class="pill buy" data-action="buy" data-symbol="${c.symbol}">Buy</button>
-                        <button class="pill sell" data-action="sell" data-symbol="${c.symbol}">Sell</button>
-                    </div>
-                    <div class="fav-watch">
-                        <button class="icon-btn ${favourites.has(c.symbol) ? "active" : ""}"
-                                data-icon="fav" data-symbol="${c.symbol}">
-                            <i class="uil uil-heart"></i>
-                        </button>
-                        <button class="icon-btn ${watchlist.has(c.symbol) ? "active" : ""}"
-                                data-icon="watch" data-symbol="${c.symbol}">
-                            <i class="uil uil-star"></i>
-                        </button>
-                    </div>
-                </div>
+        openOrders.forEach(order => {
+            const tr = document.createElement("tr");
+            const sideColor = order.side === "buy" ? "var(--success)" : "var(--danger)";
+            tr.innerHTML = `
+                <td>${order.pair}</td>
+                <td style="font-weight:600;color:${sideColor};">${order.side.toUpperCase()}</td>
+                <td>${order.type}</td>
+                <td>${order.price ? "$" + order.price.toFixed(2) : "Market"}</td>
+                <td>${order.amount.toFixed(4)}</td>
+                <td><span class="status-pill ${order.status === "Open" ? "status-open" : "status-filled"}">
+                    ${order.status}
+                </span></td>
             `;
-            marketsListEl.appendChild(row);
+            ordersBody.appendChild(tr);
         });
     }
 
-    function renderOrderBook() {
-        const coin = getCoin(currentSymbol);
-        if (!coin) return;
+    btnPlaceOrder.addEventListener("click", () => {
+        const amount = parseFloat(inputAmount.value);
+        if (!amount || amount <= 0) {
+            alert("Enter a valid amount.");
+            return;
+        }
 
-        obPairTitle.textContent = `${coin.symbol} / USDT`;
+        let price = parseFloat(inputPrice.value);
+        if (!price || activeOrderType === "market") price = selectedMarket.price;
 
-        asksListEl.innerHTML = "";
-        bidsListEl.innerHTML = "";
+        const order = {
+            pair: selectedMarket.pair,
+            side: activeSide,
+            type: activeOrderType.toUpperCase(),
+            price,
+            amount,
+            status: "Open"
+        };
+        openOrders.unshift(order);
+        renderOrders();
+        // Randomly mark some orders as filled later
+    });
 
-        coin.orderBook.asks.forEach(a => {
+    // periodically mark some orders as filled
+    setInterval(() => {
+        if (openOrders.length === 0) return;
+        const idx = Math.floor(Math.random() * openOrders.length);
+        if (openOrders[idx].status === "Open") {
+            openOrders[idx].status = "Filled";
+            renderOrders();
+        }
+    }, 15000);
+
+    // ---------- Order book ----------
+    function generateOrderBook() {
+        orderBookList.innerHTML = "";
+        const center = selectedMarket.price;
+        const levels = 15;
+
+        for (let i = levels; i > 0; i--) {
+            const price = center * (1 + (i / 1000));
+            const amount = (Math.random() * 1.2 + 0.05);
+            const total = price * amount;
+            const depth = Math.random();
             const row = document.createElement("div");
-            row.className = "orderbook-row";
+            row.className = "depth-row ask";
             row.innerHTML = `
-                <span class="price ask">$${formatNumber(a.price, 2)}</span>
-                <span class="size">${formatNumber(a.size, 4)}</span>
+                <span>${price.toFixed(2)}</span>
+                <span>${amount.toFixed(3)}</span>
+                <span>${(total / 1000).toFixed(2)}k</span>
+                <div class="bar" style="width:${depth * 100}%"></div>
             `;
-            asksListEl.appendChild(row);
-        });
+            orderBookList.appendChild(row);
+        }
 
-        coin.orderBook.bids.forEach(b => {
+        for (let i = 0; i < levels; i++) {
+            const price = center * (1 - (i / 1000));
+            const amount = (Math.random() * 1.2 + 0.05);
+            const total = price * amount;
+            const depth = Math.random();
             const row = document.createElement("div");
-            row.className = "orderbook-row";
+            row.className = "depth-row bid";
             row.innerHTML = `
-                <span class="price bid">$${formatNumber(b.price, 2)}</span>
-                <span class="size">${formatNumber(b.size, 4)}</span>
+                <span>${price.toFixed(2)}</span>
+                <span>${amount.toFixed(3)}</span>
+                <span>${(total / 1000).toFixed(2)}k</span>
+                <div class="bar" style="width:${depth * 100}%"></div>
             `;
-            bidsListEl.appendChild(row);
-        });
+            orderBookList.appendChild(row);
+        }
+    }
 
-        const mid = coin.price;
-        midPriceLabel.textContent = `Mid: $${formatNumber(mid, 2)}`;
+    // Live tiny updates to prices to feel real
+    function tickPrices() {
+        markets = markets.map(m => {
+            const drift = (Math.random() - 0.5) * (m.price * 0.0008);
+            const newPrice = Math.max(0.0001, m.price + drift);
+            const change = ((newPrice - m.price) / m.price) * 100;
+            m.price = newPrice;
+            m.change = Math.max(Math.min(m.change + change * 0.03, 20), -20);
+            m.volume = m.volume * (0.98 + Math.random() * 0.04);
+            return m;
+        });
+        updateSelectedMarketUI();
+        renderMarkets();
+    }
+
+    setInterval(tickPrices, 3500);
+
+    // ---------- Trades ----------
+    let trades = [];
+
+    function generateTrades(initial = false) {
+        if (initial) trades = [];
+        tradesList.innerHTML = "";
+        const now = new Date();
+
+        for (let i = 0; i < 18; i++) {
+            const side = Math.random() > 0.5 ? "buy" : "sell";
+            const price = selectedMarket.price * (1 + (Math.random() - 0.5) * 0.002);
+            const amount = (Math.random() * 1.3 + 0.01);
+            const time = new Date(now.getTime() - i * 15000);
+            trades.push({side, price, amount, time});
+        }
+
+        trades.sort((a, b) => b.time - a.time);
+        renderTrades();
     }
 
     function renderTrades() {
-        const coin = getCoin(currentSymbol);
-        if (!coin) return;
-        tradesListEl.innerHTML = "";
-
-        if (coin.trades.length === 0) {
-            tradesListEl.innerHTML = '<div class="muted">Waiting for first trades…</div>';
-            return;
-        }
-
-        coin.trades.slice().reverse().forEach(t => {
+        tradesList.innerHTML = "";
+        trades.slice(0, 30).forEach(t => {
             const row = document.createElement("div");
-            row.className = "trade-row";
-            const sideClass = t.side === "BUY" ? "side-buy" : "side-sell";
+            row.className = "trades-row " + (t.side === "buy" ? "buy" : "sell");
+            const timeStr = t.time.toTimeString().slice(0, 8);
             row.innerHTML = `
-                <span class="${sideClass}">${t.side}</span>
-                <span>$${formatNumber(t.price, 2)}</span>
-                <span class="muted">${formatNumber(t.amount, 5)}</span>
+                <span>${timeStr}</span>
+                <span>${t.price.toFixed(2)}</span>
+                <span>${t.amount.toFixed(3)}</span>
             `;
-            tradesListEl.appendChild(row);
+            tradesList.appendChild(row);
         });
     }
 
-    function renderWallet() {
-        walletList.innerHTML = "";
-        Object.keys(balances).forEach(symbol => {
-            const row = document.createElement("div");
-            row.className = "wallet-row";
-            row.innerHTML = `
-                <span>${symbol}</span>
-                <span>${formatNumber(balances[symbol], 6)}</span>
-            `;
-            walletList.appendChild(row);
-        });
-    }
-
-    function renderOrders() {
-        ordersContainer.innerHTML = "";
-
-        const source = currentOrdersTab === "open" ? openOrders : orderHistory;
-
-        if (source.length === 0) {
-            ordersContainer.innerHTML =
-                `<div class="muted" style="font-size:0.78rem;">No ${currentOrdersTab === "open" ? "open" : "historical"} orders yet.</div>`;
-            return;
-        }
-
-        const header = document.createElement("div");
-        header.className = "orders-header";
-        header.innerHTML = `
-            <span>Side</span>
-            <span>Pair</span>
-            <span>Type</span>
-            <span>Price</span>
-            <span>Amount / Total</span>
-        `;
-        ordersContainer.appendChild(header);
-
-        source.slice().slice().reverse().forEach(o => {
-            const row = document.createElement("div");
-            row.className = "orders-row";
-
-            const tagClass = o.side === "BUY" ? "buy" : "sell";
-            const priceText = o.type === "MARKET" ? "Market" : `$${formatNumber(o.price, 2)}`;
-            const statusExtra = o.status && o.status !== "OPEN" ? ` (${o.status})` : "";
-
-            row.innerHTML = `
-                <span><span class="tag ${tagClass}">${o.side}</span></span>
-                <span>${o.symbol}/USDT</span>
-                <span>${o.type}</span>
-                <span>${priceText}</span>
-                <span class="muted">${formatNumber(o.amount, 6)} @ ${formatNumber(o.total, 2)} USDT${statusExtra}</span>
-            `;
-            ordersContainer.appendChild(row);
-        });
-    }
-
-    function renderSymbolSelect() {
-        symbolSelect.innerHTML = "";
-        coins.forEach(c => {
-            const opt = document.createElement("option");
-            opt.value = c.symbol;
-            opt.textContent = `${c.symbol} / USDT`;
-            symbolSelect.appendChild(opt);
-        });
-        symbolSelect.value = currentSymbol;
-    }
-
-    function updatePairInfo() {
-        const coin = getCoin(currentSymbol) || coins[0];
-        pairTitle.textContent = `${coin.symbol} / USDT`;
-        pairPriceEl.textContent = "$" + formatNumber(coin.price, 2);
-        pairChangeEl.textContent =
-            (coin.change >= 0 ? "+" : "") + coin.change.toFixed(2) + "%";
-
-        if (coin.change >= 0) {
-            pairChangeEl.classList.remove("red");
-        } else {
-            pairChangeEl.classList.add("red");
-        }
-
-        summaryPair.textContent = `${coin.symbol} / USDT`;
-
-        if (currentType === "MARKET") {
-            priceInput.value = coin.price.toFixed(2);
-        }
-
-        updateAvailableBalance();
-        recalcTotal();
-    }
-
-    function updateAvailableBalance() {
-        const bal = balances[currentSymbol] || 0;
-        availableBalanceEl.textContent = `${formatNumber(bal, 8)} ${currentSymbol}`;
-    }
-
-    function recalcTotal() {
-        const amount = parseFloat(amountInput.value) || 0;
-        const price = parseFloat(priceInput.value) || 0;
-        const total = amount * price;
-
-        if (total > 0) {
-            totalInput.value = total.toFixed(2);
-            summaryTotal.textContent = `${formatNumber(total, 2)} USDT`;
-        } else {
-            totalInput.value = "";
-            summaryTotal.textContent = "0.00 USDT";
-        }
-
-        const fee = total * FEE_RATE;
-        feeText.textContent = `Fee (0.1%): ${formatNumber(fee || 0, 4)} USDT`;
-    }
-
-    function setSide(side) {
-        currentSide = side;
-        orderSideInput.value = side;
-
-        sideToggle.querySelectorAll("button").forEach(btn => {
-            btn.classList.remove("active", "buy", "sell");
-        });
-        const btn = sideToggle.querySelector(`[data-side="${side}"]`);
-        btn.classList.add("active");
-        btn.classList.add(side === "BUY" ? "buy" : "sell");
-
-        summarySide.textContent = side === "BUY" ? "Buy" : "Sell";
-        amountHint.textContent = side === "BUY" ? "Amount you want to buy" :
-            "Amount you want to sell";
-        submitBtn.classList.toggle("sell", side === "SELL");
-        submitLabel.textContent =
-            `Place ${side === "BUY" ? "Buy" : "Sell"} ${currentType === "MARKET" ? "Market" : "Limit"} Order`;
-        statusMsg.textContent = "";
-        statusMsg.className = "status-msg";
-    }
-
-    function setOrderType(type) {
-        currentType = type;
-        orderTypeInput.value = type;
-
-        typeToggle.querySelectorAll("button").forEach(btn => {
-            btn.classList.remove("active", "type");
-        });
-        const btn = typeToggle.querySelector(`[data-type="${type}"]`);
-        btn.classList.add("active", "type");
-
-        summaryType.textContent = type === "MARKET" ? "Market" : "Limit";
-        const coin = getCoin(currentSymbol);
-
-        if (type === "MARKET") {
-            priceInput.value = coin.price.toFixed(2);
-            priceInput.readOnly = true;
-            priceInfo.textContent = "Market price";
-        } else {
-            priceInput.readOnly = false;
-            priceInfo.textContent = "Your limit price";
-        }
-
-        submitLabel.textContent =
-            `Place ${currentSide === "BUY" ? "Buy" : "Sell"} ${currentType === "MARKET" ? "Market" : "Limit"} Order`;
-
-        recalcTotal();
-    }
-
-    function showStatus(message, isError = false) {
-        statusMsg.textContent = message;
-        statusMsg.className = "status-msg " + (isError ? "status-error" : "status-success");
-    }
-
-    // ===== EVENTS =====
-
-    tabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-            tabs.forEach(t => t.classList.remove("active"));
-            tab.classList.add("active");
-            currentTab = tab.dataset.tab;
-            renderMarkets();
-        });
-    });
-
-    searchInput.addEventListener("input", () => {
-        renderMarkets();
-    });
-
-    marketsListEl.addEventListener("click", (e) => {
-        const pill = e.target.closest(".pill");
-        const iconBtn = e.target.closest(".icon-btn");
-
-        if (pill) {
-            const sym = pill.dataset.symbol;
-            const action = pill.dataset.action;
-            currentSymbol = sym;
-            renderSymbolSelect();
-            updatePairInfo();
-            renderOrderBook();
-            renderTrades();
-            setSide(action.toUpperCase());
-        }
-
-        if (iconBtn) {
-            const sym = iconBtn.dataset.symbol;
-            const type = iconBtn.dataset.icon;
-            if (type === "fav") {
-                if (favourites.has(sym)) favourites.delete(sym);
-                else favourites.add(sym);
-            } else if (type === "watch") {
-                if (watchlist.has(sym)) watchlist.delete(sym);
-                else watchlist.add(sym);
-            }
-            renderMarkets();
-        }
-    });
-
-    sideToggle.addEventListener("click", (e) => {
-        const btn = e.target.closest("button");
-        if (!btn) return;
-        const side = btn.dataset.side;
-        if (!side) return;
-        setSide(side);
-    });
-
-    typeToggle.addEventListener("click", (e) => {
-        const btn = e.target.closest("button");
-        if (!btn) return;
-        const type = btn.dataset.type;
-        if (!type) return;
-        setOrderType(type);
-    });
-
-    symbolSelect.addEventListener("change", () => {
-        currentSymbol = symbolSelect.value;
-        updatePairInfo();
-        renderOrderBook();
+    setInterval(() => {
+        const side = Math.random() > 0.5 ? "buy" : "sell";
+        const price = selectedMarket.price * (1 + (Math.random() - 0.5) * 0.0015);
+        const amount = (Math.random() * 1.5 + 0.01);
+        const time = new Date();
+        trades.unshift({side, price, amount, time});
         renderTrades();
-    });
+    }, 2600);
 
-    amountInput.addEventListener("input", recalcTotal);
-    priceInput.addEventListener("input", recalcTotal);
+    // ---------- Mini chart ----------
+    const chartCanvas = document.getElementById("priceChart");
+    const ctx = chartCanvas.getContext("2d");
+    let chartPoints = [];
 
-    ordersTabsButtons.forEach(btn => {
+    function regenerateChartData() {
+        const base = selectedMarket.price;
+        chartPoints = [];
+        let last = base;
+        for (let i = 0; i < 60; i++) {
+            last = last * (1 + (Math.random() - 0.5) * 0.003);
+            chartPoints.push(last);
+        }
+        drawChart();
+    }
+
+    function drawChart() {
+        const w = chartCanvas.clientWidth;
+        const h = chartCanvas.clientHeight;
+        chartCanvas.width = w * window.devicePixelRatio;
+        chartCanvas.height = h * window.devicePixelRatio;
+        ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+
+        if (chartPoints.length === 0) return;
+
+        const min = Math.min(...chartPoints);
+        const max = Math.max(...chartPoints);
+        const padding = 8;
+        const range = max - min || 1;
+
+        // area fill
+        ctx.beginPath();
+        chartPoints.forEach((value, idx) => {
+            const x = padding + (idx / (chartPoints.length - 1)) * (w - padding * 2);
+            const y = h - padding - ((value - min) / range) * (h - padding * 2);
+            if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.lineTo(w - padding, h - padding);
+        ctx.lineTo(padding, h - padding);
+        ctx.closePath();
+        ctx.fillStyle = "rgba(129, 140, 248, 0.35)";
+        ctx.fill();
+
+        // line
+        ctx.beginPath();
+        chartPoints.forEach((value, idx) => {
+            const x = padding + (idx / (chartPoints.length - 1)) * (w - padding * 2);
+            const y = h - padding - ((value - min) / range) * (h - padding * 2);
+            if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.lineWidth = 1.8;
+        ctx.strokeStyle = "#a855f7";
+        ctx.stroke();
+    }
+
+    window.addEventListener("resize", drawChart);
+
+    // ---------- Timeframe tabs (visual only) ----------
+    document.querySelectorAll(".timeframe-tab").forEach(btn => {
         btn.addEventListener("click", () => {
-            ordersTabsButtons.forEach(b => b.classList.remove("active"));
+            document.querySelectorAll(".timeframe-tab").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
-            currentOrdersTab = btn.dataset.ordersTab;
-            renderOrders();
+            regenerateChartData(); // regenerate pattern to simulate timeframe change
         });
     });
 
-    orderForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const amount = parseFloat(amountInput.value);
-        const price = parseFloat(priceInput.value);
-        const coin = getCoin(currentSymbol);
-        if (!coin) return;
-
-        if (!amount || amount <= 0 || !price || price <= 0) {
-            showStatus("Enter a valid amount and price.", true);
-            return;
-        }
-
-        const total = amount * price;
-        const fee = total * FEE_RATE;
-        const totalWithFee = total + fee;
-
-        if (currentSide === "BUY") {
-            if (balances.USDT < totalWithFee && currentType === "MARKET") {
-                showStatus("Not enough USDT to buy (including fee).", true);
-                return;
-            }
-            if (currentType === "MARKET") {
-                // Market order executes immediately at mid price
-                balances.USDT -= totalWithFee;
-                balances[currentSymbol] = (balances[currentSymbol] || 0) + amount;
-                const order = {
-                    id: nextOrderId++,
-                    symbol: currentSymbol,
-                    side: "BUY",
-                    type: "MARKET",
-                    price,
-                    amount,
-                    total: totalWithFee,
-                    status: "FILLED"
-                };
-                orderHistory.push(order);
-                showStatus("Market buy executed (demo only).");
-            } else {
-                // Limit buy: if limit >= best ask -> fill now; else open order
-                const bestAsk = coin.orderBook.asks.length ? coin.orderBook.asks[0].price : coin.price;
-                if (price >= bestAsk) {
-                    if (balances.USDT < totalWithFee) {
-                        showStatus("Not enough USDT to buy (including fee).", true);
-                        return;
-                    }
-                    balances.USDT -= totalWithFee;
-                    balances[currentSymbol] = (balances[currentSymbol] || 0) + amount;
-                    orderHistory.push({
-                        id: nextOrderId++,
-                        symbol: currentSymbol,
-                        side: "BUY",
-                        type: "LIMIT",
-                        price,
-                        amount,
-                        total: totalWithFee,
-                        status: "FILLED"
-                    });
-                    showStatus("Limit buy immediately filled (price crossed).");
-                } else {
-                    openOrders.push({
-                        id: nextOrderId++,
-                        symbol: currentSymbol,
-                        side: "BUY",
-                        type: "LIMIT",
-                        price,
-                        amount,
-                        total: totalWithFee,
-                        status: "OPEN"
-                    });
-                    showStatus("Limit buy placed (open order).");
-                }
-            }
-        } else {
-            // SELL
-            if ((balances[currentSymbol] || 0) < amount && currentType === "MARKET") {
-                showStatus(`Not enough ${currentSymbol} to sell.`, true);
-                return;
-            }
-            if (currentType === "MARKET") {
-                balances[currentSymbol] -= amount;
-                balances.USDT += total - fee; // fee taken from proceeds
-                orderHistory.push({
-                    id: nextOrderId++,
-                    symbol: currentSymbol,
-                    side: "SELL",
-                    type: "MARKET",
-                    price,
-                    amount,
-                    total: total - fee,
-                    status: "FILLED"
-                });
-                showStatus("Market sell executed (demo only).");
-            } else {
-                const bestBid = coin.orderBook.bids.length ? coin.orderBook.bids[0].price : coin.price;
-                if (price <= bestBid) {
-                    if ((balances[currentSymbol] || 0) < amount) {
-                        showStatus(`Not enough ${currentSymbol} to sell.`, true);
-                        return;
-                    }
-                    balances[currentSymbol] -= amount;
-                    balances.USDT += total - fee;
-                    orderHistory.push({
-                        id: nextOrderId++,
-                        symbol: currentSymbol,
-                        side: "SELL",
-                        type: "LIMIT",
-                        price,
-                        amount,
-                        total: total - fee,
-                        status: "FILLED"
-                    });
-                    showStatus("Limit sell immediately filled (price crossed).");
-                } else {
-                    openOrders.push({
-                        id: nextOrderId++,
-                        symbol: currentSymbol,
-                        side: "SELL",
-                        type: "LIMIT",
-                        price,
-                        amount,
-                        total: total - fee,
-                        status: "OPEN"
-                    });
-                    showStatus("Limit sell placed (open order).");
-                }
-            }
-        }
-
-        amountInput.value = "";
-        recalcTotal();
-        renderWallet();
-        renderOrders();
-    });
-
-    // ===== ORDER BOOK & TRADES SIMULATION =====
-
-    function generateOrderBook(price) {
-        const bids = [];
-        const asks = [];
-        const levels = 10;
-        const step = price * 0.0015; // 0.15%
-
-        for (let i = levels; i >= 1; i--) {
-            const p = price - step * i;
-            bids.push({
-                price: Math.max(0.0001, p),
-                size: Math.random() * 0.7 + 0.01
-            });
-        }
-        for (let i = 1; i <= levels; i++) {
-            const p = price + step * i;
-            asks.push({
-                price: Math.max(0.0001, p),
-                size: Math.random() * 0.7 + 0.01
-            });
-        }
-        return {bids: bids.sort((a, b) => b.price - a.price), asks};
-    }
-
-    function addRandomTrade(coin) {
-        const side = Math.random() > 0.5 ? "BUY" : "SELL";
-        const price = coin.price * (1 + (Math.random() - 0.5) * 0.002);
-        const amount = Math.random() * 0.6 + 0.01;
-        coin.trades.push({side, price, amount});
-        if (coin.trades.length > 40) coin.trades.shift();
-    }
-
-    function simulateTick() {
-        coins.forEach(c => {
-            const drift = 1 + (Math.random() - 0.5) * 0.0035; // ±0.175%
-            c.price = Math.max(0.0001, c.price * drift);
-            c.change += (Math.random() - 0.5) * 0.15;
-            c.orderBook = generateOrderBook(c.price);
-            addRandomTrade(c);
-        });
-
-        matchOpenOrders();
-        renderMarkets();
-        updatePairInfo();
-        renderOrderBook();
-        renderTrades();
-        renderOrders();
-    }
-
-    function matchOpenOrders() {
-        for (let i = openOrders.length - 1; i >= 0; i--) {
-            const o = openOrders[i];
-            const coin = getCoin(o.symbol);
-            if (!coin) continue;
-            const bestAsk = coin.orderBook.asks.length ? coin.orderBook.asks[0].price : coin.price;
-            const bestBid = coin.orderBook.bids.length ? coin.orderBook.bids[0].price : coin.price;
-
-            let shouldFill = false;
-            let fillPrice = coin.price;
-
-            if (o.side === "BUY" && bestAsk <= o.price) {
-                shouldFill = true;
-                fillPrice = bestAsk;
-            } else if (o.side === "SELL" && bestBid >= o.price) {
-                shouldFill = true;
-                fillPrice = bestBid;
-            }
-
-            if (shouldFill) {
-                const total = o.amount * fillPrice;
-                const fee = total * FEE_RATE;
-
-                if (o.side === "BUY") {
-                    if (balances.USDT >= total + fee) {
-                        balances.USDT -= total + fee;
-                        balances[o.symbol] = (balances[o.symbol] || 0) + o.amount;
-                    }
-                } else {
-                    if ((balances[o.symbol] || 0) >= o.amount) {
-                        balances[o.symbol] -= o.amount;
-                        balances.USDT += total - fee;
-                    }
-                }
-
-                orderHistory.push({
-                    ...o,
-                    price: fillPrice,
-                    total: o.side === "BUY" ? total + fee : total - fee,
-                    status: "FILLED"
-                });
-                openOrders.splice(i, 1);
-            }
-        }
-        renderWallet();
-    }
-
-    // ===== INIT =====
-
-    (function init() {
-        // prepare books & trades
-        coins.forEach(c => {
-            c.orderBook = generateOrderBook(c.price);
-            for (let i = 0; i < 8; i++) addRandomTrade(c);
-        });
-
-        renderSymbolSelect();
-        renderMarkets();
-        renderOrderBook();
-        renderTrades();
-        renderWallet();
-        renderOrders();
-        updatePairInfo();
-        setSide("BUY");
-        setOrderType("MARKET");
-
-        setInterval(simulateTick, 6000);
-    })();
+    // ---------- Init ----------
+    updateSelectedMarketUI();
+    renderMarkets();
+    generateOrderBook();
+    generateTrades(true);
+    regenerateChartData();
+    renderOrders();
 </script>
-
 </body>
 </html>
