@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NINAR – Message Center</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Unicons -->
+    <link rel="stylesheet"
+          href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+
+    <!-- If you already have main-style.css, include it BEFORE this block -->
+    <!-- <link rel="stylesheet" href="main-style.css"> -->
+
+    <style>
+        :root {
+            --bg-body: #f5f5ff;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-muted: #9ca3af;
+            --accent: #5b21ff;
+            --accent-soft: rgba(91, 33, 255, 0.08);
+            --danger: #ef4444;
+            --success: #22c55e;
+            --border-subtle: #e5e7eb;
+            --radius-lg: 1.4rem;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+            sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+        }
+
+        .app {
+            display: grid;
+            grid-template-columns: 260px minmax(0, 1fr);
+            min-height: 100vh;
+        }
+
+        .sidebar-placeholder {
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-subtle);
+            padding: 1.4rem 1.2rem;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 0, #fde68a 0, #facc15 30%, #f97316 80%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111827;
+            font-weight: 800;
+        }
+
+        .sidebar-logo span {
+            font-weight: 700;
+            letter-spacing: 0.06em;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.9rem;
+            text-decoration: none;
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .sidebar-menu a i {
+            font-size: 1.1rem;
+        }
+
+        .sidebar-menu a.active {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .sidebar-menu a span {
+            margin-top: 1px;
+        }
+
+        .main {
+            padding: 1.4rem 2rem 2rem;
+        }
+
+        @media (max-width: 960px) {
+            .app {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar-placeholder {
+                display: none;
+            }
+
+            .main {
+                padding: 1rem 1rem 1.6rem;
+            }
+        }
+
+        /* Topbar */
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .topbar-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar-left h1 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+
+        .topbar-left span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .topbar-search {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .search-input {
+            max-width: 340px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            padding: 0.4rem 0.8rem;
+            border: 1px solid var(--border-subtle);
+            gap: 0.4rem;
+        }
+
+        .search-input i {
+            color: var(--text-muted);
+        }
+
+        .search-input input {
+            border: none;
+            outline: none;
+            background: transparent;
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        /* Layout */
+
+        .message-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.8fr);
+            gap: 1.3rem;
+        }
+
+        @media (max-width: 1100px) {
+            .message-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-subtle);
+            padding: 1.2rem 1.3rem;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .card-header span.sub {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .badge {
+            font-size: 0.72rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        /* Conversation filters */
+
+        .filter-tabs {
+            display: inline-flex;
+            background: #f9fafb;
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            padding: 0.17rem;
+        }
+
+        .filter-tabs button {
+            border: none;
+            background: transparent;
+            padding: 0.3rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .filter-tabs button.active {
+            background: var(--accent);
+            color: #ffffff;
+        }
+
+        /* Conversation list */
+
+        .conversations-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .secondary-btn {
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+            padding: 0.3rem 0.7rem;
+            font-size: 0.78rem;
+            background: #f9fafb;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #4b5563;
+        }
+
+        .secondary-btn i {
+            font-size: 0.9rem;
+        }
+
+        .conversation-list {
+            max-height: 480px;
+            overflow-y: auto;
+            margin-top: 0.3rem;
+        }
+
+        .conversation-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .conversation-list::-webkit-scrollbar-thumb {
+            background: #e5e7eb;
+            border-radius: 999px;
+        }
+
+        .conversation-item {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 0.6rem;
+            padding: 0.6rem 0.5rem;
+            border-radius: 0.9rem;
+            cursor: pointer;
+            align-items: center;
+            margin-bottom: 0.2rem;
+        }
+
+        .conversation-item:hover {
+            background: #f9fafb;
+        }
+
+        .conversation-item.active {
+            background: var(--accent-soft);
+        }
+
+        .conv-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #f97316, #facc15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111827;
+            font-weight: 600;
+            font-size: 0.88rem;
+        }
+
+        .conv-avatar.system {
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            color: #ffffff;
+        }
+
+        .conv-avatar.security {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #ffffff;
+        }
+
+        .conv-avatar.support {
+            background: linear-gradient(135deg, #ec4899, #a855f7);
+            color: #ffffff;
+        }
+
+        .conv-main {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+        }
+
+        .conv-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 0.4rem;
+        }
+
+        .conv-title {
+            font-size: 0.86rem;
+            font-weight: 500;
+        }
+
+        .conv-time {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .conv-snippet {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+        }
+
+        .conv-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.25rem;
+        }
+
+        .unread-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 999px;
+            background: #22c55e;
+        }
+
+        .label-pill {
+            font-size: 0.7rem;
+            padding: 0.12rem 0.45rem;
+            border-radius: 999px;
+            background: #f3f4f6;
+            color: var(--text-muted);
+        }
+
+        .label-pill.system {
+            background: rgba(59,130,246,0.12);
+            color: #1d4ed8;
+        }
+
+        .label-pill.support {
+            background: rgba(236,72,153,0.12);
+            color: #be185d;
+        }
+
+        .label-pill.security {
+            background: rgba(22,163,74,0.12);
+            color: #15803d;
+        }
+
+        /* Chat panel */
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 480px;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+            margin-bottom: 0.7rem;
+        }
+
+        .chat-header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .chat-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-title span.name {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .chat-title span.meta {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .chat-header-actions {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .icon-circle-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #6b7280;
+        }
+
+        .chat-body {
+            flex: 1;
+            border-radius: 1rem;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 0.7rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            overflow-y: auto;
+        }
+
+        .chat-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-body::-webkit-scrollbar-thumb {
+            background: #e5e7eb;
+            border-radius: 999px;
+        }
+
+        .chat-day-divider {
+            text-align: center;
+            margin: 0.2rem 0;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .chat-message-row {
+            display: flex;
+            margin: 0.05rem 0;
+        }
+
+        .chat-message-row.me {
+            justify-content: flex-end;
+        }
+
+        .chat-message-row.them {
+            justify-content: flex-start;
+        }
+
+        .chat-bubble {
+            max-width: 75%;
+            padding: 0.45rem 0.65rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            line-height: 1.35;
+            position: relative;
+        }
+
+        .chat-bubble.me {
+            background: linear-gradient(135deg, #5b21ff, #7c3aed);
+            color: #f9fafb;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .chat-bubble.them {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .chat-meta-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+
+        .chat-meta-row.them {
+            justify-content: flex-start;
+        }
+
+        .chat-tag {
+            padding: 0.08rem 0.4rem;
+            border-radius: 999px;
+            background: rgba(59,130,246,0.12);
+            color: #1d4ed8;
+        }
+
+        .chat-tag.system {
+            background: rgba(59,130,246,0.12);
+            color: #1d4ed8;
+        }
+
+        .chat-tag.security {
+            background: rgba(22,163,74,0.12);
+            color: #15803d;
+        }
+
+        /* Composer */
+
+        .chat-composer {
+            margin-top: 0.75rem;
+            border-radius: 1rem;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            padding: 0.5rem 0.6rem;
+        }
+
+        .composer-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 0.5rem;
+        }
+
+        .composer-textarea {
+            flex: 1;
+            border-radius: 0.75rem;
+            border: none;
+            outline: none;
+            resize: none;
+            padding: 0.45rem 0.6rem;
+            background: transparent;
+            font-size: 0.84rem;
+            max-height: 150px;
+        }
+
+        .composer-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            align-items: flex-end;
+        }
+
+        .send-btn {
+            border-radius: 999px;
+            border: none;
+            padding: 0.4rem 0.9rem;
+            font-size: 0.82rem;
+            cursor: pointer;
+            background: linear-gradient(135deg, #5b21ff, #7c3aed);
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .send-btn:active {
+            transform: translateY(1px);
+        }
+
+        .composer-footnote {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        .empty-chat {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.84rem;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <!-- Sidebar – replace with your own include if needed -->
+    <aside class="sidebar-placeholder">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">N</div>
+            <span>NINAR</span>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="index.html">
+                <i class="uil uil-estate"></i><span>Dashboard</span>
+            </a>
+            <a href="exchange.html">
+                <i class="uil uil-exchange"></i><span>Exchange</span>
+            </a>
+            <a href="wallet.html">
+                <i class="uil uil-wallet"></i><span>Wallet</span>
+            </a>
+            <a href="transactions.html">
+                <i class="uil uil-receipt"></i><span>Transactions</span>
+            </a>
+            <a href="analytics.html">
+                <i class="uil uil-analytics"></i><span>Analytics</span>
+            </a>
+            <a href="help-center.html">
+                <i class="uil uil-question-circle"></i><span>Help Center</span>
+            </a>
+            <a href="message-center.html" class="active">
+                <i class="uil uil-chat-bubble-user"></i><span>Message Center</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+        <header class="topbar">
+            <div class="topbar-left">
+                <h1>Message Center</h1>
+                <span>System alerts, support threads and account messages in one place</span>
+            </div>
+            <div class="topbar-search">
+                <div class="search-input">
+                    <i class="uil uil-search"></i>
+                    <input type="text" id="convSearchInput" placeholder="Search messages or threads">
+                </div>
+            </div>
+        </header>
+
+        <section class="message-layout">
+            <!-- LEFT: conversation list -->
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <h2>Conversations</h2>
+                        <span class="sub">All notifications & support chats</span>
+                    </div>
+                    <div class="filter-tabs" id="filterTabs">
+                        <button type="button" class="active" data-filter="all">All</button>
+                        <button type="button" data-filter="system">System</button>
+                        <button type="button" data-filter="support">Support</button>
+                        <button type="button" data-filter="security">Security</button>
+                    </div>
+                </div>
+
+                <div class="conversations-header">
+                    <span id="convSummary">0 conversations</span>
+                    <button type="button" class="secondary-btn" id="newConvBtn">
+                        <i class="uil uil-plus"></i><span>New message</span>
+                    </button>
+                </div>
+
+                <div class="conversation-list" id="conversationList"></div>
+            </section>
+
+            <!-- RIGHT: chat detail -->
+            <section class="card">
+                <div class="chat-container" id="chatContainer">
+                    <!-- Filled by JS -->
+                </div>
+            </section>
+        </section>
+    </main>
+</div>
+
+<script>
+    // ---------- DEMO DATA ----------
+
+    const conversations = [
+        {
+            id: "sys-1",
+            title: "System notifications",
+            type: "system",
+            unread: 2,
+            lastTime: "Today • 10:42 AM",
+            messages: [
+                { from: "them", text: "Welcome to NINAR. This is a demo message center with local data only.", time: "09:05 AM", tag: "system" },
+                { from: "them", text: "Your BTC card ending ··311 was successfully added to the dashboard view.", time: "09:40 AM", tag: "system" },
+                { from: "them", text: "We updated the analytics widget to include your new investments.", time: "10:42 AM", tag: "system" }
+            ]
+        },
+        {
+            id: "support-1",
+            title: "NINAR Support · Exchange UI",
+            type: "support",
+            unread: 1,
+            lastTime: "Yesterday • 8:15 PM",
+            messages: [
+                { from: "me", text: "Hi, I want to know how the demo exchange matches my orders.", time: "07:58 PM" },
+                { from: "them", text: "Hi Nithin, the current version uses only local JavaScript to simulate fills. No real backend is involved.", time: "08:10 PM", tag: "support" },
+                { from: "them", text: "You can safely test the UI without affecting any live funds.", time: "08:15 PM", tag: "support" }
+            ]
+        },
+        {
+            id: "sec-1",
+            title: "Security alerts",
+            type: "security",
+            unread: 0,
+            lastTime: "2 days ago",
+            messages: [
+                { from: "them", text: "We detected a login from a new browser. If this was not you, please update your password.", time: "2 days ago • 09:20 AM", tag: "security" },
+                { from: "them", text: "Tip: In a real app, you should enable 2FA and review active sessions.", time: "2 days ago • 09:21 AM", tag: "security" }
+            ]
+        },
+        {
+            id: "support-2",
+            title: "Design feedback",
+            type: "support",
+            unread: 0,
+            lastTime: "3 days ago",
+            messages: [
+                { from: "me", text: "I’d like to tweak the colors of the cards to match my brand.", time: "3 days ago • 06:05 PM" },
+                { from: "them", text: "You can update the CSS variables in :root so the whole dashboard follows your palette.", time: "3 days ago • 06:18 PM" }
+            ]
+        }
+    ];
+
+    // ---------- STATE ----------
+    let currentFilter = "all";
+    let currentConvId = conversations[0]?.id || null;
+
+    // ---------- DOM ----------
+    const filterTabs = document.getElementById("filterTabs");
+    const conversationListEl = document.getElementById("conversationList");
+    const convSearchInput = document.getElementById("convSearchInput");
+    const convSummary = document.getElementById("convSummary");
+    const chatContainer = document.getElementById("chatContainer");
+    const newConvBtn = document.getElementById("newConvBtn");
+
+    // ---------- HELPERS ----------
+    function formatConversationCount(count) {
+        return count + (count === 1 ? " conversation" : " conversations");
+    }
+
+    function getConversation(id) {
+        return conversations.find(c => c.id === id);
+    }
+
+    // ---------- RENDER CONVERSATIONS ----------
+    function renderConversations() {
+        conversationListEl.innerHTML = "";
+        const q = (convSearchInput.value || "").trim().toLowerCase();
+
+        let filtered = conversations.filter(c => currentFilter === "all" || c.type === currentFilter);
+
+        if (q) {
+            filtered = filtered.filter(c =>
+                c.title.toLowerCase().includes(q) ||
+                (c.messages[c.messages.length - 1]?.text || "").toLowerCase().includes(q)
+            );
+        }
+
+        convSummary.textContent = formatConversationCount(filtered.length);
+
+        if (filtered.length === 0) {
+            conversationListEl.innerHTML =
+                '<div class="empty-chat" style="background:none;border:none;">No conversations match this filter.</div>';
+            return;
+        }
+
+        filtered.forEach(c => {
+            const lastMsg = c.messages[c.messages.length - 1];
+            const snippet = lastMsg ? lastMsg.text.slice(0, 60) + (lastMsg.text.length > 60 ? "…" : "") : "";
+            const item = document.createElement("div");
+            item.className = "conversation-item" + (c.id === currentConvId ? " active" : "");
+            item.dataset.id = c.id;
+
+            const avatarClass = c.type === "system" ? "system" :
+                c.type === "support" ? "support" :
+                    c.type === "security" ? "security" : "";
+
+            const labelClass = c.type;
+
+            const initial = c.title.charAt(0).toUpperCase();
+
+            item.innerHTML = `
+                <div class="conv-avatar ${avatarClass}">${initial}</div>
+                <div class="conv-main">
+                    <div class="conv-title-row">
+                        <span class="conv-title">${c.title}</span>
+                        <span class="conv-time">${c.lastTime}</span>
+                    </div>
+                    <span class="conv-snippet">${snippet}</span>
+                </div>
+                <div class="conv-meta">
+                    <span class="label-pill ${labelClass}">${c.type.charAt(0).toUpperCase() + c.type.slice(1)}</span>
+                    ${c.unread > 0 ? '<span class="unread-dot"></span>' : ""}
+                </div>
+            `;
+
+            conversationListEl.appendChild(item);
+        });
+    }
+
+    // ---------- RENDER CHAT ----------
+    function renderChat() {
+        chatContainer.innerHTML = "";
+
+        const conv = getConversation(currentConvId);
+
+        if (!conv) {
+            chatContainer.innerHTML = `
+                <div class="empty-chat">
+                    Select a conversation from the left to view messages, or start a new one.
+                </div>
+            `;
+            return;
+        }
+
+        const header = document.createElement("div");
+        header.className = "chat-header";
+
+        const avatarClass = conv.type === "system" ? "system" :
+            conv.type === "support" ? "support" :
+                conv.type === "security" ? "security" : "";
+
+        header.innerHTML = `
+            <div class="chat-header-left">
+                <div class="conv-avatar ${avatarClass}">${conv.title.charAt(0).toUpperCase()}</div>
+                <div class="chat-title">
+                    <span class="name">${conv.title}</span>
+                    <span class="meta">
+                        ${conv.type.charAt(0).toUpperCase() + conv.type.slice(1)} · Last updated ${conv.lastTime}
+                    </span>
+                </div>
+            </div>
+            <div class="chat-header-actions">
+                <button class="icon-circle-btn" title="Mark as unread" id="markUnreadBtn">
+                    <i class="uil uil-eye-slash"></i>
+                </button>
+                <button class="icon-circle-btn" title="Pin (demo only)">
+                    <i class="uil uil-bookmark"></i>
+                </button>
+            </div>
+        `;
+
+        const body = document.createElement("div");
+        body.className = "chat-body";
+        body.id = "chatBody";
+
+        if (conv.messages.length === 0) {
+            body.innerHTML = '<div class="empty-chat">No messages yet. Say hi to start the conversation.</div>';
+        } else {
+            conv.messages.forEach(msg => {
+                const row = document.createElement("div");
+                row.className = "chat-message-row " + (msg.from === "me" ? "me" : "them");
+
+                const bubble = document.createElement("div");
+                bubble.className = "chat-bubble " + (msg.from === "me" ? "me" : "them");
+                bubble.textContent = msg.text;
+                row.appendChild(bubble);
+                body.appendChild(row);
+
+                const metaRow = document.createElement("div");
+                metaRow.className = "chat-meta-row " + (msg.from === "me" ? "" : "them");
+                metaRow.innerHTML = `
+                    <span>${msg.time}</span>
+                    ${msg.tag ? `<span class="chat-tag ${msg.tag}">${msg.tag}</span>` : ""}
+                `;
+                body.appendChild(metaRow);
+            });
+        }
+
+        // Composer
+        const composer = document.createElement("div");
+        composer.className = "chat-composer";
+        composer.innerHTML = `
+            <div class="composer-row">
+                <textarea id="composerTextarea" class="composer-textarea" rows="1"
+                    placeholder="Type your message to NINAR here..."></textarea>
+                <div class="composer-actions">
+                    <button type="button" class="send-btn" id="sendMsgBtn">
+                        <span>Send</span><i class="uil uil-message"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="composer-footnote">
+                Messages are stored only in this browser session for demo purposes. Nothing is sent to a server.
+            </div>
+        `;
+
+        chatContainer.appendChild(header);
+        chatContainer.appendChild(body);
+        chatContainer.appendChild(composer);
+
+        // Scroll to bottom
+        body.scrollTop = body.scrollHeight;
+
+        // Attach composer events
+        const textarea = document.getElementById("composerTextarea");
+        const sendBtn = document.getElementById("sendMsgBtn");
+        const markUnreadBtn = document.getElementById("markUnreadBtn");
+
+        textarea.addEventListener("input", () => {
+            textarea.style.height = "auto";
+            textarea.style.height = Math.min(textarea.scrollHeight, 150) + "px";
+        });
+
+        textarea.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendCurrentMessage();
+            }
+        });
+
+        sendBtn.addEventListener("click", () => {
+            sendCurrentMessage();
+        });
+
+        markUnreadBtn.addEventListener("click", () => {
+            conv.unread = Math.max(conv.unread, 1);
+            renderConversations();
+        });
+
+        function sendCurrentMessage() {
+            const text = textarea.value.trim();
+            if (!text) return;
+
+            const time = new Date();
+            const timeStr = time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+            conv.messages.push({
+                from: "me",
+                text,
+                time: timeStr
+            });
+            conv.lastTime = "Just now";
+            conv.unread = 0;
+
+            textarea.value = "";
+            textarea.style.height = "auto";
+
+            renderConversations();
+            renderChat();
+        }
+    }
+
+    // ---------- EVENTS ----------
+    filterTabs.addEventListener("click", (e) => {
+        const btn = e.target.closest("button");
+        if (!btn) return;
+        const filter = btn.dataset.filter;
+        if (!filter) return;
+
+        filterTabs.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        currentFilter = filter;
+        renderConversations();
+    });
+
+    convSearchInput.addEventListener("input", () => {
+        renderConversations();
+    });
+
+    conversationListEl.addEventListener("click", (e) => {
+        const item = e.target.closest(".conversation-item");
+        if (!item) return;
+        const id = item.dataset.id;
+        currentConvId = id;
+
+        const conv = getConversation(id);
+        if (conv) conv.unread = 0;
+
+        renderConversations();
+        renderChat();
+    });
+
+    newConvBtn.addEventListener("click", () => {
+        const id = "support-" + (conversations.length + 1);
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+        const newConv = {
+            id,
+            title: "New support thread",
+            type: "support",
+            unread: 0,
+            lastTime: "Just now",
+            messages: [
+                { from: "me", text: "Hi NINAR, I have a new question about my dashboard.", time: timeStr }
+            ]
+        };
+        conversations.unshift(newConv);
+        currentConvId = id;
+        currentFilter = "all";
+        filterTabs.querySelectorAll("button").forEach(b => {
+            b.classList.toggle("active", b.dataset.filter === "all");
+        });
+        convSearchInput.value = "";
+        renderConversations();
+        renderChat();
+    });
+
+    // ---------- INIT ----------
+    (function init() {
+        if (!currentConvId && conversations.length > 0) {
+            currentConvId = conversations[0].id;
+        }
+        renderConversations();
+        renderChat();
+    })();
+
+    
+//Sidebar Menu
+
+const Sidebar = document.querySelector(".sidebar")
+const closeSidebarbtn = document.querySelector(".sidebar_close-btn")
+const openSidebarbtn = document.querySelector(".nav_menu-btn")
+
+openSidebarbtn.addEventListener("click", () => {
+   Sidebar.style.display = "flex";
+})
+
+closeSidebarbtn.addEventListener("click", () => {
+   Sidebar.style.display = "none";
+})
+
+
+// Theme Toggel
+
+const themeBtn = document.querySelector(".nav_theme-btn");
+
+themeBtn.addEventListener("click", () => {
+    document.body.classList.toggle("dark-theme")
+    if(document.body.classList.contains("dark-theme")){
+        themeBtn.innerHTML = '<i class="uil uil-sun"></i>'
+
+        localStorage.setItem("currentTheme", "dark-theme")
+    } else {
+        themeBtn.innerHTML = '<i class="uil uil-moon"></i>'
+
+        localStorage.setItem("currentTheme", " ")
+
+    }
+})
+
+document.body.className =localStorage.getItem("currentTheme")
+if(document.body.classList.contains("dark-theme")){
+    themeBtn.innerHTML = '<i class="uil uil-sun"></i>'
+
+    localStorage.setItem("currentTheme", "dark-theme")
+} else {
+    themeBtn.innerHTML = '<i class="uil uil-moon"></i>'
+
+    localStorage.setItem("currentTheme", " ")
+
+}
+
+
+</script>
+
+</body>
+</html>

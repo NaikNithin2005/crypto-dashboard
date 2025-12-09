@@ -215,7 +215,7 @@ nav{
     width: 10rem;
     /*need to change height acc. to logo or remove it add a logo which has a width[rectangle] */
     height: 4rem;
-    background-color: var(--color-gray-dark);
+    background-color: black;
     border-radius: var(--radius-3);
     padding: 0.2rem;
     margin-top: 1rem;

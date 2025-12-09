@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NINAR – Help Center</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Unicons -->
+    <link rel="stylesheet"
+          href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+    <link rel="stylesheet" href="/main-style.css">
+
+    <!-- If you already have main-style.css, include it BEFORE this block -->
+    <!-- <link rel="stylesheet" href="main-style.css"> -->
+
+    <style>
+        :root {
+            --bg-body: #f5f5ff;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-muted: #9ca3af;
+            --accent: #5b21ff;
+            --accent-soft: rgba(91, 33, 255, 0.08);
+            --danger: #ef4444;
+            --success: #22c55e;
+            --border-subtle: #e5e7eb;
+            --radius-lg: 1.4rem;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+            sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+        }
+
+        .app {
+            display: grid;
+            grid-template-columns: 260px minmax(0, 1fr);
+            min-height: 100vh;
+        }
+
+        .sidebar-placeholder {
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-subtle);
+            padding: 1.4rem 1.2rem;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 0, #fde68a 0, #facc15 30%, #f97316 80%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111827;
+            font-weight: 800;
+        }
+
+        .sidebar-logo span {
+            font-weight: 700;
+            letter-spacing: 0.06em;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.9rem;
+            text-decoration: none;
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .sidebar-menu a i {
+            font-size: 1.1rem;
+        }
+
+        .sidebar-menu a.active {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .sidebar-menu a span {
+            margin-top: 1px;
+        }
+
+        .main {
+            padding: 1.4rem 2rem 2rem;
+        }
+
+        @media (max-width: 960px) {
+            .app {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar-placeholder {
+                display: none;
+            }
+
+            .main {
+                padding: 1rem 1rem 1.6rem;
+            }
+        }
+
+        /* Topbar */
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .topbar-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar-left h1 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+
+        .topbar-left span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .topbar-search {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .search-input {
+            max-width: 340px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            padding: 0.4rem 0.8rem;
+            border: 1px solid var(--border-subtle);
+            gap: 0.4rem;
+        }
+
+        .search-input i {
+            color: var(--text-muted);
+        }
+
+        .search-input input {
+            border: none;
+            outline: none;
+            background: transparent;
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        /* Layout inside help center */
+
+        .help-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1100px) {
+            .help-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-subtle);
+            padding: 1.2rem 1.3rem;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .card-header span.sub {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .badge {
+            font-size: 0.72rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        /* Category chips */
+
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .category-chip {
+            border-radius: 999px;
+            padding: 0.35rem 0.8rem;
+            font-size: 0.78rem;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .category-chip i {
+            font-size: 0.9rem;
+        }
+
+        .category-chip.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #ffffff;
+        }
+
+        /* FAQ accordion */
+
+        .faq-list {
+            margin-top: 0.5rem;
+        }
+
+        .faq-item {
+            border-radius: 1rem;
+            border: 1px solid #e5e7eb;
+            background: #fafafa;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+
+        .faq-header {
+            padding: 0.7rem 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .faq-header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+        }
+
+        .faq-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 1rem;
+        }
+
+        .faq-title {
+            font-size: 0.86rem;
+            font-weight: 500;
+        }
+
+        .faq-category-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .faq-toggle-icon {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        .faq-body {
+            padding: 0 0.9rem 0.75rem;
+            display: none;
+            font-size: 0.8rem;
+            color: #4b5563;
+        }
+
+        .faq-body.open {
+            display: block;
+        }
+
+        .faq-body p {
+            margin: 0.35rem 0;
+        }
+
+        .faq-tags {
+            margin-top: 0.3rem;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state {
+            padding: 0.8rem 0.2rem;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        /* Right column: contact + quick links */
+
+        .input-group {
+            margin-bottom: 0.8rem;
+            font-size: 0.84rem;
+        }
+
+        .input-group label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.2rem;
+            color: var(--text-muted);
+        }
+
+        .input-group label span.title {
+            color: #111827;
+            font-weight: 500;
+        }
+
+        .input-group label span.info {
+            font-size: 0.75rem;
+        }
+
+        .input-group input,
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            border-radius: 0.8rem;
+            border: 1px solid #e5e7eb;
+            padding: 0.55rem 0.7rem;
+            font-size: 0.86rem;
+            outline: none;
+            background: #f9fafb;
+            resize: vertical;
+        }
+
+        .input-group textarea {
+            min-height: 90px;
+            max-height: 220px;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus,
+        .input-group select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px rgba(91, 33, 255, 0.15);
+            background: #ffffff;
+        }
+
+        .primary-btn {
+            width: 100%;
+            border-radius: 999px;
+            border: none;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            cursor: pointer;
+            background: linear-gradient(135deg, #5b21ff, #7c3aed);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .primary-btn:active {
+            transform: translateY(1px);
+        }
+
+        .status-msg {
+            margin-top: 0.45rem;
+            font-size: 0.78rem;
+        }
+
+        .status-success {
+            color: var(--success);
+        }
+
+        .status-error {
+            color: var(--danger);
+        }
+
+        .support-footnote {
+            margin-top: 0.35rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.7rem;
+            margin-top: 0.3rem;
+        }
+
+        @media (max-width: 480px) {
+            .quick-links {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .quick-link-card {
+            border-radius: 1rem;
+            border: 1px solid #e5e7eb;
+            padding: 0.6rem 0.7rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            background: #fafafa;
+            cursor: pointer;
+        }
+
+        .quick-link-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--accent);
+        }
+
+        .quick-link-text span.title {
+            font-weight: 500;
+            display: block;
+        }
+
+        .quick-link-text span.desc {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .tickets-list {
+            margin-top: 0.4rem;
+            font-size: 0.8rem;
+        }
+
+        .ticket-row {
+            display: grid;
+            grid-template-columns: 1.4fr 0.8fr 0.7fr;
+            padding: 0.28rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .ticket-row:last-child {
+            border-bottom: none;
+        }
+
+        .ticket-id {
+            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+            Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        .badge-status {
+            font-size: 0.7rem;
+            padding: 0.12rem 0.5rem;
+            border-radius: 999px;
+            display: inline-block;
+        }
+
+        .badge-status.open {
+            background: rgba(234, 179, 8, 0.2);
+            color: #854d0e;
+        }
+
+        .badge-status.resolved {
+            background: rgba(34, 197, 94, 0.18);
+            color: #166534;
+        }
+
+        .badge-status.pending {
+            background: rgba(59, 130, 246, 0.18);
+            color: #1d4ed8;
+        }
+
+        .ticket-priority {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+        }
+
+        .chips-inline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-top: 0.3rem;
+            font-size: 0.72rem;
+        }
+
+        .chip-small {
+            border-radius: 999px;
+            padding: 0.18rem 0.45rem;
+            background: #f3f4f6;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+<!--++++NAV BAR++++-->
+    <nav>
+        <div class="container nav_container">
+            <a href="./main-index.html" class="nav_logo">
+                <img src="./assets/images/ninar logo.png" alt="logo">
+            </a>
+            <div class="nav_search">
+                <i class="uil uil-search"></i>
+                <input type="search" placeholder="search">
+
+            </div>
+            <div class="nav_profile-wrapper">
+                <button class="nav_theme-btn">
+                    <i class="uil uil-moon"></i>
+                </button>
+                <div class="nav_profile">
+                    <div class="nav_profile-photo">
+                        
+                        <img src="https://tse1.explicit.bing.net/th/id/OIP.hGSCbXlcOjL_9mmzerqAbQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="profile photo">
+                    </div>
+                    <h5>Nithin</h5>
+                    <i class="uil uil-angle-down"></i>
+                </div>
+                <button class="nav_menu-btn">
+                    <i class="uil uil-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+<!--+++++SIDEBAR++++-->
+
+    <menu class="sidebar">
+        <a href="main-index.html" class="active">
+            <i class="uil uil-create-dashboard"></i>
+            <h5>Dashboard</h5>
+        </a>
+
+        <a href="./pages/exchange/exchange.html">
+            <i class="uil uil-exchange"></i>
+            <h5>Exchange</h5>
+        </a>
+
+        <a href="/pages/wallet/wallet.html">
+            <i class="uil uil-wallet"></i>
+            <h5>Wallet</h5>
+        </a>
+
+        <a href="/pages/transactions/transaction.html">
+            <i class="uil uil-transaction"></i>
+            <h5>Transacations</h5>
+        </a>
+
+        <a href="./pages/analytics/analytics.html">
+            <i class="uil uil-chart-line"></i>
+            <h5>Analytics</h5>
+        </a>
+
+        <a href="./pages/message/message.html">
+            <i class="uil uil-comment-alt-message"></i>
+            <h5>Message</h5>
+        </a>
+
+        <a href="./pages/help/help.html">
+            <i class="uil uil-question-circle"></i>
+            <h5>Help Center</h5>
+        </a>
+
+        <a href="./pages/settings/settings.html">
+            <i class="uil uil-setting"></i>
+            <h5>Settings</h5>
+        </a>
+
+        <button class="sidebar_close-btn">
+            <i class="uil uil-times"></i>
+        </button>
+
+    </menu>
+
+    <!-- Main -->
+    <main class="main">
+        <header class="topbar">
+            <div class="topbar-left">
+                <h1>Help Center</h1>
+                <span>Find quick answers, or contact NINAR support</span>
+            </div>
+            <div class="topbar-search">
+                <div class="search-input">
+                    <i class="uil uil-search"></i>
+                    <input type="text" id="faqSearchInput" placeholder="Search in Help Center">
+                </div>
+            </div>
+        </header>
+
+        <section class="help-layout">
+            <!-- LEFT: FAQ & categories -->
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <h2>FAQs & Guides</h2>
+                        <span class="sub">Browse common questions about using NINAR</span>
+                    </div>
+                    <span class="badge" id="faqCountBadge">0 results</span>
+                </div>
+
+                <!-- Category chips -->
+                <div class="categories" id="categoryChips">
+                    <button class="category-chip active" data-category="all">
+                        <i class="uil uil-apps"></i><span>All topics</span>
+                    </button>
+                    <button class="category-chip" data-category="account">
+                        <i class="uil uil-user"></i><span>Account & Profile</span>
+                    </button>
+                    <button class="category-chip" data-category="wallet">
+                        <i class="uil uil-wallet"></i><span>Wallet & Payments</span>
+                    </button>
+                    <button class="category-chip" data-category="trading">
+                        <i class="uil uil-chart-line"></i><span>Trading & Orders</span>
+                    </button>
+                    <button class="category-chip" data-category="security">
+                        <i class="uil uil-shield-check"></i><span>Security</span>
+                    </button>
+                    <button class="category-chip" data-category="other">
+                        <i class="uil uil-info-circle"></i><span>Other</span>
+                    </button>
+                </div>
+
+                <!-- FAQ list -->
+                <div class="faq-list" id="faqList"></div>
+            </section>
+
+            <!-- RIGHT: contact + quick links + tickets -->
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <h2>Contact Support</h2>
+                        <span class="sub">Still stuck? Open a support request</span>
+                    </div>
+                </div>
+
+                <form id="supportForm">
+                    <div class="input-group">
+                        <label>
+                            <span class="title">Your email</span>
+                            <span class="info">We reply here</span>
+                        </label>
+                        <input type="email" id="supportEmail" placeholder="name@example.com" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>
+                            <span class="title">Topic</span>
+                            <span class="info">What do you need help with?</span>
+                        </label>
+                        <select id="supportTopic">
+                            <option value="General question">General question</option>
+                            <option value="Account & verification">Account & verification</option>
+                            <option value="Wallet & deposits">Wallet & deposits</option>
+                            <option value="Trading & orders">Trading & orders</option>
+                            <option value="Security & login">Security & login</option>
+                            <option value="Bug / UI issue">Bug / UI issue</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>
+                            <span class="title">Subject</span>
+                        </label>
+                        <input type="text" id="supportSubject" placeholder="Short summary of your issue" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>
+                            <span class="title">Message</span>
+                            <span class="info">Include device, browser, steps to reproduce if possible</span>
+                        </label>
+                        <textarea id="supportMessage" placeholder="Describe what happened..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="primary-btn">
+                        <i class="uil uil-message"></i>
+                        <span>Send to NINAR Support (demo)</span>
+                    </button>
+
+                    <div id="supportStatus" class="status-msg"></div>
+
+                    <div class="support-footnote">
+                        This is a front-end demo only. In a real app, this form would send your ticket
+                        to a support backend or email system.
+                    </div>
+                </form>
+
+                <div style="margin-top: 1rem; border-top: 1px solid #f3f4f6; padding-top: 0.8rem;">
+                    <div class="card-header" style="padding:0; margin-bottom:0.5rem;">
+                        <div>
+                            <h2 style="font-size:0.95rem;">Quick links</h2>
+                            <span class="sub">Jump into common areas</span>
+                        </div>
+                    </div>
+
+                    <div class="quick-links">
+                        <div class="quick-link-card" data-link="exchange.html">
+                            <div class="quick-link-icon"><i class="uil uil-exchange"></i></div>
+                            <div class="quick-link-text">
+                                <span class="title">Trading guide</span>
+                                <span class="desc">Understand orders, fees & watchlist</span>
+                            </div>
+                        </div>
+                        <div class="quick-link-card" data-link="wallet.html">
+                            <div class="quick-link-icon"><i class="uil uil-wallet"></i></div>
+                            <div class="quick-link-text">
+                                <span class="title">Wallet overview</span>
+                                <span class="desc">Top up or review your balances</span>
+                            </div>
+                        </div>
+                        <div class="quick-link-card" data-link="#">
+                            <div class="quick-link-icon"><i class="uil uil-shield-check"></i></div>
+                            <div class="quick-link-text">
+                                <span class="title">Security checklist</span>
+                                <span class="desc">Keep your NINAR account safe</span>
+                            </div>
+                        </div>
+                        <div class="quick-link-card" data-link="#">
+                            <div class="quick-link-icon"><i class="uil uil-document-layout-left"></i></div>
+                            <div class="quick-link-text">
+                                <span class="title">Terms & policies</span>
+                                <span class="desc">Review legal & compliance docs</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1rem; border-top: 1px solid #f3f4f6; padding-top: 0.8rem;">
+                    <div class="card-header" style="padding:0; margin-bottom:0.4rem;">
+                        <div>
+                            <h2 style="font-size:0.95rem;">Your recent tickets</h2>
+                            <span class="sub">Demo timeline of support requests</span>
+                        </div>
+                    </div>
+
+                    <div class="tickets-list" id="ticketsList">
+                        <!-- Filled by JS -->
+                    </div>
+
+                    <div class="chips-inline">
+                        <span class="chip-small">Avg. response &lt; 12 hrs</span>
+                        <span class="chip-small">Priority support for verified users</span>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+
+<script>
+    // ---------- FAQ DATA (STATIC) ----------
+    const faqs = [
+        {
+            id: 1,
+            category: "account",
+            title: "How do I verify my NINAR account?",
+            body: [
+                "In a real application, verification would be handled in a dedicated KYC screen.",
+                "Typical steps are: submit basic details, upload ID documents, and wait for review.",
+                "For this demo dashboard, verification is only shown in the UI and does not send any data."
+            ],
+            tags: ["verification", "profile", "limits"]
+        },
+        {
+            id: 2,
+            category: "wallet",
+            title: "Where can I see my wallet balance and recent deposits?",
+            body: [
+                "Open the Wallet page from the sidebar to view total balance per coin.",
+                "The wallet section inside the Exchange view also shows a compact balance summary.",
+                "In this static demo, all wallet values are stored in JavaScript and reset on refresh."
+            ],
+            tags: ["wallet", "balances", "deposits"]
+        },
+        {
+            id: 3,
+            category: "trading",
+            title: "How does the NINAR Exchange simulator work?",
+            body: [
+                "The Exchange page uses local JavaScript to simulate prices, order book, and trades.",
+                "When you place a market order, it instantly updates balances and order history on the client only.",
+                "There is no real matching engine or backend, so no real money is involved."
+            ],
+            tags: ["exchange", "orders", "simulation"]
+        },
+        {
+            id: 4,
+            category: "trading",
+            title: "What is the difference between Market and Limit orders?",
+            body: [
+                "A Market order executes immediately at the best available price in the book.",
+                "A Limit order lets you set your own price. It will only fill if the market price reaches your limit.",
+                "In this demo, limit orders that cross the simulated order book are filled instantly; others become open orders."
+            ],
+            tags: ["market", "limit", "order types"]
+        },
+        {
+            id: 5,
+            category: "security",
+            title: "How can I keep my demo account secure?",
+            body: [
+                "In a live product, you should enable 2FA, use a strong password, and avoid sharing login details.",
+                "This NINAR dashboard is client-side only for demo purposes, so it does not store real credentials.",
+                "When you implement a backend, never expose private keys or API secrets in the frontend."
+            ],
+            tags: ["2fa", "password", "safety"]
+        },
+        {
+            id: 6,
+            category: "wallet",
+            title: "Why do my balances reset after refreshing the page?",
+            body: [
+                "All balances and trade data in this project are kept only in memory inside the browser.",
+                "Refreshing the page reloads the script, so everything returns to the initial demo state.",
+                "To make balances persistent, you would connect a real backend and database."
+            ],
+            tags: ["reset", "demo", "local data"]
+        },
+        {
+            id: 7,
+            category: "account",
+            title: "Can I switch between light and dark mode?",
+            body: [
+                "You can design a theme toggle (like the moon icon in your dashboard header).",
+                "A common pattern is to store the selected theme in localStorage and apply CSS variables.",
+                "This help center page uses the same base theme variables as the dashboard and exchange."
+            ],
+            tags: ["theme", "design", "ui"]
+        },
+        {
+            id: 8,
+            category: "other",
+            title: "Is this NINAR dashboard connected to real crypto markets?",
+            body: [
+                "No. All prices, order book entries, and trades are generated on the client using random ticks.",
+                "You can later replace the simulated data with real APIs (for example, web sockets from an exchange) while keeping this UI.",
+                "The current setup is safe for demos and UI experiments."
+            ],
+            tags: ["real data", "api", "markets"]
+        }
+    ];
+
+    // ---------- DEMO TICKETS ----------
+    const demoTickets = [
+        { id: "#NIN-10234", subject: "Unable to place demo order", status: "resolved", priority: "Normal" },
+        { id: "#NIN-10212", subject: "Feedback on dashboard UI", status: "pending", priority: "Low" },
+        { id: "#NIN-10187", subject: "Question about wallet reset", status: "open", priority: "Normal" }
+    ];
+
+    // ---------- DOM ----------
+    const faqListEl = document.getElementById("faqList");
+    const faqSearchInput = document.getElementById("faqSearchInput");
+    const categoryChips = document.querySelectorAll(".category-chip");
+    const faqCountBadge = document.getElementById("faqCountBadge");
+
+    const supportForm = document.getElementById("supportForm");
+    const supportEmail = document.getElementById("supportEmail");
+    const supportTopic = document.getElementById("supportTopic");
+    const supportSubject = document.getElementById("supportSubject");
+    const supportMessage = document.getElementById("supportMessage");
+    const supportStatus = document.getElementById("supportStatus");
+
+    const quickLinkCards = document.querySelectorAll(".quick-link-card");
+    const ticketsList = document.getElementById("ticketsList");
+
+    let currentCategory = "all";
+
+    // ---------- FAQ RENDERING ----------
+    function renderFaqs() {
+        faqListEl.innerHTML = "";
+        const q = (faqSearchInput.value || "").trim().toLowerCase();
+
+        let filtered = faqs.filter(f => currentCategory === "all" || f.category === currentCategory);
+
+        if (q) {
+            filtered = filtered.filter(f =>
+                f.title.toLowerCase().includes(q) ||
+                f.body.join(" ").toLowerCase().includes(q) ||
+                f.tags.some(tag => tag.toLowerCase().includes(q))
+            );
+        }
+
+        faqCountBadge.textContent = filtered.length + (filtered.length === 1 ? " result" : " results");
+
+        if (filtered.length === 0) {
+            faqListEl.innerHTML = '<div class="empty-state">No articles found for this search. Try another keyword or topic.</div>';
+            return;
+        }
+
+        filtered.forEach(f => {
+            const item = document.createElement("div");
+            item.className = "faq-item";
+            item.dataset.id = f.id;
+
+            const categoryLabel = ({
+                account: "Account & Profile",
+                wallet: "Wallet & Payments",
+                trading: "Trading & Orders",
+                security: "Security",
+                other: "Other"
+            })[f.category] || "General";
+
+            item.innerHTML = `
+                <div class="faq-header">
+                    <div class="faq-header-left">
+                        <div class="faq-icon"><i class="uil uil-question-circle"></i></div>
+                        <div>
+                            <div class="faq-title">${f.title}</div>
+                            <div class="faq-category-label">${categoryLabel}</div>
+                        </div>
+                    </div>
+                    <div class="faq-toggle-icon">
+                        <i class="uil uil-angle-down"></i>
+                    </div>
+                </div>
+                <div class="faq-body">
+                    ${f.body.map(p => `<p>${p}</p>`).join("")}
+                    <div class="faq-tags">
+                        Tags: ${f.tags.map(t => `<span>#${t}</span>`).join(" ")}
+                    </div>
+                </div>
+            `;
+            faqListEl.appendChild(item);
+        });
+    }
+
+    // ---------- FAQ EVENTS ----------
+    faqListEl.addEventListener("click", (e) => {
+        const header = e.target.closest(".faq-header");
+        if (!header) return;
+        const item = header.parentElement;
+        const body = item.querySelector(".faq-body");
+        const icon = item.querySelector(".faq-toggle-icon i");
+        const isOpen = body.classList.contains("open");
+
+        // close others
+        faqListEl.querySelectorAll(".faq-body.open").forEach(b => {
+            if (b !== body) {
+                b.classList.remove("open");
+                const i = b.parentElement.querySelector(".faq-toggle-icon i");
+                i.className = "uil uil-angle-down";
+            }
+        });
+
+        if (isOpen) {
+            body.classList.remove("open");
+            icon.className = "uil uil-angle-down";
+        } else {
+            body.classList.add("open");
+            icon.className = "uil uil-angle-up";
+        }
+    });
+
+    categoryChips.forEach(chip => {
+        chip.addEventListener("click", () => {
+            categoryChips.forEach(c => c.classList.remove("active"));
+            chip.classList.add("active");
+            currentCategory = chip.dataset.category;
+            renderFaqs();
+        });
+    });
+
+    faqSearchInput.addEventListener("input", () => {
+        renderFaqs();
+    });
+
+    // ---------- SUPPORT FORM ----------
+    supportForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        supportStatus.textContent = "";
+        supportStatus.className = "status-msg";
+
+        const email = supportEmail.value.trim();
+        const subject = supportSubject.value.trim();
+        const message = supportMessage.value.trim();
+
+        if (!email || !subject || !message) {
+            supportStatus.textContent = "Please fill in all required fields.";
+            supportStatus.classList.add("status-error");
+            return;
+        }
+
+        // Demo: push fake ticket
+        const newId = "#NIN-" + (Math.floor(Math.random() * 9000) + 11000);
+        demoTickets.unshift({
+            id: newId,
+            subject,
+            status: "open",
+            priority: "Normal"
+        });
+
+        renderTickets();
+
+        supportForm.reset();
+        supportTopic.value = "General question";
+
+        supportStatus.textContent = "Your message has been captured in this demo. In a real app, it would be sent to NINAR Support.";
+        supportStatus.classList.add("status-success");
+    });
+
+    // ---------- QUICK LINKS ----------
+    quickLinkCards.forEach(card => {
+        card.addEventListener("click", () => {
+            const link = card.dataset.link;
+            if (!link || link === "#") return;
+            window.location.href = link;
+        });
+    });
+
+    // ---------- TICKETS ----------
+    function renderTickets() {
+        ticketsList.innerHTML = "";
+        if (demoTickets.length === 0) {
+            ticketsList.innerHTML = '<div class="empty-state">No tickets yet. Submit the form above to create a demo ticket.</div>';
+            return;
+        }
+
+        demoTickets.slice(0, 4).forEach(t => {
+            const row = document.createElement("div");
+            row.className = "ticket-row";
+            const statusClass = t.status === "resolved" ? "resolved" :
+                t.status === "pending" ? "pending" : "open";
+            row.innerHTML = `
+                <span>
+                    <span class="ticket-id">${t.id}</span><br>
+                    <span>${t.subject}</span>
+                </span>
+                <span>
+                    <span class="badge-status ${statusClass}">${t.status}</span>
+                </span>
+                <span class="ticket-priority">${t.priority}</span>
+            `;
+            ticketsList.appendChild(row);
+        });
+    }
+
+    // ---------- INIT ----------
+    (function init() {
+        renderFaqs();
+        renderTickets();
+    })();
+
+    
+//Sidebar Menu
+
+const Sidebar = document.querySelector(".sidebar")
+const closeSidebarbtn = document.querySelector(".sidebar_close-btn")
+const openSidebarbtn = document.querySelector(".nav_menu-btn")
+
+openSidebarbtn.addEventListener("click", () => {
+   Sidebar.style.display = "flex";
+})
+
+closeSidebarbtn.addEventListener("click", () => {
+   Sidebar.style.display = "none";
+})
+
+
+// Theme Toggel
+
+const themeBtn = document.querySelector(".nav_theme-btn");
+
+themeBtn.addEventListener("click", () => {
+    document.body.classList.toggle("dark-theme")
+    if(document.body.classList.contains("dark-theme")){
+        themeBtn.innerHTML = '<i class="uil uil-sun"></i>'
+
+        localStorage.setItem("currentTheme", "dark-theme")
+    } else {
+        themeBtn.innerHTML = '<i class="uil uil-moon"></i>'
+
+        localStorage.setItem("currentTheme", " ")
+
+    }
+})
+
+document.body.className =localStorage.getItem("currentTheme")
+if(document.body.classList.contains("dark-theme")){
+    themeBtn.innerHTML = '<i class="uil uil-sun"></i>'
+
+    localStorage.setItem("currentTheme", "dark-theme")
+} else {
+    themeBtn.innerHTML = '<i class="uil uil-moon"></i>'
+
+    localStorage.setItem("currentTheme", " ")
+
+}
+
+</script>
+
+</body>
+</html>

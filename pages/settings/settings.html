@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NINAR – Settings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Unicons -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+    <link rel="stylesheet" href="/main-style.css">
+
+    <style>
+        :root {
+            --bg-body: #f5f5ff;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-muted: #9ca3af;
+            --accent: #5b21ff;
+            --accent-soft: rgba(91, 33, 255, 0.08);
+            --danger: #ef4444;
+            --success: #22c55e;
+            --border-subtle: #e5e7eb;
+            --radius-lg: 1.4rem;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, sans-serif;
+            background: var(--bg-body);
+        }
+
+        .app {
+            display: grid;
+            grid-template-columns: 260px minmax(0,1fr);
+            min-height: 100vh;
+        }
+
+        .sidebar-placeholder {
+            background: white;
+            padding: 1.4rem;
+            border-right: 1px solid #e5e7eb;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            padding: .6rem .8rem;
+            margin-bottom: .2rem;
+            border-radius: 1rem;
+            text-decoration: none;
+            font-size: .9rem;
+            align-items: center;
+            gap:.6rem;
+            color: #6b7280;
+        }
+
+        .sidebar-menu a.active {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .main {
+            padding: 1.5rem 2rem;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.6rem;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            margin-bottom: .8rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-group label {
+            font-size: .85rem;
+            color: #6b7280;
+        }
+
+        .input-group input, select {
+            width: 100%;
+            padding: .6rem;
+            margin-top:.3rem;
+            border-radius: .7rem;
+            border: 1px solid #ddd;
+            font-size: .9rem;
+        }
+
+        .toggle {
+            display:flex;
+            justify-content: space-between;
+            margin-bottom:.8rem;
+            font-size:.9rem;
+        }
+
+        .toggle input {
+            width: 50px;
+        }
+
+        .save-btn {
+            width:100%;
+            background: var(--accent);
+            color:white;
+            padding: .8rem;
+            border:none;
+            font-size:1rem;
+            border-radius: 1rem;
+            cursor:pointer;
+        }
+
+        .success-msg {
+            margin-top: .7rem;
+            display:none;
+            text-align:center;
+            color: var(--success);
+            font-size: .85rem;
+        }
+
+        .danger-zone {
+            border:1px solid #fda4af;
+            background:#fff1f2;
+            padding:1rem;
+            border-radius:1rem;
+        }
+
+        .danger-btn {
+            background: #ef4444;
+            color:white;
+            padding:.7rem;
+            border:none;
+            width:100%;
+            border-radius:1rem;
+            cursor:pointer;
+            margin-top:.5rem;
+        }
+
+        @media(max-width:900px){
+            .app { grid-template-columns:1fr; }
+            .sidebar-placeholder { display:none; }
+            .main { padding:1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!--++++NAV BAR++++-->
+    <nav>
+        <div class="container nav_container">
+            <a href="./main-index.html" class="nav_logo">
+                <img src="./assets/images/ninar logo.png" alt="logo">
+            </a>
+            <div class="nav_search">
+                <i class="uil uil-search"></i>
+                <input type="search" placeholder="search">
+
+            </div>
+            <div class="nav_profile-wrapper">
+                <button class="nav_theme-btn">
+                    <i class="uil uil-moon"></i>
+                </button>
+                <div class="nav_profile">
+                    <div class="nav_profile-photo">
+                        
+                        <img src="https://tse1.explicit.bing.net/th/id/OIP.hGSCbXlcOjL_9mmzerqAbQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="profile photo">
+                    </div>
+                    <h5>Nithin</h5>
+                    <i class="uil uil-angle-down"></i>
+                </div>
+                <button class="nav_menu-btn">
+                    <i class="uil uil-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+<!--+++++SIDEBAR++++-->
+
+    <menu class="sidebar">
+        <a href="main-index.html" class="active">
+            <i class="uil uil-create-dashboard"></i>
+            <h5>Dashboard</h5>
+        </a>
+
+        <a href="./pages/exchange/exchange.html">
+            <i class="uil uil-exchange"></i>
+            <h5>Exchange</h5>
+        </a>
+
+        <a href="/pages/wallet/wallet.html">
+            <i class="uil uil-wallet"></i>
+            <h5>Wallet</h5>
+        </a>
+
+        <a href="/pages/transactions/transaction.html">
+            <i class="uil uil-transaction"></i>
+            <h5>Transacations</h5>
+        </a>
+
+        <a href="./pages/analytics/analytics.html">
+            <i class="uil uil-chart-line"></i>
+            <h5>Analytics</h5>
+        </a>
+
+        <a href="./pages/message/message.html">
+            <i class="uil uil-comment-alt-message"></i>
+            <h5>Message</h5>
+        </a>
+
+        <a href="./pages/help/help.html">
+            <i class="uil uil-question-circle"></i>
+            <h5>Help Center</h5>
+        </a>
+
+        <a href="./pages/settings/settings.html">
+            <i class="uil uil-setting"></i>
+            <h5>Settings</h5>
+        </a>
+
+        <button class="sidebar_close-btn">
+            <i class="uil uil-times"></i>
+        </button>
+
+    </menu>
+
+
+    <!-- Main -->
+    <main class="main">
+        <h1>Settings</h1>
+        <p style="color:#6b7280;margin-bottom:1.5rem;">Manage preferences, security and account profile</p>
+
+        <!-- Profile -->
+        <div class="card">
+            <div class="section-title">Profile Details</div>
+
+            <div class="input-group">
+                <label>Full Name</label>
+                <input id="nameInput" type="text" placeholder="Your name here">
+            </div>
+
+            <div class="input-group">
+                <label>Email</label>
+                <input id="emailInput" type="email" placeholder="example@gmail.com">
+            </div>
+
+            <div class="input-group">
+                <label>Username</label>
+                <input id="usernameInput" type="text" placeholder="@username">
+            </div>
+        </div>
+
+        <!-- Security -->
+        <div class="card">
+            <div class="section-title">Privacy & Security</div>
+
+            <div class="toggle">
+                <span>Enable Two-Factor Authentication (2FA)</span>
+                <input id="toggle2FA" type="checkbox">
+            </div>
+
+            <div class="toggle">
+                <span>Login alerts</span>
+                <input id="toggleAlerts" type="checkbox">
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="card">
+            <div class="section-title">Notifications</div>
+
+            <div class="toggle">
+                <span>Email updates</span>
+                <input id="toggleEmail" type="checkbox">
+            </div>
+
+            <div class="toggle">
+                <span>Push notifications</span>
+                <input id="togglePush" type="checkbox">
+            </div>
+
+            <div class="toggle">
+                <span>System messages</span>
+                <input id="toggleSystem" type="checkbox">
+            </div>
+        </div>
+
+        <!-- Appearance -->
+        <div class="card">
+            <div class="section-title">Display Preferences</div>
+
+            <div class="input-group">
+                <label>Theme</label>
+                <select id="themeSelect">
+                    <option value="light">Light Mode</option>
+                    <option value="dark">Dark Mode</option>
+                    <option value="system">System Default</option>
+                </select>
+            </div>
+
+            <div class="toggle">
+                <span>Reduce motion animations</span>
+                <input id="toggleMotion" type="checkbox">
+            </div>
+        </div>
+
+        <!-- Currency -->
+        <div class="card">
+            <div class="section-title">Currency & Region</div>
+
+            <div class="input-group">
+                <label>Preferred Currency</label>
+                <select id="currencySelect">
+                    <option value="USD">$ USD</option>
+                    <option value="EUR">€ Euro</option>
+                    <option value="INR">₹ INR</option>
+                    <option value="GBP">£ GBP</option>
+                    <option value="JPY">¥ JPY</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="save-btn" id="saveBtn">Save Changes</button>
+        <div class="success-msg" id="successMsg">✔ Settings saved successfully</div>
+
+
+        <!-- Danger Zone -->
+        <div class="card danger-zone">
+            <div class="section-title" style="color:#dc2626;font-weight:bold;">Danger Zone</div>
+
+            <button class="danger-btn">Reset Dashboard (Local Only)</button>
+            <button class="danger-btn">Delete Account (Demo Only)</button>
+        </div>
+    </main>
+
+
+<script>
+    // load existing settings
+    const settings = JSON.parse(localStorage.getItem("ninar-settings")) || {
+        name:"",
+        email:"",
+        username:"",
+        tfa:false,
+        alerts:false,
+        notifEmail:false,
+        notifPush:false,
+        notifSystem:true,
+        theme:"light",
+        motion:false,
+        currency:"USD"
+    };
+
+    // bind fields
+    document.getElementById("nameInput").value = settings.name;
+    document.getElementById("emailInput").value = settings.email;
+    document.getElementById("usernameInput").value = settings.username;
+    document.getElementById("toggle2FA").checked = settings.tfa;
+    document.getElementById("toggleAlerts").checked = settings.alerts;
+    document.getElementById("toggleEmail").checked = settings.notifEmail;
+    document.getElementById("togglePush").checked = settings.notifPush;
+    document.getElementById("toggleSystem").checked = settings.notifSystem;
+    document.getElementById("themeSelect").value = settings.theme;
+    document.getElementById("toggleMotion").checked = settings.motion;
+    document.getElementById("currencySelect").value = settings.currency;
+
+    // Save functionality
+    document.getElementById("saveBtn").addEventListener("click", () => {
+
+        settings.name = nameInput.value;
+        settings.email = emailInput.value;
+        settings.username = usernameInput.value;
+        settings.tfa = toggle2FA.checked;
+        settings.alerts = toggleAlerts.checked;
+        settings.notifEmail = toggleEmail.checked;
+        settings.notifPush = togglePush.checked;
+        settings.notifSystem = toggleSystem.checked;
+        settings.theme = themeSelect.value;
+        settings.motion = toggleMotion.checked;
+        settings.currency = currencySelect.value;
+
+        // store
+        localStorage.setItem("ninar-settings", JSON.stringify(settings));
+
+        const success = document.getElementById("successMsg");
+        success.style.display = "block";
+        setTimeout(()=> success.style.display="none",2500)
+    });
+
+    
+//Sidebar Menu
+
+const Sidebar = document.querySelector(".sidebar")
+const closeSidebarbtn = document.querySelector(".sidebar_close-btn")
+const openSidebarbtn = document.querySelector(".nav_menu-btn")
+
+openSidebarbtn.addEventListener("click", () => {
+   Sidebar.style.display = "flex";
+})
+
+closeSidebarbtn.addEventListener("click", () => {
+   Sidebar.style.display = "none";
+})
+
+
+// Theme Toggel
+
+const themeBtn = document.querySelector(".nav_theme-btn");
+
+themeBtn.addEventListener("click", () => {
+    document.body.classList.toggle("dark-theme")
+    if(document.body.classList.contains("dark-theme")){
+        themeBtn.innerHTML = '<i class="uil uil-sun"></i>'
+
+        localStorage.setItem("currentTheme", "dark-theme")
+    } else {
+        themeBtn.innerHTML = '<i class="uil uil-moon"></i>'
+
+        localStorage.setItem("currentTheme", " ")
+
+    }
+})
+
+document.body.className =localStorage.getItem("currentTheme")
+if(document.body.classList.contains("dark-theme")){
+    themeBtn.innerHTML = '<i class="uil uil-sun"></i>'
+
+    localStorage.setItem("currentTheme", "dark-theme")
+} else {
+    themeBtn.innerHTML = '<i class="uil uil-moon"></i>'
+
+    localStorage.setItem("currentTheme", " ")
+
+}
+
+</script>
+
+</body>
+</html>
