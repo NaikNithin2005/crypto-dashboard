@@ -1,804 +1,609 @@
- const coins = [
-        {
-            symbol: "BTC",
-            name: "Bitcoin",
-            price: 82719,
-            change: 1.72,
-            volume: 120000000,
-            orderBook: {bids: [], asks: []},
-            trades: []
-        },
-        {
-            symbol: "ETH",
-            name: "Ethereum",
-            price: 3719,
-            change: -0.84,
-            volume: 78000000,
-            orderBook: {bids: [], asks: []},
-            trades: []
-        },
-        {
-            symbol: "BNB",
-            name: "Binance Coin",
-            price: 628,
-            change: 0.32,
-            volume: 32000000,
-            orderBook: {bids: [], asks: []},
-            trades: []
-        },
-        {
-            symbol: "SOL",
-            name: "Solana",
-            price: 142.5,
-            change: 3.12,
-            volume: 56000000,
-            orderBook: {bids: [], asks: []},
-            trades: []
-        },
-        {
-            symbol: "USDT",
-            name: "Tether",
-            price: 1.0,
-            change: 0.02,
-            volume: 890000000,
-            orderBook: {bids: [], asks: []},
-            trades: []
+const themeToggleBtn = document.getElementById("themeToggle");
+    const themeIcon = themeToggleBtn.querySelector("i");
+
+    function applyThemeFromStorage() {
+        const stored = localStorage.getItem("ninar_theme") || "light";
+        if (stored === "dark") {
+            document.body.classList.add("dark-theme");
+            themeIcon.classList.remove("uil-moon");
+            themeIcon.classList.add("uil-sun");
+        } else {
+            document.body.classList.remove("dark-theme");
+            themeIcon.classList.remove("uil-sun");
+            themeIcon.classList.add("uil-moon");
         }
+    }
+
+    themeToggleBtn.addEventListener("click", () => {
+        const isDark = document.body.classList.toggle("dark-theme");
+        localStorage.setItem("ninar_theme", isDark ? "dark" : "light");
+        applyThemeFromStorage();
+    });
+
+    applyThemeFromStorage();
+
+    const FAVORITES_KEY = "ninar_exchange_favorites";
+    const ORDERS_KEY = "ninar_exchange_orders";
+    const SELECTED_MARKET_KEY = "ninar_exchange_selected_pair";
+
+    const baseMarkets = [
+        {pair: "BTC/USDT", base: "BTC", quote: "USDT", price: 82719, change: 2.53, volume: 14320, segment: "btc"},
+        {pair: "ETH/USDT", base: "ETH", quote: "USDT", price: 3719, change: -0.82, volume: 41320, segment: "alts"},
+        {pair: "SOL/USDT", base: "SOL", quote: "USDT", price: 142.13, change: 4.11, volume: 28310, segment: "alts"},
+        {pair: "BNB/USDT", base: "BNB", quote: "USDT", price: 612.34, change: 1.02, volume: 12340, segment: "alts"},
+        {pair: "XRP/USDT", base: "XRP", quote: "USDT", price: 1.18, change: -3.21, volume: 55340, segment: "alts"},
+        {pair: "ADA/USDT", base: "ADA", quote: "USDT", price: 0.72, change: 0.91, volume: 21230, segment: "alts"},
+        {pair: "UNI/USDT", base: "UNI", quote: "USDT", price: 12.11, change: 5.43, volume: 9870, segment: "defi"},
+        {pair: "AAVE/USDT", base: "AAVE", quote: "USDT", price: 142.55, change: 1.67, volume: 3210, segment: "defi"},
+        {pair: "LINK/USDT", base: "LINK", quote: "USDT", price: 18.22, change: -0.56, volume: 11200, segment: "defi"},
+        {pair: "BTC/EUR", base: "BTC", quote: "EUR", price: 74810, change: 2.23, volume: 3800, segment: "btc"}
     ];
 
-    const balances = {
-        BTC: 0.05234567,
-        ETH: 1.21456789,
-        BNB: 2.437621,
-        SOL: 10.432156,
-        USDT: 2500.12
-    };
+    let markets = JSON.parse(JSON.stringify(baseMarkets));
+    let favoriteSet = new Set(JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]"));
 
-    const favourites = new Set();
-    const watchlist = new Set();
-    const openOrders = [];
-    const orderHistory = [];
-    let nextOrderId = 1;
+    function saveFavorites() {
+        localStorage.setItem(FAVORITES_KEY, JSON.stringify(Array.from(favoriteSet)));
+    }
 
-    // ===== STATE =====
+    const marketsBody = document.getElementById("marketsBody");
+    const marketTabs = document.querySelectorAll(".market-tab");
+    const marketSearch = document.getElementById("marketSearch");
 
-    let currentSymbol = "BTC";
-    let currentSide = "BUY";
-    let currentType = "MARKET"; // MARKET | LIMIT
-    let currentTab = "all";
-    let currentOrdersTab = "open";
-
-    const FEE_RATE = 0.001; // 0.1%
-
-    // ===== DOM ELEMENTS =====
-
-    const marketsListEl = document.getElementById("marketsList");
-    const searchInput = document.getElementById("searchInput");
-    const tabs = document.querySelectorAll(".tab");
-
-    const obPairTitle = document.getElementById("obPairTitle");
-    const asksListEl = document.getElementById("asksList");
-    const bidsListEl = document.getElementById("bidsList");
-    const tradesListEl = document.getElementById("tradesList");
-    const midPriceLabel = document.getElementById("midPriceLabel");
-
-    const sideToggle = document.getElementById("sideToggle");
-    const typeToggle = document.getElementById("typeToggle");
-    const orderSideInput = document.getElementById("orderSide");
-    const orderTypeInput = document.getElementById("orderType");
-    const pairTitle = document.getElementById("pairTitle");
-    const pairPriceEl = document.getElementById("pairPrice");
+    const pairBaseBadge = document.getElementById("pairBaseBadge");
+    const pairSymbolText = document.getElementById("pairSymbolText");
+    const pairLastPrice = document.getElementById("pairLastPrice");
     const pairChangeEl = document.getElementById("pairChange");
+    const chartPairLabel = document.getElementById("chartPairLabel");
 
-    const symbolSelect = document.getElementById("symbolSelect");
-    const availableBalanceEl = document.getElementById("availableBalance");
-    const amountHint = document.getElementById("amountHint");
-    const amountInput = document.getElementById("amountInput");
-    const priceInput = document.getElementById("priceInput");
-    const priceInfo = document.getElementById("priceInfo");
-    const totalInput = document.getElementById("totalInput");
-    const feeText = document.getElementById("feeText");
+    const btnBuySide = document.getElementById("btnBuySide");
+    const btnSellSide = document.getElementById("btnSellSide");
+    const orderTypePills = document.querySelectorAll(".order-type-pill");
+    const inputPrice = document.getElementById("inputPrice");
+    const inputAmount = document.getElementById("inputAmount");
+    const priceLabelRight = document.getElementById("priceLabelRight");
+    const priceUnit = document.getElementById("priceUnit");
+    const amountUnit = document.getElementById("amountUnit");
+    const amountSlider = document.getElementById("amountSlider");
+    const sliderPercent = document.getElementById("sliderPercent");
+    const totalValue = document.getElementById("totalValue");
+    const btnPlaceOrder = document.getElementById("btnPlaceOrder");
+    const balanceLabel = document.getElementById("balanceLabel");
+    const ordersBody = document.getElementById("ordersBody");
+    const orderBookList = document.getElementById("orderBookList");
+    const tradesList = document.getElementById("tradesList");
 
-    const summarySide = document.getElementById("summarySide");
-    const summaryType = document.getElementById("summaryType");
-    const summaryPair = document.getElementById("summaryPair");
-    const summaryTotal = document.getElementById("summaryTotal");
-    const submitBtn = document.getElementById("submitBtn");
-    const submitLabel = document.getElementById("submitLabel");
-    const statusMsg = document.getElementById("statusMsg");
-    const orderForm = document.getElementById("orderForm");
+    let activeTab = "all";
+    let selectedMarket = markets[0];
+    let activeSide = "buy";
+    let activeOrderType = "market";
 
-    const walletList = document.getElementById("walletList");
-    const ordersContainer = document.getElementById("ordersContainer");
-    const ordersTabsButtons = document.querySelectorAll("[data-orders-tab]");
-
-    // ===== HELPERS =====
-
-    function formatNumber(val, decimals = 2) {
-        return Number(val).toLocaleString(undefined, {
-            minimumFractionDigits: decimals,
-            maximumFractionDigits: decimals
-        });
+    let openOrders = [];
+    try {
+        openOrders = JSON.parse(localStorage.getItem(ORDERS_KEY) || "[]");
+    } catch (e) {
+        openOrders = [];
     }
 
-    function formatCompact(val) {
-        return Intl.NumberFormat("en", {
-            notation: "compact",
-            maximumFractionDigits: 2
-        }).format(val);
+    function saveOrders() {
+        localStorage.setItem(ORDERS_KEY, JSON.stringify(openOrders));
     }
 
-    function getCoin(symbol) {
-        return coins.find(c => c.symbol === symbol);
+    const savedPair = localStorage.getItem(SELECTED_MARKET_KEY);
+    if (savedPair) {
+        const found = markets.find(m => m.pair === savedPair);
+        if (found) selectedMarket = found;
     }
 
-    // ===== RENDER FUNCTIONS =====
+    const chartCanvas = document.getElementById("priceChart");
+    const ctx = chartCanvas.getContext("2d");
+    let chartPoints = [];
+    let currentTimeframeDays = 1;
+
+    const COINGECKO_BASE = "https://api.coingecko.com/api/v3";
+
+    function classifySegmentFromCoin(coin) {
+        const symbol = (coin.symbol || "").toUpperCase();
+        if (symbol === "BTC") return "btc";
+        if (["UNI", "AAVE", "LINK", "MKR", "COMP", "SNX", "CRV"].includes(symbol)) return "defi";
+        if (symbol === "ETH") return "alts";
+        return "alts";
+    }
+
+    async function hydrateMarketsFromAPI() {
+        try {
+            const pages = [1, 2];
+            const liveMarkets = [];
+
+            for (const page of pages) {
+                const url =
+                    `${COINGECKO_BASE}/coins/markets` +
+                    `?vs_currency=usd&order=market_cap_desc&per_page=250&page=${page}` +
+                    `&sparkline=false&price_change_percentage=24h`;
+
+                const res = await fetch(url);
+                if (!res.ok) continue;
+                const data = await res.json();
+
+                data.forEach(c => {
+                    liveMarkets.push({
+                        id: c.id,
+                        pair: `${c.symbol.toUpperCase()}/USDT`,
+                        base: c.symbol.toUpperCase(),
+                        quote: "USDT",
+                        price: c.current_price || 0,
+                        change: c.price_change_percentage_24h || 0,
+                        volume: c.total_volume || 0,
+                        segment: classifySegmentFromCoin(c)
+                    });
+                });
+            }
+
+            if (liveMarkets.length === 0) return;
+
+            markets = liveMarkets;
+
+            const saved = localStorage.getItem(SELECTED_MARKET_KEY);
+            if (saved) {
+                const fp = markets.find(m => m.pair === saved);
+                if (fp) selectedMarket = fp;
+                else selectedMarket = markets[0];
+            } else {
+                selectedMarket = markets[0];
+            }
+
+            updateSelectedMarketUI();
+            renderMarkets();
+        } catch (err) {
+            console.error("Failed to hydrate markets from CoinGecko; using fallback mock data.", err);
+        }
+    }
+
+    setInterval(hydrateMarketsFromAPI, 30000);
+
+    setInterval(() => {
+        if (!markets || markets.length === 0) return;
+
+        for (let i = 0; i < markets.length; i++) {
+            const m = markets[i];
+            const drift = 1 + (Math.random() - 0.5) * 0.002;
+            const oldPrice = m.price;
+            const newPrice = oldPrice * drift;
+            const deltaPct = ((newPrice - oldPrice) / (oldPrice || 1)) * 100;
+
+            m.price = newPrice;
+            m.change = (m.change || 0) + deltaPct * 0.2;
+            m.volume = m.volume * (1 + (Math.random() - 0.5) * 0.01);
+        }
+
+        if (selectedMarket) {
+            const updated = markets.find(mm => mm.pair === selectedMarket.pair);
+            if (updated) selectedMarket = updated;
+        }
+
+        updateSelectedMarketUI();
+        renderMarkets();
+    }, 5000);
 
     function renderMarkets() {
-        const q = (searchInput.value || "").trim().toLowerCase();
-        marketsListEl.innerHTML = "";
+        const searchTerm = (marketSearch && marketSearch.value || "").toLowerCase();
 
-        let filtered = coins.slice();
+        marketsBody.innerHTML = "";
 
-        if (currentTab === "favourites") {
-            filtered = filtered.filter(c => favourites.has(c.symbol));
-        } else if (currentTab === "watchlist") {
-            filtered = filtered.filter(c => watchlist.has(c.symbol));
-        }
+        let filtered = markets.filter(m => {
+            if (activeTab === "favorites" && !favoriteSet.has(m.pair)) return false;
+            if (activeTab === "btc" && m.base !== "BTC") return false;
+            if (activeTab === "alts" && (m.base === "BTC" || m.base === "ETH")) return false;
+            if (activeTab === "defi" && !["UNI", "AAVE", "LINK", "MKR", "COMP", "SNX", "CRV"].includes(m.base)) return false;
+            if (!searchTerm) return true;
+            return m.pair.toLowerCase().includes(searchTerm) || m.base.toLowerCase().includes(searchTerm);
+        });
 
-        if (q) {
-            filtered = filtered.filter(c =>
-                c.symbol.toLowerCase().includes(q) ||
-                c.name.toLowerCase().includes(q)
-            );
-        }
+        filtered.forEach(market => {
+            const tr = document.createElement("tr");
+            if (selectedMarket && market.pair === selectedMarket.pair) {
+                tr.classList.add("active");
+            }
+
+            tr.innerHTML = `
+                <td>
+                    <i class="uil uil-star fav-icon ${favoriteSet.has(market.pair) ? "filled" : ""}"
+                       data-pair="${market.pair}"></i>
+                </td>
+                <td>${market.pair}</td>
+                <td>$${market.price.toLocaleString(undefined, {maximumFractionDigits: 6})}</td>
+                <td class="${market.change >= 0 ? "change-pos" : "change-neg"}">
+                    ${market.change >= 0 ? "+" : ""}${market.change.toFixed(2)}%
+                </td>
+                <td>${(market.volume / 1000000).toFixed(2)}M</td>
+            `;
+
+            tr.querySelector(".fav-icon").addEventListener("click", (e) => {
+                e.stopPropagation();
+                const pair = market.pair;
+                if (favoriteSet.has(pair)) {
+                    favoriteSet.delete(pair);
+                } else {
+                    favoriteSet.add(pair);
+                }
+                saveFavorites();
+                renderMarkets();
+            });
+
+            tr.addEventListener("click", () => {
+                selectedMarket = market;
+                localStorage.setItem(SELECTED_MARKET_KEY, market.pair);
+                updateSelectedMarketUI();
+                renderMarkets();
+            });
+
+            marketsBody.appendChild(tr);
+        });
 
         if (filtered.length === 0) {
-            marketsListEl.innerHTML =
-                '<div class="muted" style="padding:0.7rem 0.2rem;font-size:0.8rem;">No coins match this filter.</div>';
-            return;
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td colspan="5" style="font-size:11px;color:var(--text-muted);padding-top:6px;">
+                No markets match this filter.</td>`;
+            marketsBody.appendChild(tr);
         }
-
-        filtered.forEach(c => {
-            const row = document.createElement("div");
-            row.className = "market-row";
-
-            const avatarClass =
-                c.symbol === "ETH" ? "eth" :
-                    c.symbol === "BNB" ? "bnb" :
-                        c.symbol === "SOL" ? "sol" :
-                            c.symbol === "USDT" ? "usdt" : "";
-
-            const changeClass = c.change >= 0 ? "change-positive" : "change-negative";
-            const changeText = (c.change >= 0 ? "+" : "") + c.change.toFixed(2) + "%";
-
-            row.innerHTML = `
-                <div class="market-main">
-                    <div class="coin-avatar ${avatarClass}"></div>
-                    <div class="coin-label">
-                        <span>${c.symbol} / USDT</span>
-                        <span>${c.name}</span>
-                    </div>
-                </div>
-                <div>$${formatNumber(c.price, 2)}</div>
-                <div class="${changeClass}">${changeText}</div>
-                <div>${formatCompact(c.volume)} USDT</div>
-                <div>
-                    <div class="buy-sell-actions" style="margin-bottom:0.3rem;">
-                        <button class="pill buy" data-action="buy" data-symbol="${c.symbol}">Buy</button>
-                        <button class="pill sell" data-action="sell" data-symbol="${c.symbol}">Sell</button>
-                    </div>
-                    <div class="fav-watch">
-                        <button class="icon-btn ${favourites.has(c.symbol) ? "active" : ""}"
-                                data-icon="fav" data-symbol="${c.symbol}">
-                            <i class="uil uil-heart"></i>
-                        </button>
-                        <button class="icon-btn ${watchlist.has(c.symbol) ? "active" : ""}"
-                                data-icon="watch" data-symbol="${c.symbol}">
-                            <i class="uil uil-star"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-            marketsListEl.appendChild(row);
-        });
     }
 
-    function renderOrderBook() {
-        const coin = getCoin(currentSymbol);
-        if (!coin) return;
+    function updateSelectedMarketUI() {
+        if (!selectedMarket) return;
 
-        obPairTitle.textContent = `${coin.symbol} / USDT`;
-
-        asksListEl.innerHTML = "";
-        bidsListEl.innerHTML = "";
-
-        coin.orderBook.asks.forEach(a => {
-            const row = document.createElement("div");
-            row.className = "orderbook-row";
-            row.innerHTML = `
-                <span class="price ask">$${formatNumber(a.price, 2)}</span>
-                <span class="size">${formatNumber(a.size, 4)}</span>
-            `;
-            asksListEl.appendChild(row);
-        });
-
-        coin.orderBook.bids.forEach(b => {
-            const row = document.createElement("div");
-            row.className = "orderbook-row";
-            row.innerHTML = `
-                <span class="price bid">$${formatNumber(b.price, 2)}</span>
-                <span class="size">${formatNumber(b.size, 4)}</span>
-            `;
-            bidsListEl.appendChild(row);
-        });
-
-        const mid = coin.price;
-        midPriceLabel.textContent = `Mid: $${formatNumber(mid, 2)}`;
-    }
-
-    function renderTrades() {
-        const coin = getCoin(currentSymbol);
-        if (!coin) return;
-        tradesListEl.innerHTML = "";
-
-        if (coin.trades.length === 0) {
-            tradesListEl.innerHTML = '<div class="muted">Waiting for first trades…</div>';
-            return;
-        }
-
-        coin.trades.slice().reverse().forEach(t => {
-            const row = document.createElement("div");
-            row.className = "trade-row";
-            const sideClass = t.side === "BUY" ? "side-buy" : "side-sell";
-            row.innerHTML = `
-                <span class="${sideClass}">${t.side}</span>
-                <span>$${formatNumber(t.price, 2)}</span>
-                <span class="muted">${formatNumber(t.amount, 5)}</span>
-            `;
-            tradesListEl.appendChild(row);
-        });
-    }
-
-    function renderWallet() {
-        walletList.innerHTML = "";
-        Object.keys(balances).forEach(symbol => {
-            const row = document.createElement("div");
-            row.className = "wallet-row";
-            row.innerHTML = `
-                <span>${symbol}</span>
-                <span>${formatNumber(balances[symbol], 6)}</span>
-            `;
-            walletList.appendChild(row);
-        });
-    }
-
-    function renderOrders() {
-        ordersContainer.innerHTML = "";
-
-        const source = currentOrdersTab === "open" ? openOrders : orderHistory;
-
-        if (source.length === 0) {
-            ordersContainer.innerHTML =
-                `<div class="muted" style="font-size:0.78rem;">No ${currentOrdersTab === "open" ? "open" : "historical"} orders yet.</div>`;
-            return;
-        }
-
-        const header = document.createElement("div");
-        header.className = "orders-header";
-        header.innerHTML = `
-            <span>Side</span>
-            <span>Pair</span>
-            <span>Type</span>
-            <span>Price</span>
-            <span>Amount / Total</span>
-        `;
-        ordersContainer.appendChild(header);
-
-        source.slice().slice().reverse().forEach(o => {
-            const row = document.createElement("div");
-            row.className = "orders-row";
-
-            const tagClass = o.side === "BUY" ? "buy" : "sell";
-            const priceText = o.type === "MARKET" ? "Market" : `$${formatNumber(o.price, 2)}`;
-            const statusExtra = o.status && o.status !== "OPEN" ? ` (${o.status})` : "";
-
-            row.innerHTML = `
-                <span><span class="tag ${tagClass}">${o.side}</span></span>
-                <span>${o.symbol}/USDT</span>
-                <span>${o.type}</span>
-                <span>${priceText}</span>
-                <span class="muted">${formatNumber(o.amount, 6)} @ ${formatNumber(o.total, 2)} USDT${statusExtra}</span>
-            `;
-            ordersContainer.appendChild(row);
-        });
-    }
-
-    function renderSymbolSelect() {
-        symbolSelect.innerHTML = "";
-        coins.forEach(c => {
-            const opt = document.createElement("option");
-            opt.value = c.symbol;
-            opt.textContent = `${c.symbol} / USDT`;
-            symbolSelect.appendChild(opt);
-        });
-        symbolSelect.value = currentSymbol;
-    }
-
-    function updatePairInfo() {
-        const coin = getCoin(currentSymbol) || coins[0];
-        pairTitle.textContent = `${coin.symbol} / USDT`;
-        pairPriceEl.textContent = "$" + formatNumber(coin.price, 2);
+        pairBaseBadge.textContent = selectedMarket.base[0] || "?";
+        pairSymbolText.textContent = `${selectedMarket.pair}`;
+        chartPairLabel.textContent = `${selectedMarket.pair}`;
+        pairLastPrice.textContent =
+            `$${selectedMarket.price.toLocaleString(undefined, {maximumFractionDigits: 6})}`;
         pairChangeEl.textContent =
-            (coin.change >= 0 ? "+" : "") + coin.change.toFixed(2) + "%";
+            `${selectedMarket.change >= 0 ? "+" : ""}${selectedMarket.change.toFixed(2)}%`;
+        pairChangeEl.style.color = selectedMarket.change >= 0 ? "var(--success)" : "var(--danger)";
 
-        if (coin.change >= 0) {
-            pairChangeEl.classList.remove("red");
+        priceUnit.textContent = selectedMarket.quote;
+        amountUnit.textContent = selectedMarket.base;
+
+        balanceLabel.textContent =
+            `Balance: ${(847119 + Math.random()).toFixed(4)} ${selectedMarket.base}`;
+        btnPlaceOrder.textContent =
+            `${activeSide === "buy" ? "Buy" : "Sell"} ${selectedMarket.base}`;
+
+        if (activeOrderType === "market") {
+            inputPrice.value = "";
+            priceLabelRight.textContent = "Market";
         } else {
-            pairChangeEl.classList.add("red");
+            if (!inputPrice.value) inputPrice.value = selectedMarket.price.toFixed(4);
+            priceLabelRight.textContent = activeOrderType === "limit" ? "Limit" : "Stop";
         }
-
-        summaryPair.textContent = `${coin.symbol} / USDT`;
-
-        if (currentType === "MARKET") {
-            priceInput.value = coin.price.toFixed(2);
-        }
-
-        updateAvailableBalance();
         recalcTotal();
+        generateOrderBook();
+        generateTrades(true);
+        loadChartData();
     }
 
-    function updateAvailableBalance() {
-        const bal = balances[currentSymbol] || 0;
-        availableBalanceEl.textContent = `${formatNumber(bal, 8)} ${currentSymbol}`;
-    }
+    marketTabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            marketTabs.forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            activeTab = tab.dataset.tab;
+            renderMarkets();
+        });
+    });
 
-    function recalcTotal() {
-        const amount = parseFloat(amountInput.value) || 0;
-        const price = parseFloat(priceInput.value) || 0;
-        const total = amount * price;
-
-        if (total > 0) {
-            totalInput.value = total.toFixed(2);
-            summaryTotal.textContent = `${formatNumber(total, 2)} USDT`;
-        } else {
-            totalInput.value = "";
-            summaryTotal.textContent = "0.00 USDT";
-        }
-
-        const fee = total * FEE_RATE;
-        feeText.textContent = `Fee (0.1%): ${formatNumber(fee || 0, 4)} USDT`;
+    if (marketSearch) {
+        marketSearch.addEventListener("input", renderMarkets);
     }
 
     function setSide(side) {
-        currentSide = side;
-        orderSideInput.value = side;
-
-        sideToggle.querySelectorAll("button").forEach(btn => {
-            btn.classList.remove("active", "buy", "sell");
-        });
-        const btn = sideToggle.querySelector(`[data-side="${side}"]`);
-        btn.classList.add("active");
-        btn.classList.add(side === "BUY" ? "buy" : "sell");
-
-        summarySide.textContent = side === "BUY" ? "Buy" : "Sell";
-        amountHint.textContent = side === "BUY" ? "Amount you want to buy" :
-            "Amount you want to sell";
-        submitBtn.classList.toggle("sell", side === "SELL");
-        submitLabel.textContent =
-            `Place ${side === "BUY" ? "Buy" : "Sell"} ${currentType === "MARKET" ? "Market" : "Limit"} Order`;
-        statusMsg.textContent = "";
-        statusMsg.className = "status-msg";
-    }
-
-    function setOrderType(type) {
-        currentType = type;
-        orderTypeInput.value = type;
-
-        typeToggle.querySelectorAll("button").forEach(btn => {
-            btn.classList.remove("active", "type");
-        });
-        const btn = typeToggle.querySelector(`[data-type="${type}"]`);
-        btn.classList.add("active", "type");
-
-        summaryType.textContent = type === "MARKET" ? "Market" : "Limit";
-        const coin = getCoin(currentSymbol);
-
-        if (type === "MARKET") {
-            priceInput.value = coin.price.toFixed(2);
-            priceInput.readOnly = true;
-            priceInfo.textContent = "Market price";
-        } else {
-            priceInput.readOnly = false;
-            priceInfo.textContent = "Your limit price";
-        }
-
-        submitLabel.textContent =
-            `Place ${currentSide === "BUY" ? "Buy" : "Sell"} ${currentType === "MARKET" ? "Market" : "Limit"} Order`;
-
+        activeSide = side;
+        btnBuySide.classList.toggle("active", side === "buy");
+        btnSellSide.classList.toggle("active", side === "sell");
+        btnPlaceOrder.classList.toggle("buy", side === "buy");
+        btnPlaceOrder.classList.toggle("sell", side === "sell");
+        btnPlaceOrder.textContent =
+            `${side === "buy" ? "Buy" : "Sell"} ${selectedMarket.base}`;
         recalcTotal();
     }
 
-    function showStatus(message, isError = false) {
-        statusMsg.textContent = message;
-        statusMsg.className = "status-msg " + (isError ? "status-error" : "status-success");
+    btnBuySide.addEventListener("click", () => setSide("buy"));
+    btnSellSide.addEventListener("click", () => setSide("sell"));
+
+    orderTypePills.forEach(pill => {
+        pill.addEventListener("click", () => {
+            orderTypePills.forEach(p => p.classList.remove("active"));
+            pill.classList.add("active");
+            activeOrderType = pill.dataset.type;
+            if (activeOrderType === "market") {
+                priceLabelRight.textContent = "Market";
+                inputPrice.value = "";
+                inputPrice.placeholder = "Market price";
+                inputPrice.disabled = false;
+            } else if (activeOrderType === "limit") {
+                priceLabelRight.textContent = "Limit";
+                if (!inputPrice.value && selectedMarket) {
+                    inputPrice.value = selectedMarket.price.toFixed(4);
+                }
+                inputPrice.placeholder = "Set your limit price";
+                inputPrice.disabled = false;
+            } else {
+                priceLabelRight.textContent = "Stop";
+                if (!inputPrice.value && selectedMarket) {
+                    inputPrice.value = (selectedMarket.price * 0.98).toFixed(4);
+                }
+                inputPrice.placeholder = "Stop trigger price";
+                inputPrice.disabled = false;
+            }
+            recalcTotal();
+        });
+    });
+
+    amountSlider.addEventListener("input", () => {
+        sliderPercent.textContent = amountSlider.value + "%";
+        const maxSize = 2.0;
+        const size = (amountSlider.value / 100) * maxSize;
+        inputAmount.value = size.toFixed(4);
+        recalcTotal();
+    });
+
+    [inputPrice, inputAmount].forEach(el => el.addEventListener("input", recalcTotal));
+
+    function recalcTotal() {
+        if (!selectedMarket) return;
+        const amount = parseFloat(inputAmount.value) || 0;
+        let price = parseFloat(inputPrice.value);
+        if (activeOrderType === "market" || !price) {
+            price = selectedMarket.price;
+        }
+        const total = amount * price;
+        totalValue.textContent = `${total.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })} ${selectedMarket.quote}`;
     }
 
-    // ===== EVENTS =====
-
-    tabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-            tabs.forEach(t => t.classList.remove("active"));
-            tab.classList.add("active");
-            currentTab = tab.dataset.tab;
-            renderMarkets();
-        });
-    });
-
-    searchInput.addEventListener("input", () => {
-        renderMarkets();
-    });
-
-    marketsListEl.addEventListener("click", (e) => {
-        const pill = e.target.closest(".pill");
-        const iconBtn = e.target.closest(".icon-btn");
-
-        if (pill) {
-            const sym = pill.dataset.symbol;
-            const action = pill.dataset.action;
-            currentSymbol = sym;
-            renderSymbolSelect();
-            updatePairInfo();
-            renderOrderBook();
-            renderTrades();
-            setSide(action.toUpperCase());
-        }
-
-        if (iconBtn) {
-            const sym = iconBtn.dataset.symbol;
-            const type = iconBtn.dataset.icon;
-            if (type === "fav") {
-                if (favourites.has(sym)) favourites.delete(sym);
-                else favourites.add(sym);
-            } else if (type === "watch") {
-                if (watchlist.has(sym)) watchlist.delete(sym);
-                else watchlist.add(sym);
-            }
-            renderMarkets();
-        }
-    });
-
-    sideToggle.addEventListener("click", (e) => {
-        const btn = e.target.closest("button");
-        if (!btn) return;
-        const side = btn.dataset.side;
-        if (!side) return;
-        setSide(side);
-    });
-
-    typeToggle.addEventListener("click", (e) => {
-        const btn = e.target.closest("button");
-        if (!btn) return;
-        const type = btn.dataset.type;
-        if (!type) return;
-        setOrderType(type);
-    });
-
-    symbolSelect.addEventListener("change", () => {
-        currentSymbol = symbolSelect.value;
-        updatePairInfo();
-        renderOrderBook();
-        renderTrades();
-    });
-
-    amountInput.addEventListener("input", recalcTotal);
-    priceInput.addEventListener("input", recalcTotal);
-
-    ordersTabsButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-            ordersTabsButtons.forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            currentOrdersTab = btn.dataset.ordersTab;
-            renderOrders();
-        });
-    });
-
-    orderForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const amount = parseFloat(amountInput.value);
-        const price = parseFloat(priceInput.value);
-        const coin = getCoin(currentSymbol);
-        if (!coin) return;
-
-        if (!amount || amount <= 0 || !price || price <= 0) {
-            showStatus("Enter a valid amount and price.", true);
+    function renderOrders() {
+        ordersBody.innerHTML = "";
+        if (openOrders.length === 0) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td colspan="6" style="font-size:11px;color:var(--text-muted);padding-top:4px;">
+                No orders yet. Place a Buy or Sell to see it here.</td>`;
+            ordersBody.appendChild(tr);
             return;
         }
 
-        const total = amount * price;
-        const fee = total * FEE_RATE;
-        const totalWithFee = total + fee;
+        openOrders.forEach(order => {
+            const tr = document.createElement("tr");
+            const sideColor = order.side === "buy" ? "var(--success)" : "var(--danger)";
+            tr.innerHTML = `
+                <td>${order.pair}</td>
+                <td style="font-weight:600;color:${sideColor};">${order.side.toUpperCase()}</td>
+                <td>${order.type}</td>
+                <td>${order.price ? "$" + order.price.toFixed(4) : "Market"}</td>
+                <td>${order.amount.toFixed(4)}</td>
+                <td><span class="status-pill ${order.status === "Open" ? "status-open" : "status-filled"}">
+                    ${order.status}
+                </span></td>
+            `;
+            ordersBody.appendChild(tr);
+        });
+    }
 
-        if (currentSide === "BUY") {
-            if (balances.USDT < totalWithFee && currentType === "MARKET") {
-                showStatus("Not enough USDT to buy (including fee).", true);
-                return;
-            }
-            if (currentType === "MARKET") {
-                // Market order executes immediately at mid price
-                balances.USDT -= totalWithFee;
-                balances[currentSymbol] = (balances[currentSymbol] || 0) + amount;
-                const order = {
-                    id: nextOrderId++,
-                    symbol: currentSymbol,
-                    side: "BUY",
-                    type: "MARKET",
-                    price,
-                    amount,
-                    total: totalWithFee,
-                    status: "FILLED"
-                };
-                orderHistory.push(order);
-                showStatus("Market buy executed (demo only).");
-            } else {
-                // Limit buy: if limit >= best ask -> fill now; else open order
-                const bestAsk = coin.orderBook.asks.length ? coin.orderBook.asks[0].price : coin.price;
-                if (price >= bestAsk) {
-                    if (balances.USDT < totalWithFee) {
-                        showStatus("Not enough USDT to buy (including fee).", true);
-                        return;
-                    }
-                    balances.USDT -= totalWithFee;
-                    balances[currentSymbol] = (balances[currentSymbol] || 0) + amount;
-                    orderHistory.push({
-                        id: nextOrderId++,
-                        symbol: currentSymbol,
-                        side: "BUY",
-                        type: "LIMIT",
-                        price,
-                        amount,
-                        total: totalWithFee,
-                        status: "FILLED"
-                    });
-                    showStatus("Limit buy immediately filled (price crossed).");
-                } else {
-                    openOrders.push({
-                        id: nextOrderId++,
-                        symbol: currentSymbol,
-                        side: "BUY",
-                        type: "LIMIT",
-                        price,
-                        amount,
-                        total: totalWithFee,
-                        status: "OPEN"
-                    });
-                    showStatus("Limit buy placed (open order).");
-                }
-            }
-        } else {
-            // SELL
-            if ((balances[currentSymbol] || 0) < amount && currentType === "MARKET") {
-                showStatus(`Not enough ${currentSymbol} to sell.`, true);
-                return;
-            }
-            if (currentType === "MARKET") {
-                balances[currentSymbol] -= amount;
-                balances.USDT += total - fee; // fee taken from proceeds
-                orderHistory.push({
-                    id: nextOrderId++,
-                    symbol: currentSymbol,
-                    side: "SELL",
-                    type: "MARKET",
-                    price,
-                    amount,
-                    total: total - fee,
-                    status: "FILLED"
-                });
-                showStatus("Market sell executed (demo only).");
-            } else {
-                const bestBid = coin.orderBook.bids.length ? coin.orderBook.bids[0].price : coin.price;
-                if (price <= bestBid) {
-                    if ((balances[currentSymbol] || 0) < amount) {
-                        showStatus(`Not enough ${currentSymbol} to sell.`, true);
-                        return;
-                    }
-                    balances[currentSymbol] -= amount;
-                    balances.USDT += total - fee;
-                    orderHistory.push({
-                        id: nextOrderId++,
-                        symbol: currentSymbol,
-                        side: "SELL",
-                        type: "LIMIT",
-                        price,
-                        amount,
-                        total: total - fee,
-                        status: "FILLED"
-                    });
-                    showStatus("Limit sell immediately filled (price crossed).");
-                } else {
-                    openOrders.push({
-                        id: nextOrderId++,
-                        symbol: currentSymbol,
-                        side: "SELL",
-                        type: "LIMIT",
-                        price,
-                        amount,
-                        total: total - fee,
-                        status: "OPEN"
-                    });
-                    showStatus("Limit sell placed (open order).");
-                }
-            }
+    btnPlaceOrder.addEventListener("click", () => {
+        if (!selectedMarket) return;
+        const amount = parseFloat(inputAmount.value);
+        if (!amount || amount <= 0) {
+            alert("Enter a valid amount.");
+            return;
         }
 
-        amountInput.value = "";
-        recalcTotal();
-        renderWallet();
+        let price = parseFloat(inputPrice.value);
+        if (!price || activeOrderType === "market") price = selectedMarket.price;
+
+        const order = {
+            pair: selectedMarket.pair,
+            side: activeSide,
+            type: activeOrderType.toUpperCase(),
+            price,
+            amount,
+            status: "Open"
+        };
+        openOrders.unshift(order);
+        saveOrders();
         renderOrders();
     });
 
-    // ===== ORDER BOOK & TRADES SIMULATION =====
-
-    function generateOrderBook(price) {
-        const bids = [];
-        const asks = [];
-        const levels = 10;
-        const step = price * 0.0015; // 0.15%
-
-        for (let i = levels; i >= 1; i--) {
-            const p = price - step * i;
-            bids.push({
-                price: Math.max(0.0001, p),
-                size: Math.random() * 0.7 + 0.01
-            });
+    setInterval(() => {
+        if (openOrders.length === 0) return;
+        const idx = Math.floor(Math.random() * openOrders.length);
+        if (openOrders[idx].status === "Open") {
+            openOrders[idx].status = "Filled";
+            saveOrders();
+            renderOrders();
         }
-        for (let i = 1; i <= levels; i++) {
-            const p = price + step * i;
-            asks.push({
-                price: Math.max(0.0001, p),
-                size: Math.random() * 0.7 + 0.01
-            });
+    }, 15000);
+
+    function generateOrderBook() {
+        orderBookList.innerHTML = "";
+        if (!selectedMarket) return;
+        const center = selectedMarket.price || 1;
+        const levels = 15;
+
+        for (let i = levels; i > 0; i--) {
+            const price = center * (1 + (i / 1000));
+            const amount = (Math.random() * 1.2 + 0.05);
+            const total = price * amount;
+            const depth = Math.random();
+            const row = document.createElement("div");
+            row.className = "depth-row ask";
+            row.innerHTML = `
+                <span>${price.toFixed(4)}</span>
+                <span>${amount.toFixed(3)}</span>
+                <span>${(total / 1000).toFixed(2)}k</span>
+                <div class="bar" style="width:${depth * 100}%"></div>
+            `;
+            orderBookList.appendChild(row);
         }
-        return {bids: bids.sort((a, b) => b.price - a.price), asks};
+
+        for (let i = 0; i < levels; i++) {
+            const price = center * (1 - (i / 1000));
+            const amount = (Math.random() * 1.2 + 0.05);
+            const total = price * amount;
+            const depth = Math.random();
+            const row = document.createElement("div");
+            row.className = "depth-row bid";
+            row.innerHTML = `
+                <span>${price.toFixed(4)}</span>
+                <span>${amount.toFixed(3)}</span>
+                <span>${(total / 1000).toFixed(2)}k</span>
+                <div class="bar" style="width:${depth * 100}%"></div>
+            `;
+            orderBookList.appendChild(row);
+        }
     }
 
-    function addRandomTrade(coin) {
-        const side = Math.random() > 0.5 ? "BUY" : "SELL";
-        const price = coin.price * (1 + (Math.random() - 0.5) * 0.002);
-        const amount = Math.random() * 0.6 + 0.01;
-        coin.trades.push({side, price, amount});
-        if (coin.trades.length > 40) coin.trades.shift();
-    }
+    let trades = [];
 
-    function simulateTick() {
-        coins.forEach(c => {
-            const drift = 1 + (Math.random() - 0.5) * 0.0035; // ±0.175%
-            c.price = Math.max(0.0001, c.price * drift);
-            c.change += (Math.random() - 0.5) * 0.15;
-            c.orderBook = generateOrderBook(c.price);
-            addRandomTrade(c);
-        });
+    function generateTrades(initial = false) {
+        if (!selectedMarket) return;
+        if (initial) trades = [];
+        tradesList.innerHTML = "";
+        const now = new Date();
 
-        matchOpenOrders();
-        renderMarkets();
-        updatePairInfo();
-        renderOrderBook();
+        for (let i = 0; i < 18; i++) {
+            const side = Math.random() > 0.5 ? "buy" : "sell";
+            const price = selectedMarket.price * (1 + (Math.random() - 0.5) * 0.002);
+            const amount = (Math.random() * 1.3 + 0.01);
+            const time = new Date(now.getTime() - i * 15000);
+            trades.push({side, price, amount, time});
+        }
+
+        trades.sort((a, b) => b.time - a.time);
         renderTrades();
-        renderOrders();
     }
 
-    function matchOpenOrders() {
-        for (let i = openOrders.length - 1; i >= 0; i--) {
-            const o = openOrders[i];
-            const coin = getCoin(o.symbol);
-            if (!coin) continue;
-            const bestAsk = coin.orderBook.asks.length ? coin.orderBook.asks[0].price : coin.price;
-            const bestBid = coin.orderBook.bids.length ? coin.orderBook.bids[0].price : coin.price;
-
-            let shouldFill = false;
-            let fillPrice = coin.price;
-
-            if (o.side === "BUY" && bestAsk <= o.price) {
-                shouldFill = true;
-                fillPrice = bestAsk;
-            } else if (o.side === "SELL" && bestBid >= o.price) {
-                shouldFill = true;
-                fillPrice = bestBid;
-            }
-
-            if (shouldFill) {
-                const total = o.amount * fillPrice;
-                const fee = total * FEE_RATE;
-
-                if (o.side === "BUY") {
-                    if (balances.USDT >= total + fee) {
-                        balances.USDT -= total + fee;
-                        balances[o.symbol] = (balances[o.symbol] || 0) + o.amount;
-                    }
-                } else {
-                    if ((balances[o.symbol] || 0) >= o.amount) {
-                        balances[o.symbol] -= o.amount;
-                        balances.USDT += total - fee;
-                    }
-                }
-
-                orderHistory.push({
-                    ...o,
-                    price: fillPrice,
-                    total: o.side === "BUY" ? total + fee : total - fee,
-                    status: "FILLED"
-                });
-                openOrders.splice(i, 1);
-            }
-        }
-        renderWallet();
-    }
-
-    // ===== INIT =====
-
-    (function init() {
-        // prepare books & trades
-        coins.forEach(c => {
-            c.orderBook = generateOrderBook(c.price);
-            for (let i = 0; i < 8; i++) addRandomTrade(c);
+    function renderTrades() {
+        tradesList.innerHTML = "";
+        trades.slice(0, 30).forEach(t => {
+            const row = document.createElement("div");
+            row.className = "trades-row " + (t.side === "buy" ? "buy" : "sell");
+            const timeStr = t.time.toTimeString().slice(0, 8);
+            row.innerHTML = `
+                <span>${timeStr}</span>
+                <span>${t.price.toFixed(4)}</span>
+                <span>${t.amount.toFixed(3)}</span>
+            `;
+            tradesList.appendChild(row);
         });
-
-        renderSymbolSelect();
-        renderMarkets();
-        renderOrderBook();
-        renderTrades();
-        renderWallet();
-        renderOrders();
-        updatePairInfo();
-        setSide("BUY");
-        setOrderType("MARKET");
-
-        setInterval(simulateTick, 6000);
-    })();
-
-
-
-//Sidebar Menu
-
-const Sidebar = document.querySelector(".sidebar")
-const closeSidebarbtn = document.querySelector(".sidebar_close-btn")
-const openSidebarbtn = document.querySelector(".nav_menu-btn")
-
-openSidebarbtn.addEventListener("click", () => {
-   Sidebar.style.display = "flex";
-})
-
-closeSidebarbtn.addEventListener("click", () => {
-   Sidebar.style.display = "none";
-})
-
-
-// Theme Toggel
-
-const themeBtn = document.querySelector(".nav_theme-btn");
-
-themeBtn.addEventListener("click", () => {
-    document.body.classList.toggle("dark-theme")
-    if(document.body.classList.contains("dark-theme")){
-        themeBtn.innerHTML = '<i class="uil uil-sun"></i>'
-
-        localStorage.setItem("currentTheme", "dark-theme")
-    } else {
-        themeBtn.innerHTML = '<i class="uil uil-moon"></i>'
-
-        localStorage.setItem("currentTheme", " ")
-
     }
-})
 
-document.body.className =localStorage.getItem("currentTheme")
-if(document.body.classList.contains("dark-theme")){
-    themeBtn.innerHTML = '<i class="uil uil-sun"></i>'
+    setInterval(() => {
+        if (!selectedMarket) return;
+        const side = Math.random() > 0.5 ? "buy" : "sell";
+        const price = selectedMarket.price * (1 + (Math.random() - 0.5) * 0.0015);
+        const amount = (Math.random() * 1.5 + 0.01);
+        const time = new Date();
+        trades.unshift({side, price, amount, time});
+        renderTrades();
+    }, 2600);
 
-    localStorage.setItem("currentTheme", "dark-theme")
-} else {
-    themeBtn.innerHTML = '<i class="uil uil-moon"></i>'
+    function drawChart() {
+        const w = chartCanvas.clientWidth;
+        const h = chartCanvas.clientHeight;
+        if (w === 0 || h === 0) return;
+        chartCanvas.width = w * window.devicePixelRatio;
+        chartCanvas.height = h * window.devicePixelRatio;
+        ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+        ctx.clearRect(0, 0, w, h);
 
-    localStorage.setItem("currentTheme", " ")
+        if (!chartPoints || chartPoints.length === 0) return;
 
-}
+        const min = Math.min(...chartPoints);
+        const max = Math.max(...chartPoints);
+        const padding = 8;
+        const range = max - min || 1;
+
+        ctx.beginPath();
+        chartPoints.forEach((value, idx) => {
+            const x = padding + (idx / (chartPoints.length - 1)) * (w - padding * 2);
+            const y = h - padding - ((value - min) / range) * (h - padding * 2);
+            if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.lineTo(w - padding, h - padding);
+        ctx.lineTo(padding, h - padding);
+        ctx.closePath();
+        ctx.fillStyle = "rgba(129, 140, 248, 0.35)";
+        ctx.fill();
+
+        ctx.beginPath();
+        chartPoints.forEach((value, idx) => {
+            const x = padding + (idx / (chartPoints.length - 1)) * (w - padding * 2);
+            const y = h - padding - ((value - min) / range) * (h - padding * 2);
+            if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.lineWidth = 1.8;
+        ctx.strokeStyle = "#a855f7";
+        ctx.stroke();
+    }
+
+    function regenerateMockChartData() {
+        if (!selectedMarket) return;
+        const base = selectedMarket.price || 1;
+        chartPoints = [];
+        let last = base;
+        for (let i = 0; i < 60; i++) {
+            last = last * (1 + (Math.random() - 0.5) * 0.003);
+            chartPoints.push(last);
+        }
+        drawChart();
+    }
+
+    async function loadChartData() {
+        if (!selectedMarket || !selectedMarket.id) {
+            regenerateMockChartData();
+            return;
+        }
+        try {
+            const url =
+                `${COINGECKO_BASE}/coins/${selectedMarket.id}/market_chart` +
+                `?vs_currency=usd&days=${currentTimeframeDays}&interval=hourly`;
+            const res = await fetch(url);
+            if (!res.ok) {
+                regenerateMockChartData();
+                return;
+            }
+            const data = await res.json();
+            if (!data.prices || !data.prices.length) {
+                regenerateMockChartData();
+                return;
+            }
+            chartPoints = data.prices.map(p => p[1]);
+            drawChart();
+        } catch (e) {
+            console.error("Failed to load chart data; using mock chart.", e);
+            regenerateMockChartData();
+        }
+    }
+
+    window.addEventListener("resize", drawChart);
+
+    document.querySelectorAll(".timeframe-tab").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".timeframe-tab").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            const tf = btn.dataset.tf;
+            if (tf === "1d") currentTimeframeDays = 1;
+            else if (tf === "7d") currentTimeframeDays = 7;
+            else if (tf === "30d") currentTimeframeDays = 30;
+            else if (tf === "90d") currentTimeframeDays = 90;
+            else if (tf === "365d") currentTimeframeDays = 365;
+            loadChartData();
+        });
+    });
+
+    updateSelectedMarketUI();
+    renderMarkets();
+    generateOrderBook();
+    generateTrades(true);
+    regenerateMockChartData();
+    renderOrders();
+    hydrateMarketsFromAPI();

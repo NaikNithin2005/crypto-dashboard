@@ -8,24 +8,41 @@
     <!-- Unicons -->
     <link rel="stylesheet"
           href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
-    <link rel="stylesheet" href="/main-style.css">
-
-    <!-- If you already have main-style.css, include it BEFORE this block -->
-    <!-- <link rel="stylesheet" href="main-style.css"> -->
 
     <style>
         :root {
             --bg-body: #f5f5ff;
-            --sidebar-bg: #ffffff;
             --card-bg: #ffffff;
             --text-main: #111827;
             --text-muted: #9ca3af;
             --accent: #5b21ff;
             --accent-soft: rgba(91, 33, 255, 0.08);
+            --accent-strong: #4c1d95;
             --danger: #ef4444;
             --success: #22c55e;
             --border-subtle: #e5e7eb;
             --radius-lg: 1.4rem;
+            --shadow-soft: 0 24px 60px rgba(15, 23, 42, 0.12);
+
+            --surface-subtle: #f3f4ff;
+            --surface-soft-alt: #eef2ff;
+            --scrollbar: #d1d5db;
+        }
+
+        body.dark-theme {
+            --bg-body: #020617;
+            --card-bg: #020617;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --accent: #6366f1;
+            --accent-soft: rgba(129,140,248,0.16);
+            --accent-strong: #1e293b;
+            --border-subtle: #1f2937;
+            --shadow-soft: 0 24px 60px rgba(0,0,0,0.9);
+
+            --surface-subtle: #020617;
+            --surface-soft-alt: #0f172a;
+            --scrollbar: #111827;
         }
 
         * {
@@ -36,32 +53,108 @@
             margin: 0;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
             sans-serif;
-            background: var(--bg-body);
+            background:
+                radial-gradient(circle at top left, #e0e7ff 0, #f5f5ff 28%, transparent 55%),
+                radial-gradient(circle at bottom right, #fee2e2 0, #f5f5ff 30%, transparent 65%),
+                var(--bg-body);
             color: var(--text-main);
+            transition: background 0.25s ease, color 0.25s ease;
+        }
+
+        body.dark-theme {
+            background:
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.25) 0, transparent 55%),
+                radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.25) 0, transparent 65%),
+                #020617;
         }
 
         .app {
-            display: grid;
-            grid-template-columns: 260px minmax(0, 1fr);
+            display: flex;
             min-height: 100vh;
+            padding: 18px;
+            justify-content: center;
         }
 
-        .sidebar-placeholder {
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--border-subtle);
-            padding: 1.4rem 1.2rem;
+        .main-wrapper {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            animation: fadeInUp 0.35s ease-out;
         }
 
-        .sidebar-logo {
+        /* Top glassy nav (same style as Exchange / Analytics) */
+        .header {
+            border-radius: 999px;
+            background: rgba(248, 250, 252, 0.9);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            padding: 0.75rem 1.4rem;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+        }
+
+        body.dark-theme .header {
+            background: rgba(15, 23, 42, 0.96);
+            border-color: rgba(55, 65, 81, 0.9);
+        }
+
+        .nav {
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            margin-bottom: 2rem;
+            justify-content: space-between;
+            gap: 1rem;
         }
 
-        .sidebar-logo-icon {
-            width: 40px;
-            height: 40px;
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            min-width: 0;
+        }
+
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 0.35rem 0.8rem;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.97);
+            border: 1px solid rgba(148, 163, 184, 0.8);
+            transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+        }
+
+        body.dark-theme .nav-back {
+            background: rgba(15, 23, 42, 0.96);
+        }
+
+        .nav-back i {
+            font-size: 1rem;
+        }
+
+        .nav-back:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+            background: var(--accent-soft);
+            box-shadow: 0 12px 30px rgba(79, 70, 229, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .logo-circle {
+            width: 34px;
+            height: 34px;
             border-radius: 999px;
             background: radial-gradient(circle at 30% 0, #fde68a 0, #facc15 30%, #f97316 80%);
             display: flex;
@@ -69,64 +162,77 @@
             justify-content: center;
             color: #111827;
             font-weight: 800;
+            font-size: 0.95rem;
         }
 
-        .sidebar-logo span {
+        .logo-text {
             font-weight: 700;
-            letter-spacing: 0.06em;
+            font-size: 0.95rem;
+            letter-spacing: 0.08em;
         }
 
-        .sidebar-menu a {
+        .nav-actions {
             display: flex;
             align-items: center;
-            gap: 0.7rem;
-            padding: 0.6rem 0.8rem;
-            border-radius: 0.9rem;
-            text-decoration: none;
-            color: #6b7280;
-            font-size: 0.9rem;
-            margin-bottom: 0.2rem;
+            gap: 0.6rem;
         }
 
-        .sidebar-menu a i {
+        .nav-pill {
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            background: rgba(129, 140, 248, 0.16);
+            color: #4f46e5;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        body.dark-theme .nav-pill {
+            background: rgba(31, 41, 55, 0.95);
+            color: #c4b5fd;
+        }
+
+        .nav_theme-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.75);
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.98);
+            color: #111827;
             font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
         }
 
-        .sidebar-menu a.active {
-            background: var(--accent-soft);
-            color: var(--accent);
+        body.dark-theme .nav_theme-btn {
+            background: rgba(15, 23, 42, 0.98);
+            border-color: rgba(55, 65, 81, 0.9);
+            color: #e5e7eb;
         }
 
-        .sidebar-menu a span {
-            margin-top: 1px;
+        .nav_theme-btn:hover {
+            transform: translateY(-1px) scale(1.03);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.34);
         }
 
+        /* Main */
         .main {
-            padding: 1.4rem 2rem 2rem;
+            padding: 1.4rem 0.2rem 2rem;
         }
 
-        @media (max-width: 960px) {
-            .app {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar-placeholder {
-                display: none;
-            }
-
-            .main {
-                padding: 1rem 1rem 1.6rem;
-            }
-        }
-
-        /* Topbar */
-
+        /* Topbar (inside help center) */
         .topbar {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 1rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.4rem;
         }
 
         .topbar-left {
@@ -153,7 +259,7 @@
         .search-input {
             max-width: 340px;
             width: 100%;
-            background: #ffffff;
+            background: var(--card-bg);
             border-radius: 999px;
             display: flex;
             align-items: center;
@@ -172,10 +278,10 @@
             background: transparent;
             flex: 1;
             font-size: 0.9rem;
+            color: var(--text-main);
         }
 
         /* Layout inside help center */
-
         .help-layout {
             display: grid;
             grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.1fr);
@@ -193,7 +299,7 @@
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-subtle);
             padding: 1.2rem 1.3rem;
-            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+            box-shadow: var(--shadow-soft);
         }
 
         .card-header {
@@ -223,7 +329,6 @@
         }
 
         /* Category chips */
-
         .categories {
             display: flex;
             flex-wrap: wrap;
@@ -255,7 +360,6 @@
         }
 
         /* FAQ accordion */
-
         .faq-list {
             margin-top: 0.5rem;
         }
@@ -266,6 +370,11 @@
             background: #fafafa;
             margin-bottom: 0.5rem;
             overflow: hidden;
+        }
+
+        body.dark-theme .faq-item {
+            background: #020617;
+            border-color: #1f2937;
         }
 
         .faq-header {
@@ -295,6 +404,10 @@
             font-size: 1rem;
         }
 
+        body.dark-theme .faq-icon {
+            background: #020617;
+        }
+
         .faq-title {
             font-size: 0.86rem;
             font-weight: 500;
@@ -317,6 +430,10 @@
             color: #4b5563;
         }
 
+        body.dark-theme .faq-body {
+            color: #e5e7eb;
+        }
+
         .faq-body.open {
             display: block;
         }
@@ -337,8 +454,7 @@
             color: var(--text-muted);
         }
 
-        /* Right column: contact + quick links */
-
+        /* Right column: contact + quick links + tickets */
         .input-group {
             margin-bottom: 0.8rem;
             font-size: 0.84rem;
@@ -354,6 +470,10 @@
         .input-group label span.title {
             color: #111827;
             font-weight: 500;
+        }
+
+        body.dark-theme .input-group label span.title {
+            color: #f9fafb;
         }
 
         .input-group label span.info {
@@ -373,6 +493,14 @@
             resize: vertical;
         }
 
+        body.dark-theme .input-group input,
+        body.dark-theme .input-group textarea,
+        body.dark-theme .input-group select {
+            background: #020617;
+            border-color: #1f2937;
+            color: #f9fafb;
+        }
+
         .input-group textarea {
             min-height: 90px;
             max-height: 220px;
@@ -384,6 +512,12 @@
             border-color: var(--accent);
             box-shadow: 0 0 0 1px rgba(91, 33, 255, 0.15);
             background: #ffffff;
+        }
+
+        body.dark-theme .input-group input:focus,
+        body.dark-theme .input-group textarea:focus,
+        body.dark-theme .input-group select:focus {
+            background: #020617;
         }
 
         .primary-btn {
@@ -450,6 +584,11 @@
             cursor: pointer;
         }
 
+        body.dark-theme .quick-link-card {
+            background: #020617;
+            border-color: #1f2937;
+        }
+
         .quick-link-icon {
             width: 28px;
             height: 28px;
@@ -460,6 +599,10 @@
             justify-content: center;
             font-size: 1rem;
             color: var(--accent);
+        }
+
+        body.dark-theme .quick-link-icon {
+            background: #020617;
         }
 
         .quick-link-text span.title {
@@ -480,9 +623,13 @@
 
         .ticket-row {
             display: grid;
-            grid-template-columns: 1.4fr 0.8fr 0.7fr;
+            grid-template-columns: 1.5fr 0.8fr 0.7fr;
             padding: 0.28rem 0;
             border-bottom: 1px solid #f3f4f6;
+        }
+
+        body.dark-theme .ticket-row {
+            border-color: #1f2937;
         }
 
         .ticket-row:last-child {
@@ -535,297 +682,317 @@
             background: #f3f4f6;
             color: var(--text-muted);
         }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--scrollbar);
+            border-radius: 999px;
+        }
+
+        @media (max-width: 800px) {
+            .app {
+                padding: 12px;
+            }
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .topbar-search {
+                width: 100%;
+            }
+            .search-input {
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .nav-back span {
+                display: none;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
 
-<!--++++NAV BAR++++-->
-    <nav>
-        <div class="container nav_container">
-            <a href="./main-index.html" class="nav_logo">
-                <img src="./assets/images/ninar logo.png" alt="logo">
-            </a>
-            <div class="nav_search">
-                <i class="uil uil-search"></i>
-                <input type="search" placeholder="search">
+<div class="app">
+    <div class="main-wrapper">
+        <!-- Glassy global nav -->
+        <header class="header">
+            <nav class="nav">
+                <div class="nav-left">
+                    <a href="index.html" class="nav-back">
+                        <i class="uil uil-arrow-left"></i>
+                        <span>Back to Dashboard</span>
+                    </a>
 
-            </div>
-            <div class="nav_profile-wrapper">
-                <button class="nav_theme-btn">
-                    <i class="uil uil-moon"></i>
-                </button>
-                <div class="nav_profile">
-                    <div class="nav_profile-photo">
-                        
-                        <img src="https://tse1.explicit.bing.net/th/id/OIP.hGSCbXlcOjL_9mmzerqAbQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="profile photo">
-                    </div>
-                    <h5>Nithin</h5>
-                    <i class="uil uil-angle-down"></i>
+                    <a href="index.html" class="nav-logo">
+                        <div class="logo-circle">N</div>
+                        <span class="logo-text">NINAR</span>
+                    </a>
                 </div>
-                <button class="nav_menu-btn">
-                    <i class="uil uil-bars"></i>
-                </button>
-            </div>
-        </div>
-    </nav>
 
-<!--+++++SIDEBAR++++-->
-
-    <menu class="sidebar">
-        <a href="main-index.html" class="active">
-            <i class="uil uil-create-dashboard"></i>
-            <h5>Dashboard</h5>
-        </a>
-
-        <a href="./pages/exchange/exchange.html">
-            <i class="uil uil-exchange"></i>
-            <h5>Exchange</h5>
-        </a>
-
-        <a href="/pages/wallet/wallet.html">
-            <i class="uil uil-wallet"></i>
-            <h5>Wallet</h5>
-        </a>
-
-        <a href="/pages/transactions/transaction.html">
-            <i class="uil uil-transaction"></i>
-            <h5>Transacations</h5>
-        </a>
-
-        <a href="./pages/analytics/analytics.html">
-            <i class="uil uil-chart-line"></i>
-            <h5>Analytics</h5>
-        </a>
-
-        <a href="./pages/message/message.html">
-            <i class="uil uil-comment-alt-message"></i>
-            <h5>Message</h5>
-        </a>
-
-        <a href="./pages/help/help.html">
-            <i class="uil uil-question-circle"></i>
-            <h5>Help Center</h5>
-        </a>
-
-        <a href="./pages/settings/settings.html">
-            <i class="uil uil-setting"></i>
-            <h5>Settings</h5>
-        </a>
-
-        <button class="sidebar_close-btn">
-            <i class="uil uil-times"></i>
-        </button>
-
-    </menu>
-
-    <!-- Main -->
-    <main class="main">
-        <header class="topbar">
-            <div class="topbar-left">
-                <h1>Help Center</h1>
-                <span>Find quick answers, or contact NINAR support</span>
-            </div>
-            <div class="topbar-search">
-                <div class="search-input">
-                    <i class="uil uil-search"></i>
-                    <input type="text" id="faqSearchInput" placeholder="Search in Help Center">
+                <div class="nav-actions">
+                    <span class="nav-pill">
+                        <i class="uil uil-question-circle"></i>
+                        Help Center
+                    </span>
+                    <button class="nav_theme-btn" type="button">
+                        <i class="uil uil-moon"></i>
+                    </button>
                 </div>
-            </div>
+            </nav>
         </header>
 
-        <section class="help-layout">
-            <!-- LEFT: FAQ & categories -->
-            <section class="card">
-                <div class="card-header">
-                    <div>
-                        <h2>FAQs & Guides</h2>
-                        <span class="sub">Browse common questions about using NINAR</span>
-                    </div>
-                    <span class="badge" id="faqCountBadge">0 results</span>
+        <!-- Main -->
+        <main class="main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <h1>Help Center</h1>
+                    <span>Find quick answers, view policies, or contact NINAR support</span>
                 </div>
-
-                <!-- Category chips -->
-                <div class="categories" id="categoryChips">
-                    <button class="category-chip active" data-category="all">
-                        <i class="uil uil-apps"></i><span>All topics</span>
-                    </button>
-                    <button class="category-chip" data-category="account">
-                        <i class="uil uil-user"></i><span>Account & Profile</span>
-                    </button>
-                    <button class="category-chip" data-category="wallet">
-                        <i class="uil uil-wallet"></i><span>Wallet & Payments</span>
-                    </button>
-                    <button class="category-chip" data-category="trading">
-                        <i class="uil uil-chart-line"></i><span>Trading & Orders</span>
-                    </button>
-                    <button class="category-chip" data-category="security">
-                        <i class="uil uil-shield-check"></i><span>Security</span>
-                    </button>
-                    <button class="category-chip" data-category="other">
-                        <i class="uil uil-info-circle"></i><span>Other</span>
-                    </button>
-                </div>
-
-                <!-- FAQ list -->
-                <div class="faq-list" id="faqList"></div>
-            </section>
-
-            <!-- RIGHT: contact + quick links + tickets -->
-            <section class="card">
-                <div class="card-header">
-                    <div>
-                        <h2>Contact Support</h2>
-                        <span class="sub">Still stuck? Open a support request</span>
+                <div class="topbar-search">
+                    <div class="search-input">
+                        <i class="uil uil-search"></i>
+                        <input type="text" id="faqSearchInput" placeholder="Search FAQs, topics, or keywords">
                     </div>
                 </div>
+            </header>
 
-                <form id="supportForm">
-                    <div class="input-group">
-                        <label>
-                            <span class="title">Your email</span>
-                            <span class="info">We reply here</span>
-                        </label>
-                        <input type="email" id="supportEmail" placeholder="name@example.com" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label>
-                            <span class="title">Topic</span>
-                            <span class="info">What do you need help with?</span>
-                        </label>
-                        <select id="supportTopic">
-                            <option value="General question">General question</option>
-                            <option value="Account & verification">Account & verification</option>
-                            <option value="Wallet & deposits">Wallet & deposits</option>
-                            <option value="Trading & orders">Trading & orders</option>
-                            <option value="Security & login">Security & login</option>
-                            <option value="Bug / UI issue">Bug / UI issue</option>
-                        </select>
-                    </div>
-
-                    <div class="input-group">
-                        <label>
-                            <span class="title">Subject</span>
-                        </label>
-                        <input type="text" id="supportSubject" placeholder="Short summary of your issue" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label>
-                            <span class="title">Message</span>
-                            <span class="info">Include device, browser, steps to reproduce if possible</span>
-                        </label>
-                        <textarea id="supportMessage" placeholder="Describe what happened..." required></textarea>
-                    </div>
-
-                    <button type="submit" class="primary-btn">
-                        <i class="uil uil-message"></i>
-                        <span>Send to NINAR Support (demo)</span>
-                    </button>
-
-                    <div id="supportStatus" class="status-msg"></div>
-
-                    <div class="support-footnote">
-                        This is a front-end demo only. In a real app, this form would send your ticket
-                        to a support backend or email system.
-                    </div>
-                </form>
-
-                <div style="margin-top: 1rem; border-top: 1px solid #f3f4f6; padding-top: 0.8rem;">
-                    <div class="card-header" style="padding:0; margin-bottom:0.5rem;">
+            <section class="help-layout">
+                <!-- LEFT: FAQ & categories -->
+                <section class="card">
+                    <div class="card-header">
                         <div>
-                            <h2 style="font-size:0.95rem;">Quick links</h2>
-                            <span class="sub">Jump into common areas</span>
+                            <h2>FAQs & Guides</h2>
+                            <span class="sub">Browse common questions about using NINAR</span>
                         </div>
+                        <span class="badge" id="faqCountBadge">0 results</span>
                     </div>
 
-                    <div class="quick-links">
-                        <div class="quick-link-card" data-link="exchange.html">
-                            <div class="quick-link-icon"><i class="uil uil-exchange"></i></div>
-                            <div class="quick-link-text">
-                                <span class="title">Trading guide</span>
-                                <span class="desc">Understand orders, fees & watchlist</span>
-                            </div>
-                        </div>
-                        <div class="quick-link-card" data-link="wallet.html">
-                            <div class="quick-link-icon"><i class="uil uil-wallet"></i></div>
-                            <div class="quick-link-text">
-                                <span class="title">Wallet overview</span>
-                                <span class="desc">Top up or review your balances</span>
-                            </div>
-                        </div>
-                        <div class="quick-link-card" data-link="#">
-                            <div class="quick-link-icon"><i class="uil uil-shield-check"></i></div>
-                            <div class="quick-link-text">
-                                <span class="title">Security checklist</span>
-                                <span class="desc">Keep your NINAR account safe</span>
-                            </div>
-                        </div>
-                        <div class="quick-link-card" data-link="#">
-                            <div class="quick-link-icon"><i class="uil uil-document-layout-left"></i></div>
-                            <div class="quick-link-text">
-                                <span class="title">Terms & policies</span>
-                                <span class="desc">Review legal & compliance docs</span>
-                            </div>
-                        </div>
+                    <!-- Category chips -->
+                    <div class="categories" id="categoryChips">
+                        <button class="category-chip active" data-category="all">
+                            <i class="uil uil-apps"></i><span>All topics</span>
+                        </button>
+                        <button class="category-chip" data-category="account">
+                            <i class="uil uil-user"></i><span>Account & Profile</span>
+                        </button>
+                        <button class="category-chip" data-category="wallet">
+                            <i class="uil uil-wallet"></i><span>Wallet & Payments</span>
+                        </button>
+                        <button class="category-chip" data-category="trading">
+                            <i class="uil uil-chart-line"></i><span>Trading & Orders</span>
+                        </button>
+                        <button class="category-chip" data-category="security">
+                            <i class="uil uil-shield-check"></i><span>Security</span>
+                        </button>
+                        <button class="category-chip" data-category="other">
+                            <i class="uil uil-info-circle"></i><span>Other</span>
+                        </button>
                     </div>
-                </div>
 
-                <div style="margin-top: 1rem; border-top: 1px solid #f3f4f6; padding-top: 0.8rem;">
-                    <div class="card-header" style="padding:0; margin-bottom:0.4rem;">
+                    <!-- FAQ list -->
+                    <div class="faq-list" id="faqList"></div>
+                </section>
+
+                <!-- RIGHT: contact + quick links + tickets -->
+                <section class="card">
+                    <div class="card-header">
                         <div>
-                            <h2 style="font-size:0.95rem;">Your recent tickets</h2>
-                            <span class="sub">Demo timeline of support requests</span>
+                            <h2>Contact Support</h2>
+                            <span class="sub">Still stuck? Open a support request (demo)</span>
                         </div>
                     </div>
 
-                    <div class="tickets-list" id="ticketsList">
-                        <!-- Filled by JS -->
+                    <form id="supportForm">
+                        <div class="input-group">
+                            <label>
+                                <span class="title">Your email</span>
+                                <span class="info">We reply here</span>
+                            </label>
+                            <input type="email" id="supportEmail" placeholder="name@example.com" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label>
+                                <span class="title">Topic</span>
+                                <span class="info">What do you need help with?</span>
+                            </label>
+                            <select id="supportTopic">
+                                <option value="General question">General question</option>
+                                <option value="Account & verification">Account & verification</option>
+                                <option value="Wallet & deposits">Wallet & deposits</option>
+                                <option value="Trading & orders">Trading & orders</option>
+                                <option value="Security & login">Security & login</option>
+                                <option value="Bug / UI issue">Bug / UI issue</option>
+                                <option value="Fees & limits">Fees & limits</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label>
+                                <span class="title">Subject</span>
+                            </label>
+                            <input type="text" id="supportSubject" placeholder="Short summary of your issue" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label>
+                                <span class="title">Message</span>
+                                <span class="info">Include device, browser, steps to reproduce if possible</span>
+                            </label>
+                            <textarea id="supportMessage" placeholder="Describe what happened..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="primary-btn">
+                            <i class="uil uil-message"></i>
+                            <span>Send to NINAR Support (demo)</span>
+                        </button>
+
+                        <div id="supportStatus" class="status-msg"></div>
+
+                        <div class="support-footnote">
+                            This is a front-end demo only. In a real app, this form would send your ticket
+                            to a support backend (email, Zendesk, or custom ticket system).
+                        </div>
+                    </form>
+
+                    <div style="margin-top: 1rem; border-top: 1px solid #f3f4f6; padding-top: 0.8rem;">
+                        <div class="card-header" style="padding:0; margin-bottom:0.5rem;">
+                            <div>
+                                <h2 style="font-size:0.95rem;">Quick links</h2>
+                                <span class="sub">Jump into common areas</span>
+                            </div>
+                        </div>
+
+                        <div class="quick-links">
+                            <div class="quick-link-card" data-link="exchange.html">
+                                <div class="quick-link-icon"><i class="uil uil-exchange"></i></div>
+                                <div class="quick-link-text">
+                                    <span class="title">Trading guide</span>
+                                    <span class="desc">Orders, fees, watchlist & order history</span>
+                                </div>
+                            </div>
+                            <div class="quick-link-card" data-link="wallet.html">
+                                <div class="quick-link-icon"><i class="uil uil-wallet"></i></div>
+                                <div class="quick-link-text">
+                                    <span class="title">Wallet overview</span>
+                                    <span class="desc">Balances, deposits & internal transfers</span>
+                                </div>
+                            </div>
+                            <div class="quick-link-card" data-link="analytics.html">
+                                <div class="quick-link-icon"><i class="uil uil-analytics"></i></div>
+                                <div class="quick-link-text">
+                                    <span class="title">Analytics</span>
+                                    <span class="desc">PNL, risk metrics & allocation</span>
+                                </div>
+                            </div>
+                            <div class="quick-link-card" data-link="message-center.html">
+                                <div class="quick-link-icon"><i class="uil uil-chat-bubble-user"></i></div>
+                                <div class="quick-link-text">
+                                    <span class="title">Message Center</span>
+                                    <span class="desc">System alerts & support threads</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="chips-inline">
-                        <span class="chip-small">Avg. response &lt; 12 hrs</span>
-                        <span class="chip-small">Priority support for verified users</span>
+                    <div style="margin-top: 1rem; border-top: 1px solid #f3f4f6; padding-top: 0.8rem;">
+                        <div class="card-header" style="padding:0; margin-bottom:0.4rem;">
+                            <div>
+                                <h2 style="font-size:0.95rem;">Your recent tickets</h2>
+                                <span class="sub">Demo timeline of support requests</span>
+                            </div>
+                        </div>
+
+                        <div class="tickets-list" id="ticketsList">
+                            <!-- Filled by JS -->
+                        </div>
+
+                        <div class="chips-inline">
+                            <span class="chip-small">Avg. response &lt; 12 hrs (demo)</span>
+                            <span class="chip-small">Priority for verified users</span>
+                            <span class="chip-small">24/7 critical security support</span>
+                        </div>
                     </div>
-                </div>
+                </section>
             </section>
-        </section>
-    </main>
-
+        </main>
+    </div>
+</div>
 
 <script>
-    // ---------- FAQ DATA (STATIC) ----------
+    // ---------- THEME (shared key: ninar_theme) ----------
+    const themeBtn = document.querySelector(".nav_theme-btn");
+
+    function applyThemeFromStorage() {
+        const stored = localStorage.getItem("ninar_theme") || "light";
+        const isDark = stored === "dark";
+        document.body.classList.toggle("dark-theme", isDark);
+        if (themeBtn) {
+            themeBtn.innerHTML = isDark
+                ? '<i class="uil uil-sun"></i>'
+                : '<i class="uil uil-moon"></i>';
+        }
+    }
+
+    if (themeBtn) {
+        themeBtn.addEventListener("click", () => {
+            const isDarkNow = !document.body.classList.contains("dark-theme");
+            localStorage.setItem("ninar_theme", isDarkNow ? "dark" : "light");
+            applyThemeFromStorage();
+        });
+    }
+
+    applyThemeFromStorage();
+
+    // ---------- FAQ DATA (expanded, crypto-style) ----------
     const faqs = [
         {
             id: 1,
             category: "account",
-            title: "How do I verify my NINAR account?",
+            title: "How do I verify my NINAR account (KYC)?",
             body: [
-                "In a real application, verification would be handled in a dedicated KYC screen.",
-                "Typical steps are: submit basic details, upload ID documents, and wait for review.",
-                "For this demo dashboard, verification is only shown in the UI and does not send any data."
+                "In a real exchange, verification (KYC) is handled in a dedicated onboarding flow.",
+                "Typical steps: fill in your legal name and address, upload ID documents, then wait while the provider reviews them.",
+                "In this demo dashboard, we only show the verification UI. No documents are uploaded or reviewed."
             ],
-            tags: ["verification", "profile", "limits"]
+            tags: ["verification", "kyc", "limits"]
         },
         {
             id: 2,
             category: "wallet",
-            title: "Where can I see my wallet balance and recent deposits?",
+            title: "Where can I see my wallet balance, deposits and withdrawals?",
             body: [
-                "Open the Wallet page from the sidebar to view total balance per coin.",
-                "The wallet section inside the Exchange view also shows a compact balance summary.",
-                "In this static demo, all wallet values are stored in JavaScript and reset on refresh."
+                "Open the Wallet page to view a breakdown per coin (BTC, ETH, stablecoins, altcoins).",
+                "Recent deposit and withdrawal history would normally appear in a dedicated 'Transactions' or 'Funding' tab.",
+                "In this demo, balances and history live only in JavaScript and reset when you refresh the page."
             ],
-            tags: ["wallet", "balances", "deposits"]
+            tags: ["wallet", "balances", "deposits", "withdrawals"]
         },
         {
             id: 3,
             category: "trading",
             title: "How does the NINAR Exchange simulator work?",
             body: [
-                "The Exchange page uses local JavaScript to simulate prices, order book, and trades.",
-                "When you place a market order, it instantly updates balances and order history on the client only.",
-                "There is no real matching engine or backend, so no real money is involved."
+                "The Exchange screen uses local JavaScript to simulate the order book, trades and price ticks.",
+                "Market and limit orders update your demo balances instantly on the client.",
+                "There is no connection to a live matching engine or blockchain—so it’s safe for practice and UI testing."
             ],
             tags: ["exchange", "orders", "simulation"]
         },
@@ -834,55 +1001,99 @@
             category: "trading",
             title: "What is the difference between Market and Limit orders?",
             body: [
-                "A Market order executes immediately at the best available price in the book.",
-                "A Limit order lets you set your own price. It will only fill if the market price reaches your limit.",
-                "In this demo, limit orders that cross the simulated order book are filled instantly; others become open orders."
+                "A Market order executes immediately at the best price available in the book.",
+                "A Limit order lets you choose the maximum price you are willing to pay (for buys) or the minimum price you accept (for sells).",
+                "In this demo, any limit order that crosses the current simulated price fills instantly; others remain as open orders."
             ],
             tags: ["market", "limit", "order types"]
         },
         {
             id: 5,
-            category: "security",
-            title: "How can I keep my demo account secure?",
-            body: [
-                "In a live product, you should enable 2FA, use a strong password, and avoid sharing login details.",
-                "This NINAR dashboard is client-side only for demo purposes, so it does not store real credentials.",
-                "When you implement a backend, never expose private keys or API secrets in the frontend."
-            ],
-            tags: ["2fa", "password", "safety"]
-        },
-        {
-            id: 6,
             category: "wallet",
             title: "Why do my balances reset after refreshing the page?",
             body: [
-                "All balances and trade data in this project are kept only in memory inside the browser.",
-                "Refreshing the page reloads the script, so everything returns to the initial demo state.",
-                "To make balances persistent, you would connect a real backend and database."
+                "All portfolio and wallet data in this project currently lives only in memory (and optional localStorage).",
+                "Refreshing the tab reloads the script so values go back to the initial demo state.",
+                "To make balances persistent, you would connect this UI to a real backend (database / Firestore / APIs)."
             ],
             tags: ["reset", "demo", "local data"]
+        },
+        {
+            id: 6,
+            category: "security",
+            title: "How can I keep my account and funds secure?",
+            body: [
+                "In a real crypto app you should: enable 2FA, use a strong unique password, and never share your seed phrase or API keys.",
+                "Only download the official app, use hardware keys if possible, and be careful with browser extensions.",
+                "This NINAR dashboard is a UI demo—no real keys or secrets should ever be stored in the frontend."
+            ],
+            tags: ["security", "2fa", "safety"]
         },
         {
             id: 7,
             category: "account",
             title: "Can I switch between light and dark mode?",
             body: [
-                "You can design a theme toggle (like the moon icon in your dashboard header).",
-                "A common pattern is to store the selected theme in localStorage and apply CSS variables.",
-                "This help center page uses the same base theme variables as the dashboard and exchange."
+                "Yes. Use the moon / sun icon in the top navigation bar to toggle the theme.",
+                "Your preference is stored in localStorage so NINAR remembers it across page loads.",
+                "You can customise colors in the CSS variables (in the :root and body.dark-theme blocks)."
             ],
             tags: ["theme", "design", "ui"]
         },
         {
             id: 8,
             category: "other",
-            title: "Is this NINAR dashboard connected to real crypto markets?",
+            title: "Is NINAR connected to real-time crypto markets?",
             body: [
-                "No. All prices, order book entries, and trades are generated on the client using random ticks.",
-                "You can later replace the simulated data with real APIs (for example, web sockets from an exchange) while keeping this UI.",
-                "The current setup is safe for demos and UI experiments."
+                "In this version, prices, order books, analytics and PnL are simulated in the browser.",
+                "You can later swap the simulated data layer for real exchange APIs (REST + WebSocket) without changing most of the UI.",
+                "This makes NINAR safe for demos, case studies and UI experiments."
             ],
             tags: ["real data", "api", "markets"]
+        },
+        {
+            id: 9,
+            category: "wallet",
+            title: "How would deposits and withdrawals work in a real app?",
+            body: [
+                "On a live exchange you get a unique deposit address or QR code per asset or network.",
+                "Withdrawals usually require 2FA + email or device confirmation and may include on-chain network fees.",
+                "This demo only shows the screens. No on-chain transfer or real money movement happens."
+            ],
+            tags: ["deposits", "withdrawals", "onchain"]
+        },
+        {
+            id: 10,
+            category: "other",
+            title: "Where can I see trading fees and minimum order sizes?",
+            body: [
+                "Real exchanges publish a fee schedule (maker / taker fees) and minimum order sizes per trading pair.",
+                "In this UI demo, fees are shown only as labels or hints in the trading form UI.",
+                "When you connect a backend, you should fetch fee tiers and limits from your server and show them here."
+            ],
+            tags: ["fees", "limits", "minimums"]
+        },
+        {
+            id: 11,
+            category: "security",
+            title: "What happens if a new device logs into my account?",
+            body: [
+                "A production system would send you an email or in-app notification for every new device or IP.",
+                "You would also be able to review active sessions and revoke access from the Security page.",
+                "In this demo we show the security alerts only in the Message Center UI; no real login tracking is done."
+            ],
+            tags: ["device", "login", "sessions"]
+        },
+        {
+            id: 12,
+            category: "trading",
+            title: "Does the Analytics page use my real trading history?",
+            body: [
+                "The Analytics view currently builds your PnL, allocation and risk metrics from simulated data points.",
+                "When wired to a backend, those charts would use your real fills, portfolio snapshots and market prices.",
+                "All formulas (volatility, Sharpe, Sortino, drawdown) are compatible with real data when you plug it in."
+            ],
+            tags: ["analytics", "pnl", "risk"]
         }
     ];
 
@@ -929,7 +1140,7 @@
         faqCountBadge.textContent = filtered.length + (filtered.length === 1 ? " result" : " results");
 
         if (filtered.length === 0) {
-            faqListEl.innerHTML = '<div class="empty-state">No articles found for this search. Try another keyword or topic.</div>';
+            faqListEl.innerHTML = '<div class="empty-state">No articles found. Try another keyword or category.</div>';
             return;
         }
 
@@ -1026,7 +1237,6 @@
             return;
         }
 
-        // Demo: push fake ticket
         const newId = "#NIN-" + (Math.floor(Math.random() * 9000) + 11000);
         demoTickets.unshift({
             id: newId,
@@ -1085,53 +1295,6 @@
         renderFaqs();
         renderTickets();
     })();
-
-    
-//Sidebar Menu
-
-const Sidebar = document.querySelector(".sidebar")
-const closeSidebarbtn = document.querySelector(".sidebar_close-btn")
-const openSidebarbtn = document.querySelector(".nav_menu-btn")
-
-openSidebarbtn.addEventListener("click", () => {
-   Sidebar.style.display = "flex";
-})
-
-closeSidebarbtn.addEventListener("click", () => {
-   Sidebar.style.display = "none";
-})
-
-
-// Theme Toggel
-
-const themeBtn = document.querySelector(".nav_theme-btn");
-
-themeBtn.addEventListener("click", () => {
-    document.body.classList.toggle("dark-theme")
-    if(document.body.classList.contains("dark-theme")){
-        themeBtn.innerHTML = '<i class="uil uil-sun"></i>'
-
-        localStorage.setItem("currentTheme", "dark-theme")
-    } else {
-        themeBtn.innerHTML = '<i class="uil uil-moon"></i>'
-
-        localStorage.setItem("currentTheme", " ")
-
-    }
-})
-
-document.body.className =localStorage.getItem("currentTheme")
-if(document.body.classList.contains("dark-theme")){
-    themeBtn.innerHTML = '<i class="uil uil-sun"></i>'
-
-    localStorage.setItem("currentTheme", "dark-theme")
-} else {
-    themeBtn.innerHTML = '<i class="uil uil-moon"></i>'
-
-    localStorage.setItem("currentTheme", " ")
-
-}
-
 </script>
 
 </body>
