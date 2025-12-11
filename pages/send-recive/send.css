@@ -156,25 +156,27 @@ textarea{
     width:100%;
     padding:15px;
     font-size:1rem;
-    background:var(--primary);
+    background:#E4E6ED;
     border:none;
     border-radius:12px;
-    color:white;
+    color:#000;
     cursor:pointer;
+    text-align:center;
     transition:.3s;
-    text-align: center;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
 .cancel:hover{
-    background:#4338ca;
+    background:#d2d4dd;
 }
 
 .button{
     display:flex;
     gap:10px;
 }
-
-
 
 .bill-btn{
     margin-top:12px;
@@ -195,7 +197,7 @@ textarea{
     font-size:1rem;
 }
 
-/* SECURITY NOTE & CONFIRM */
+/* SECURITY NOTE */
 .security{
     background:#fff8e6;
     padding:12px;

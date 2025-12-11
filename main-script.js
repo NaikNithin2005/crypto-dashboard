@@ -98,6 +98,17 @@ if(document.body.classList.contains("dark-theme")){
 
 }
 
+// Visitor Counter 
+
+const visitorCountEl = document.querySelector("#visitor-count");
+
+if (visitorCountEl) {
+    let visits = parseInt(localStorage.getItem("ninarVisitCount") || "0", 10);
+    visits += 1;
+    localStorage.setItem("ninarVisitCount", visits);
+    visitorCountEl.textContent = visits.toLocaleString();
+}
+
 
 
 
