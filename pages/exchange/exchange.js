@@ -461,6 +461,8 @@ const themeToggleBtn = document.getElementById("themeToggle");
         }
     }
 
+    // lsit
+
     let trades = [];
 
     function generateTrades(initial = false) {
